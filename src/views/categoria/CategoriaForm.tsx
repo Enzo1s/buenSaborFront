@@ -1,8 +1,7 @@
 import { Autocomplete, Button, Grid, TextField } from "@mui/material"
-import axios from "axios"
 import { Formik } from "formik"
 import { useEffect, useState } from "react"
-import { crearCategoria } from "../../Api/Categoria"
+import { crearCategoria, getAllCategoria } from "../../Api/CategoriaAPI"
 import { CategoriaArticulo } from "../../interfaces/CategoriaArticulo"
 
 export interface CategoriaFormProps {
@@ -15,7 +14,7 @@ const CategoriaForm = (props: CategoriaFormProps) => {
 
   useEffect(() => {
     const getCategorias = async () => {
-      const {data} = await axios.get("http://localhost:8080/api/categoria-articulo");
+      const {data} = await getAllCategoria();
       setCategorias(data);
     }
     getCategorias()

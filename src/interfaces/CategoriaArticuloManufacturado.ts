@@ -1,4 +1,4 @@
 export interface CategoriaArticuloManufacturado {
-    id: String,
+    id: String | null,
     denominacion: String
 }

@@ -1,4 +1,4 @@
-import { Button, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
+import { Button, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { ArticuloInsumo } from "../../../interfaces/ArticuloInsumo"
 import { getListArticuloInsumo } from "../../../Api/ArticuloInsumo"
@@ -17,11 +17,18 @@ const InsumosTable = () => {
     }, [])
     
   return (
-    <>
-    <Button variant="contained" color="primary" onClick={() => navigate("/articulo-insumo/crear")}>
-        Crear Articulo Insumo
-      </Button>
-    <Typography variant="h1">Listado articulo Insumo</Typography>
+    <Grid container>
+        <Grid container size={12} sx={{ padding: '20px' }} >
+            <Grid size={10}>
+            <Typography variant="h4">Listado articulo Insumo</Typography>
+            </Grid>
+            <Grid size={2}>
+            <Button variant="contained" color="primary" onClick={() => navigate("/articulo-insumo/crear")}>
+                Crear Articulo Insumo
+            </Button>
+            </Grid>
+        </Grid>
+    
     <Table>
         <TableHead>
             <TableRow>
@@ -36,7 +43,7 @@ const InsumosTable = () => {
         </TableHead>
         <TableBody>
             {articuloInsumos ? articuloInsumos.map((articuloInsumo, index) => (
-                <TableRow key={(articuloInsumo.id !== undefined ? articuloInsumo.id : `no-id-${index}`).toString()}>
+                <TableRow key={(articuloInsumo?.id ?? `no-id-${index}`).toString()}>
                     <TableCell>{articuloInsumo.denominacion}</TableCell>
                     <TableCell>{articuloInsumo.precioCompra.toString()}</TableCell>
                     <TableCell>{articuloInsumo.precioVenta.toString()}</TableCell>
@@ -48,7 +55,7 @@ const InsumosTable = () => {
             )): (<TableRow>No se encontraron insumos</TableRow>)}
         </TableBody>
     </Table>
-    </>
+    </Grid>
   )
 }
 

@@ -1,7 +1,7 @@
 import { ArticuloManufacturado } from "./ArticuloManufacturado"
 
 export interface PromocionDetalle {
-    id: String,
+    id: String | null,
 	cantidad: Number,
 	articuloManufacturado: ArticuloManufacturado
 }

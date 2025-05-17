@@ -1,7 +1,7 @@
 import { SucursalEmpresa } from "./SucursalEmpresa";
 
 export interface SucursalInsumo {
-    id: String,
+    id: String | null,
 	stockActual: Number, 
 	stockMinimo: Number, 
 	stockMaximo: Number, 

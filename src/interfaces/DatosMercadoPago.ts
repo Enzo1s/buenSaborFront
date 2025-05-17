@@ -1,5 +1,5 @@
 export interface DatosMercadoPago {
-    id: String,
+    id: String | null,
 	dateCreated: Date,
 	dateApproved: Date,
 	dateLastUpdated: Date,

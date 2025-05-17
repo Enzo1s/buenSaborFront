@@ -1,15 +1,15 @@
 import { Typography } from "@mui/material"
 import { Outlet } from "react-router";
 
-const ArticuloInsumo = () => {
+const ArticuloInsumoView = () => {
   
   return (
     <div>
-      <Typography variant="h1">Articulo Insumo</Typography>
+      <Typography variant="h3">Articulo Insumo</Typography>
       
       <Outlet />
     </div>
   )
 }
 
-export default ArticuloInsumo
+export default ArticuloInsumoView

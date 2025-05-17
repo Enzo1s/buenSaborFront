@@ -1,7 +1,7 @@
 import { Localidad } from "./Localidad";
 
 export interface Domicilio {
-    id: String,
+    id: String | null,
 	calle: String,
 	numero:  Number,
 	cp: Number,

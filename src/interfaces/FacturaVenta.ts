@@ -3,7 +3,7 @@ import { DatosMercadoPago } from "./DatosMercadoPago";
 import { FacturaVentaDetalle } from "./FacturaVentaDetalle";
 
 export interface FacturaVenta {
-    id: String,
+    id: String | null,
 	fechaFacturacion: Date,
 	numeroComprobante: Number,
 	formaPago: FormaPago,
@@ -12,5 +12,5 @@ export interface FacturaVenta {
 	gastosEnvio: Number,
 	totalVenta: Number,
 	datosMP: DatosMercadoPago,
-	facturaVentaDetalle: [FacturaVentaDetalle]
+	facturaVentaDetalle: FacturaVentaDetalle[]
 }

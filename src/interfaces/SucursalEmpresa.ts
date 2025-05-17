@@ -1,7 +1,7 @@
 import { Domicilio } from "./Domicilio"
 
 export interface SucursalEmpresa {
-    id: String
+    id: String | null,
 	nombre: String,
 	horarioApertura: String,
 	horarioCIerre: String,

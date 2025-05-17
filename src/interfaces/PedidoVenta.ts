@@ -8,7 +8,7 @@ import { PedidoVentaDetalle } from "./PedidoVentaDetalle"
 import { SucursalEmpresa } from "./SucursalEmpresa"
 
 export interface PedidoVenta {
-    id: String,
+    id: String | null,
 	horaEstimadaFinalizacion: Date,
 	subtotal: Number,
 	descuento: Number,
@@ -22,6 +22,6 @@ export interface PedidoVenta {
 	sucursal: SucursalEmpresa,
 	cliente: Cliente,
 	factura: FacturaVenta
-	pedidoVentaDetalle: [PedidoVentaDetalle]
+	pedidoVentaDetalle: PedidoVentaDetalle[]
 	fechaPedido: Date
 }

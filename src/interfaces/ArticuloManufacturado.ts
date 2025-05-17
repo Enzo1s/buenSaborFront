@@ -5,10 +5,10 @@ export interface ArticuloManufacturado {
     id: String | null,
 	denominacion: String,
 	descripcion: String,
-	precioVenta: String,
-	precioCosto: String,
+	precioVenta: Number,
+	precioCosto: Number,
 	tiempoEstimado: Number,
-	categoriaArticuloManufacturado: CategoriaArticuloManufacturado,
-	pathImagen: [String]
+	categoriaArticuloManufacturado: CategoriaArticuloManufacturado | null,
+	pathImagen: String[]
 	articuloManufacturadoDetalle: ArticuloManufacturadoDetalle[]
 }

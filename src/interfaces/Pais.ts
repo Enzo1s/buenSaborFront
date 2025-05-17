@@ -1,4 +1,4 @@
 export interface Pais {
-    id: String,
+    id: String | null,
     nombre: String
 }

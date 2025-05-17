@@ -1,15 +1,13 @@
-import { Autocomplete, Box, Button, Checkbox, FormControlLabel, FormGroup, Grid, IconButton, Paper, styled, TextField, Typography } from "@mui/material";
-import { Formik } from "formik";
-import { PhotoCamera } from "@mui/icons-material";
+import { Autocomplete, Box, Button, Grid, IconButton, Paper, styled, TextField, Typography } from '@mui/material'
+import { Formik } from 'formik'
+import { useCallback, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useCallback, useEffect, useState } from "react";
-import { CategoriaArticulo } from "../../../interfaces/CategoriaArticulo";
-import CategoriaForm from "../../categoria/CategoriaForm";
-import Modal from "../../../components/Modal";
-import { createArticuloInsumo } from "../../../Api/ArticuloInsumo";
-import { ArticuloInsumo } from "../../../interfaces/ArticuloInsumo";
-import { getAllCategoria } from "../../../Api/CategoriaAPI";
-import { useNavigate } from "react-router";
+import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado'
+import { crearArticuloManufacturado } from '../../../Api/ArticuloManufacturadoAPI';
+import { CategoriaArticuloManufacturado } from '../../../interfaces/CategoriaArticuloManufacturado';
+import { PhotoCamera } from '@mui/icons-material';
+import Modal from '../../../components/Modal';
+import CategoriaForm from '../../categoria/CategoriaForm';
 
 const Input = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -23,60 +21,48 @@ const Input = styled('input')({
     width: 1,
 });
 
+const ManufacturadoForm = () => {
 
-const InsumoForm = () => {
-
-    const [categorias, setCategorias] = useState<CategoriaArticulo[]>([])
-    const [viewForm, setViewForm] = useState(false)
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-    const navigate = useNavigate()
+    const [categorias, setCategorias] = useState<CategoriaArticuloManufacturado[]>([])
+    const [viewForm, setViewForm] = useState(false)
 
-    const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        const files = event.target.files;
-        if (files && files.length > 0) {
-            const newPreviewUrls: string[] = [];
-            const readers: FileReader[] = [];
-            const base64Results: (string | null)[] = [];
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                readers.push(reader);
-                reader.onloadend = () => {
-                    newPreviewUrls.push(reader.result as string);
-                    base64Results.push(reader.result as string);
-                    if (base64Results.length === files.length) {
-                        setPreviewUrls([...previewUrls, ...newPreviewUrls]);
-                    }
-                };
-                reader.readAsDataURL(file);
+        const newCategoria = (categoria: CategoriaArticuloManufacturado) => {
+            if (categoria !== null)
+                setCategorias([...categorias, categoria])
+            setViewForm(false)
+        }
+    
+        const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+            const files = event.target.files;
+            if (files && files.length > 0) {
+                const newPreviewUrls: string[] = [];
+                const readers: FileReader[] = [];
+                const base64Results: (string | null)[] = [];
+    
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    readers.push(reader);
+                    reader.onloadend = () => {
+                        newPreviewUrls.push(reader.result as string);
+                        base64Results.push(reader.result as string);
+                        if (base64Results.length === files.length) {
+                            setPreviewUrls([...previewUrls, ...newPreviewUrls]);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
-        }
-    }, []);
+        }, []);
+    
+        const handleRemoveImage = useCallback((indexToRemove: number) => {
+            const newPreviewUrls = previewUrls.filter((_, index) => index !== indexToRemove);
+            setPreviewUrls(newPreviewUrls);
+          }, [ previewUrls]);
 
-    const handleRemoveImage = useCallback((indexToRemove: number) => {
-        const newPreviewUrls = previewUrls.filter((_, index) => index !== indexToRemove);
-        setPreviewUrls(newPreviewUrls);
-      }, [ previewUrls]);
-
-
-    const newCategoria = (categoria: CategoriaArticulo) => {
-        if (categoria !== null)
-            setCategorias([...categorias, categoria])
-        setViewForm(false)
-    }
-
-    useEffect(() => {
-        const getCategorias = async () => {
-            const { data } = await getAllCategoria();
-            setCategorias(data);
-        }
-        getCategorias()
-    }, [])
-
-
-    return (
-        <Grid container spacing={2} alignContent={"center"} justifyContent="center" sx={{ backgroundColor: "#f5f5f5", padding: 2, borderRadius: 2 }}>
+  return (
+    <Grid container spacing={2} alignContent={"center"} justifyContent="center" sx={{ backgroundColor: "#f5f5f5", padding: 2, borderRadius: 2 }}>
             <Grid size={12}>
                 <Typography variant="h2">Nuevo Insumo</Typography>
             </Grid>
@@ -85,27 +71,28 @@ const InsumoForm = () => {
                 <Formik
                     initialValues={{
                         denominacion: '',
-                        precioCompra: 0,
+                        descripcion: '',
+                        precioCosto: 0,
                         precioVenta: 0,
-                        esParaElaborar: true,
-                        unidadMedida: '',
-                        categoriaArticulo: [],
+                        tiempoEstimado: 0,
+                        categoriaArticuloManufacturado: null,
+                        articuloManufacturadoDetalle: [],
                         pathImagen: []
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
-                        const nuevoInsumo: ArticuloInsumo = {
+                        const nuevoArticulo: ArticuloManufacturado = {
                             id: null,
                             denominacion: values.denominacion,
-                            precioCompra: values.precioCompra,
+                            descripcion: values.descripcion,
+                            precioCosto: values.precioCosto,
                             precioVenta: values.precioVenta,
-                            esParaElaborar: values.esParaElaborar,
-                            unidadMedida: values.unidadMedida,
-                            categoriaArticulo: values.categoriaArticulo,
+                            tiempoEstimado: values.tiempoEstimado,
+                            categoriaArticuloManufacturado: values.categoriaArticuloManufacturado,
+                            articuloManufacturadoDetalle: values.articuloManufacturadoDetalle,
                             pathImagen: previewUrls
                         }
-                        await createArticuloInsumo(nuevoInsumo)
+                        await crearArticuloManufacturado(nuevoArticulo)
                         setSubmitting(false);
-                        navigate("/articulo-insumo")
                     }}
                 >
                     {({
@@ -131,16 +118,28 @@ const InsumoForm = () => {
                                     value={values.denominacion}
                                 />
                             </Grid>
-                            <Grid size={6} sx={{ marginBottom: 2 }}>
+                            <Grid size={6} sx={{ marginBottom: 2}}>
                                 <TextField
                                 fullWidth
-                                    id="precioCompra"
-                                    name="precioCompra"
-                                    label="Precio de compra"
+                                    id="descripcion"
+                                    name="descripcion"
+                                    label="Descripción"
                                     variant="outlined"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.precioCompra}
+                                    value={values.descripcion}
+                                />
+                            </Grid>
+                            <Grid size={6} sx={{ marginBottom: 2 }}>
+                                <TextField
+                                fullWidth
+                                    id="precioCosto"
+                                    name="precioCosto"
+                                    label="Precio costo"
+                                    variant="outlined"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    value={values.precioCosto}
                                 />
                             </Grid>
                             <Grid size={6} sx={{ marginBottom: 2 }}>
@@ -155,35 +154,30 @@ const InsumoForm = () => {
                                     value={values.precioVenta}
                                 />
                             </Grid>
-                            <Grid size={6} sx={{ marginBottom: 2 }}>
-                                <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked name="esParaElaborar" />} label="Es para elaborar" />
-                                </FormGroup>
-                            </Grid>
-                            <Grid size={6} sx={{ marginBottom: 2 }}>
+                             <Grid size={6} sx={{ marginBottom: 2 }}>
                                 <TextField
                                 fullWidth
-                                    id="unidadMedida"
-                                    name="unidadMedida"
-                                    label="Unidad de medida"
+                                    id="tiempoEstimado"
+                                    name="tiempoEstimado"
+                                    label="Tiempo estimado"
                                     variant="outlined"
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    value={values.unidadMedida}
+                                    value={values.tiempoEstimado}
                                 />
                             </Grid>
+                            
                             <Grid size={6} sx={{ marginBottom: 2 }} container>
                                 <Grid size={11}>
                                 <Autocomplete
-                                fullWidth
+                                    fullWidth
                                     id="categoriaArticulo"
-                                    value={values.categoriaArticulo}
-                                    multiple
+                                    value={values.categoriaArticuloManufacturado}
                                     options={categorias}
                                     onChange={(_, newValue) => {
                                         setFieldValue("categoriaArticulo", newValue);
                                     }}
-                                    getOptionLabel={(option: CategoriaArticulo) => option.denominacion as string}
+                                    getOptionLabel={(option: CategoriaArticuloManufacturado) => option.denominacion as string}
                                     renderInput={(params) => <TextField {...params} label="Categoria" />}
                                 />
                                 </Grid>
@@ -218,6 +212,18 @@ const InsumoForm = () => {
                                         </Grid>
                                     </Box>
                                 )}
+                                {/* {previewUrls.length === 0 && (
+                                    <TextField
+                                        fullWidth
+                                        label="Imágenes (Base64)"
+                                        value={previewUrls.join(', ') || ''}
+                                        InputProps={{
+                                            readOnly: true,
+                                        }}
+                                        helperText="Las imágenes se mostrarán aquí después de la selección."
+                                        sx={{ mt: 2 }}
+                                    />
+                                )} */}
                             </Box>
                             <Grid size={12} sx={{ marginBottom: 2 }}>
                                 <Button variant="contained" type="submit" disabled={isSubmitting}>
@@ -234,7 +240,7 @@ const InsumoForm = () => {
                 <CategoriaForm setCategoria={newCategoria} />
             </Modal>
         </Grid >
-    )
+  )
 }
 
-export default InsumoForm
+export default ManufacturadoForm

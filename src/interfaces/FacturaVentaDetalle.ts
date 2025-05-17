@@ -2,9 +2,9 @@ import { ArticuloInsumo } from "./ArticuloInsumo";
 import { ArticuloManufacturado } from "./ArticuloManufacturado";
 
 export interface FacturaVentaDetalle {
-    id: String,
+    id: String | null,
 	cantidad: Number,
 	subTotal: Number,
-	articuloManufacturado: ArticuloManufacturado,
-	articuloInsumo: ArticuloInsumo
+	articuloManufacturado: ArticuloManufacturado | null,
+	articuloInsumo: ArticuloInsumo | null
 }
