@@ -8,5 +8,6 @@ export interface CardProps {
         esParaElaborar: Boolean | null,
         unidadMedida: String | null,
         cantidad: Number | null,
+        esInsumo: Boolean 
     }
 }

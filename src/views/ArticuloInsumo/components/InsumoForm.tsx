@@ -6,10 +6,10 @@ import { useCallback, useEffect, useState } from "react";
 import { CategoriaArticulo } from "../../../interfaces/CategoriaArticulo";
 import CategoriaForm from "../../categoria/CategoriaForm";
 import Modal from "../../../components/Modal";
-import { createArticuloInsumo } from "../../../Api/ArticuloInsumo";
+import { createArticuloInsumo, getByIdArticuloInsumo } from "../../../Api/ArticuloInsumo";
 import { ArticuloInsumo } from "../../../interfaces/ArticuloInsumo";
 import { getAllCategoria } from "../../../Api/CategoriaAPI";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const Input = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -26,6 +26,9 @@ const Input = styled('input')({
 
 const InsumoForm = () => {
 
+    const {id} = useParams()
+
+    const [articulo, setArticulo] = useState<ArticuloInsumo | null>(null)
     const [categorias, setCategorias] = useState<CategoriaArticulo[]>([])
     const [viewForm, setViewForm] = useState(false)
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -66,6 +69,21 @@ const InsumoForm = () => {
         setViewForm(false)
     }
 
+    const getArticulo = async () => {
+            try {
+                if (id !== undefined) {
+                    const { data } = await getByIdArticuloInsumo(id)
+                    console.log("data", data)
+                    setArticulo(data);
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        useEffect(() => {
+            getArticulo()
+        }, [id])
+
     useEffect(() => {
         const getCategorias = async () => {
             const { data } = await getAllCategoria();
@@ -83,22 +101,23 @@ const InsumoForm = () => {
             <Grid container spacing={2} sx={{width: "100%"}}>
                 <Grid size={12} sx={{width: "100%"}}>
                 <Formik
+                enableReinitialize
                     initialValues={{
-                        denominacion: '',
-                        precioCompra: 0,
-                        precioVenta: 0,
-                        esParaElaborar: true,
-                        unidadMedida: '',
-                        categoriaArticulo: [],
-                        pathImagen: []
+                        denominacion: articulo?.denominacion || '',
+                        precioCompra: articulo?.precioCompra || 0,
+                        precioVenta: articulo?.precioVenta || 0,
+                        esParaElaborar: id !== undefined ? articulo?.esParaElaborar : true,
+                        unidadMedida: articulo?.unidadMedida || '',
+                        categoriaArticulo: articulo?.categoriaArticulo || [],
+                        pathImagen: articulo?.pathImagen || []
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
                         const nuevoInsumo: ArticuloInsumo = {
-                            id: null,
+                            id: articulo?.id || null,
                             denominacion: values.denominacion,
                             precioCompra: values.precioCompra,
                             precioVenta: values.precioVenta,
-                            esParaElaborar: values.esParaElaborar,
+                            esParaElaborar: values.esParaElaborar === true ? true : false,
                             unidadMedida: values.unidadMedida,
                             categoriaArticulo: values.categoriaArticulo,
                             pathImagen: previewUrls
@@ -157,7 +176,7 @@ const InsumoForm = () => {
                             </Grid>
                             <Grid size={6} sx={{ marginBottom: 2 }}>
                                 <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked name="esParaElaborar" />} label="Es para elaborar" />
+                                    <FormControlLabel control={<Checkbox name="esParaElaborar" id="esParaElaborar" value={values.esParaElaborar} onChange={handleChange} color="primary" />} label="Es para elaborar" />
                                 </FormGroup>
                             </Grid>
                             <Grid size={6} sx={{ marginBottom: 2 }}>
@@ -221,7 +240,7 @@ const InsumoForm = () => {
                             </Box>
                             <Grid size={12} sx={{ marginBottom: 2 }}>
                                 <Button variant="contained" type="submit" disabled={isSubmitting}>
-                                    Crear
+                                    {articulo ? "Actualizar" : "Crear"}
                                 </Button>
                             </Grid>
                             </Grid>

@@ -1,12 +1,27 @@
-import { Button, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
+import { Button, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material"
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from "react"
 import { ArticuloInsumo } from "../../../interfaces/ArticuloInsumo"
-import { getListArticuloInsumo } from "../../../Api/ArticuloInsumo"
+import { deleteArticuloInsumo, getListArticuloInsumo } from "../../../Api/ArticuloInsumo"
 import { useNavigate } from "react-router"
+import Modal from "../../../components/Modal";
 
 const InsumosTable = () => {
     const navigate = useNavigate();
     const [articuloInsumos, setArticuloInsumos] = useState<ArticuloInsumo[]>([])
+    const [openDelete, setOpenDelete] = useState<{open: boolean, id: String | null}>({open: false, id: null})
+
+      const handleDelete = async (id: String) => {
+        try {
+          await deleteArticuloInsumo(id);
+          setArticuloInsumos(articuloInsumos.filter((articuloInsumo) => articuloInsumo.id !== id));
+          setOpenDelete({open: false, id: null})
+        } catch (error) {
+          console.error("Error deleting articulo manufacturado:", error);
+        }
+      }
 
     useEffect(() => {
         const getInsumos = async () => {
@@ -38,7 +53,7 @@ const InsumosTable = () => {
                 <TableCell>Para Elaborar</TableCell>
                 <TableCell>Unidad de Medida</TableCell>
                 <TableCell>Categoria</TableCell>
-                <TableCell></TableCell>
+                <TableCell>acciones</TableCell>
             </TableRow>
         </TableHead>
         <TableBody>
@@ -50,11 +65,31 @@ const InsumosTable = () => {
                     <TableCell>{articuloInsumo.esParaElaborar ? "Si" : "No"}</TableCell>
                     <TableCell>{articuloInsumo.unidadMedida}</TableCell>
                     <TableCell>{articuloInsumo.categoriaArticulo?.map((categoriaArticulo) => categoriaArticulo.denominacion).join(", ")}</TableCell>
-                    <TableCell></TableCell>
+                    <TableCell>
+                        <IconButton color="primary" onClick={() => navigate(`/articulo-insumo/ver/${articuloInsumo.id}`)}>
+                            <VisibilityIcon />
+                        </IconButton>
+                        <IconButton color="secondary" onClick={() => navigate(`/articulo-insumo/editar/${articuloInsumo.id}`)}>
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => setOpenDelete({open: true, id: articuloInsumo?.id})}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </TableCell>
                 </TableRow>
             )): (<TableRow>No se encontraron insumos</TableRow>)}
         </TableBody>
     </Table>
+    <Modal open={openDelete.open} onClose={() => setOpenDelete({open:false, id: null})} title="Crear Categoria">
+                <Grid container spacing={2} sx={{ padding: 2 }}>
+                  <Grid size={12}>
+                    <Typography variant="h5">¿Desea eliminar el articulo insumo?</Typography>
+                  </Grid>
+                  <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button variant="contained" color="error" onClick={() => handleDelete(openDelete.id ?? "")}>Eliminar</Button>
+                  </Grid>
+                </Grid>
+                </Modal>
     </Grid>
   )
 }

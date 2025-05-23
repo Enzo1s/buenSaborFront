@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 const ArticuloManufacturadoView = () => {
   return (
     <Grid>
-      <Typography variant="h1">Articulo Manufacturado</Typography>
+      <Typography variant="h3">Articulo Manufacturado</Typography>
       
       <Outlet />
     </Grid>
