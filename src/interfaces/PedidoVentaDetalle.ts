@@ -3,10 +3,10 @@ import { ArticuloManufacturado } from "./ArticuloManufacturado";
 import { Promocion } from "./Promocion";
 
 export interface PedidoVentaDetalle {
-    id: String | null,
-	cantidad: Number,
-	subTotal: Number,
-	articuloManufacturado: ArticuloManufacturado[],
-	articuloInsumo: ArticuloInsumo[],
-	promocion: Promocion[]
+    id: string | null,
+	cantidad: number,
+	subTotal: number,
+	articuloManufacturado: ArticuloManufacturado | null,
+	articuloInsumo: ArticuloInsumo | null,
+	promocion: Promocion[] | null
 }

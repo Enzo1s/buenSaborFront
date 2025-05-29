@@ -8,20 +8,20 @@ import { PedidoVentaDetalle } from "./PedidoVentaDetalle"
 import { SucursalEmpresa } from "./SucursalEmpresa"
 
 export interface PedidoVenta {
-    id: String | null,
+    id: string | null,
 	horaEstimadaFinalizacion: Date,
-	subtotal: Number,
-	descuento: Number,
-	gastosEnvio: Number,
-	total: Number,
-	totalCosto: Number,
+	subtotal: number,
+	descuento: number,
+	gastosEnvio: number,
+	total: number,
+	totalCosto: number,
 	estado: Estado,
-	tipoEnvpio: TipoEnvio,
+	tipoEnvio: TipoEnvio,
 	formaPago: FormaPago,
-	empleado: Empleado,
-	sucursal: SucursalEmpresa,
-	cliente: Cliente,
-	factura: FacturaVenta
+	empleado: Empleado | null,
+	sucursal: SucursalEmpresa | null,
+	cliente: Cliente | null,
+	factura: FacturaVenta | null,
 	pedidoVentaDetalle: PedidoVentaDetalle[]
 	fechaPedido: Date
 }

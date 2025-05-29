@@ -265,18 +265,6 @@ const ManufacturadoForm = () => {
                                                 </Grid>
                                             </Box>
                                         )}
-                                        {/* {previewUrls.length === 0 && (
-                                    <TextField
-                                        fullWidth
-                                        label="Imágenes (Base64)"
-                                        value={previewUrls.join(', ') || ''}
-                                        InputProps={{
-                                            readOnly: true,
-                                        }}
-                                        helperText="Las imágenes se mostrarán aquí después de la selección."
-                                        sx={{ mt: 2 }}
-                                    />
-                                )} */}
                                     </Box>
                                     <Grid size={12} sx={{ marginBottom: 2 }}>
                                         <Button variant="contained" type="submit" disabled={isSubmitting}>

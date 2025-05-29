@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useParams } from 'react-router'
 import { getArticuloManufacturadoById } from '../../../Api/ArticuloManufacturadoAPI'
 import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado'
@@ -8,7 +9,6 @@ import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado
 const ManufacturadoDetails = () => {
 
     const { id } = useParams()
-    console.log(id)
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloManufacturado | null>(null)
 
@@ -34,16 +34,16 @@ const ManufacturadoDetails = () => {
                 </Grid>
                 <Grid size={{ xs: 4 }}>
                     {articulo?.pathImagen && articulo.pathImagen.length > 0 && articulo.pathImagen.map((imagen, index) => (
-                        <img src={`${baseURL}${imagen}`} alt={`Imagen ${index + 1}`} key={index} style={{  height: '300px' }} />
+                        <img src={`${baseURL}${imagen}`} alt={`Imagen ${index + 1}`} key={index} style={{ height: '300px' }} />
                     ))}
                 </Grid>
                 <Grid size={{ xs: 6 }} sx={{ padding: 2 }}>
-                    <Typography variant='body1'><strong>Denominación:</strong> {articulo?.denominacion}</Typography>
-                    <Typography variant='body1'><strong>Descripción:</strong> {articulo?.descripcion}</Typography>
-                    <Typography variant='body1'><strong>Precio de Venta:</strong> ${articulo?.precioVenta?.toFixed(2)}</Typography>
-                    <Typography variant='body1'><strong>Precio de Costo:</strong> ${articulo?.precioCosto?.toFixed(2)}</Typography>
-                    <Typography variant='body1'><strong>Tiempo de Estimación:</strong> {articulo?.tiempoEstimado?.toString()}</Typography>
-                    <Typography variant='body1'><strong>Categoría:</strong> {articulo?.categoriaArticuloManufacturado?.denominacion}</Typography>
+                    <Typography variant='h6'><strong>Denominación:</strong> {articulo?.denominacion}</Typography>
+                    <Typography variant='h6'><strong>Descripción:</strong> {articulo?.descripcion}</Typography>
+                    <Typography variant='h6'><strong>Precio de Venta:</strong> ${articulo?.precioVenta?.toFixed(2)}</Typography>
+                    <Typography variant='h6'><strong>Precio de Costo:</strong> ${articulo?.precioCosto?.toFixed(2)}</Typography>
+                    <Typography variant='h6'><strong>Tiempo de Estimación:</strong> {articulo?.tiempoEstimado?.toString()}</Typography>
+                    <Typography variant='h6'><strong>Categoría:</strong> {articulo?.categoriaArticuloManufacturado?.denominacion}</Typography>
                     {articulo?.articuloManufacturadoDetalle && articulo?.articuloManufacturadoDetalle.map((detalle, index) => (
                         <Box key={index} >
                             <Typography variant='h5' >Detalle</Typography>
@@ -51,8 +51,13 @@ const ManufacturadoDetails = () => {
                             <Typography><strong>Cantidad:</strong> {detalle.cantidad.toString()}</Typography>
                         </Box>
                     ))}
+                    <Grid size={{ xs: 4 }} sx={{ paddingTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Button variant="contained" color="primary" startIcon={<AddShoppingCartIcon />} sx={{ width: '100%' }}>
+                            <Typography variant='body2'>Agregar al Carrito</Typography>
+                        </Button>
+                    </Grid>
                 </Grid>
-                </Grid>
+            </Grid>
         </Box>
     )
 }

@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = useCallback(async (userData: Login) => {
     const {data: token}  = await iniciarSesion(userData);
     const { data: user } = await getByToken(token);
+    console.log(user)
     setUser(user);
     setIsAuthenticated(true);
     localStorage.setItem('token', JSON.stringify(token));

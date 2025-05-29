@@ -1,20 +1,27 @@
 import { Button, Grid, TextField, Typography } from '@mui/material'
 import { Formik } from 'formik'
+import { useAuth } from '../../Context/authContext'
+import { useNavigate } from 'react-router'
 
 const LoginView = () => {
+    const {login, isAuthenticated, user} = useAuth()
+    const navigate = useNavigate()
     return (
-        <Grid container>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
-                <Typography variant='h3'>Inicio de Sersión</Typography>
+        <Grid container spacing={2} justifyContent={"center"}>
+            <Grid size={12} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"}>
+                <Typography variant='h3'>Inicio de Sesión</Typography>
             </Grid>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
+            <Grid size={6} sx={{ margin: 'auto', padding: 2 }}>
                 <Formik
                     initialValues={{
                         username: '',
                         password: ''
                     }}
                     onSubmit={(values) => {
-                        console.log(values)
+                        login(values);
+                        if(isAuthenticated){
+                            navigate('/')
+                        }
                     }}
                 >
                     {({
@@ -50,7 +57,7 @@ const LoginView = () => {
                                         required
                                     />
                                 </Grid>
-                                <Grid size={12}>
+                                <Grid size={12} justifyContent={"center"} display={"flex"}>
                                     <Button variant="contained" type="submit" disabled={isSubmitting}>Iniciar Sesión</Button>
                                 </Grid>
                             </Grid>
@@ -59,11 +66,11 @@ const LoginView = () => {
                     }
                 </Formik>
             </Grid>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>d
-                <Typography variant='h3'>Olvidaste tu contraseña?</Typography>
-            </Grid>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
-                <Typography variant='h3'>No tienes cuenta?</Typography>
+            {/* <Grid size={12} justifyContent={"center"} display={"flex"}>
+                <Typography variant='body1'>Recuperar contraseña</Typography>
+            </Grid> */}
+            <Grid size={12} justifyContent={"center"} display={"flex"}>
+                <Button variant='text' onClick={() => navigate('/register')}>Crear Cuenta</Button>
             </Grid>
 
         </Grid>
