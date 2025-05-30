@@ -49,12 +49,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Función para iniciar sesión
   const login = useCallback(async (userData: Login) => {
-    const {data: token}  = await iniciarSesion(userData);
-    const { data: user } = await getByToken(token);
-    console.log(user)
-    setUser(user);
-    setIsAuthenticated(true);
-    localStorage.setItem('token', JSON.stringify(token));
+    try {
+      const {data: token}  = await iniciarSesion(userData);
+      const { data: user } = await getByToken(token);
+      setUser(user);
+      setIsAuthenticated(true);
+      localStorage.setItem('token', JSON.stringify(token));
+    } catch (error) {
+      alert('Error al iniciar sesión. Por favor, verifica tus credenciales.');
+    }
   }, []);
 
   // Función para cerrar sesión

@@ -4,7 +4,7 @@ import { useAuth } from '../../Context/authContext'
 import { useNavigate } from 'react-router'
 
 const LoginView = () => {
-    const {login, isAuthenticated, user} = useAuth()
+    const {login, isAuthenticated} = useAuth()
     const navigate = useNavigate()
     return (
         <Grid container spacing={2} justifyContent={"center"}>
@@ -17,11 +17,12 @@ const LoginView = () => {
                         username: '',
                         password: ''
                     }}
-                    onSubmit={(values) => {
+                    onSubmit={(values, { setSubmitting }) => {
                         login(values);
                         if(isAuthenticated){
                             navigate('/')
                         }
+                        setSubmitting(false)
                     }}
                 >
                     {({
@@ -29,7 +30,8 @@ const LoginView = () => {
                         handleChange,
                         handleBlur,
                         handleSubmit,
-                        isSubmitting }) => (
+                        isSubmitting,
+                     }) => (
                         <form onSubmit={handleSubmit}>
                             <Grid container spacing={2}>
                                 <Grid size={12} sx={{ marginBottom: 2 }}>

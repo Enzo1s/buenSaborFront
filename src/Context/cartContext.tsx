@@ -11,7 +11,7 @@ interface CartContextType {
     pedidoVenta: PedidoVenta | null;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    addItemToCart: (item: ArticuloInsumo | ArticuloManufacturado, promocion: Promocion, cantidad: number) => void;
+    addItemToCart: (itemInsumo: ArticuloInsumo | null, itemManufacturado: ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => void;
     removeItemFromCart: (itemId: string) => void;
     clearCart: () => void;
 }
@@ -26,11 +26,24 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const addItemToCart = (item: ArticuloInsumo | ArticuloManufacturado, promocion: Promocion, cantidad: number) => {
+    const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufacturado:ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => {
         if (pedidoVenta) {
-            const existingItem = pedidoVenta.pedidoVentaDetalle.find((detalle) => detalle.articuloManufacturado?.id === item.id || detalle.articuloInsumo?.id === item.id);
+            const existingItem = pedidoVenta.pedidoVentaDetalle.find((detalle) => detalle.articuloManufacturado?.id === itemManufacturado?.id || detalle.articuloInsumo?.id === itemInsumo?.id);
             if (existingItem) {
-                existingItem.cantidad += cantidad;
+                const newDetails = pedidoVenta?.pedidoVentaDetalle?.map((detalle) => {
+                if (detalle.articuloManufacturado?.id === itemManufacturado?.id || detalle.articuloInsumo?.id === itemInsumo?.id) {
+                    return {
+                        ...detalle,
+                        cantidad: detalle.cantidad + cantidad,
+                        subTotal: detalle.articuloInsumo ? (detalle.articuloInsumo.precioVenta as number) * (detalle.cantidad + cantidad) : (detalle.articuloManufacturado?.precioVenta as number) * (detalle.cantidad + cantidad)
+                    };
+                }
+                return detalle;
+            });
+             setPedidoVenta({
+                    ...pedidoVenta,
+                    pedidoVentaDetalle: newDetails
+                });
             } else {
                 setPedidoVenta({
                     ...pedidoVenta,
@@ -38,10 +51,10 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                         ...pedidoVenta.pedidoVentaDetalle,
                         { id: null,
                             cantidad,
-                            subTotal: 0,
-                            articuloManufacturado: (item as ArticuloManufacturado)?.tiempoEstimado ? item as ArticuloManufacturado : null,
-                            articuloInsumo: (item as ArticuloInsumo)?.esParaElaborar ? item as ArticuloInsumo :null,
-                            promocion: [promocion] }
+                            subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                            articuloManufacturado: itemManufacturado,
+                            articuloInsumo: itemInsumo,
+                            promocion: promocion && [promocion] }
                     ]
                 });
             }
@@ -62,7 +75,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 cliente: null,
                 factura: null,
                 pedidoVentaDetalle: [
-                    { id: null, cantidad, subTotal: 0, articuloManufacturado: null, articuloInsumo: null, promocion: [] }
+                    { id: null,
+                            cantidad,
+                            subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                            articuloManufacturado: itemManufacturado,
+                            articuloInsumo: itemInsumo,
+                            promocion: promocion && [promocion] }
                 ],
                 fechaPedido: new Date()
             });

@@ -78,18 +78,24 @@ const Header = () => {
     </Grid>
     <Grid sx={{ marginTop: '10px' }} size={12}>
       <Typography variant="body1">Productos en el carrito:</Typography>
-      <ul>
-        {/* Aquí puedes mapear los productos del carrito */}
-      </ul>
+      {pedidoVenta && pedidoVenta.pedidoVentaDetalle.length > 0 ? (
+        pedidoVenta.pedidoVentaDetalle.map((item, index) => (
+          <Typography key={index} variant="body2">
+            {item.articuloInsumo?.denominacion || item.articuloManufacturado?.denominacion} - Cantidad: {item.cantidad} - Precio: ${item.subTotal.toFixed(2)}
+          </Typography>
+        ))
+      ) : (
+        <Typography variant="body2">No hay productos en el carrito.</Typography>
+      )}
     </Grid>
     <Grid sx={{ marginTop: '10px' }} size={12}>
       <Typography variant="body1">Total:</Typography></Grid>
-      <Grid sx={{ marginTop: '10px' }} size={12}>
+      <Grid sx={{ marginTop: '10px' }} size={6}>
       <Button variant="contained" color="primary">
         Comprar
       </Button>
       </Grid>
-      <Grid sx={{ marginTop: '10px' }} size={12}>
+      <Grid sx={{ marginTop: '10px' }} size={6}>
       <Button variant="contained" color="primary" onClick={handleClick}>
         Cerrar
       </Button>

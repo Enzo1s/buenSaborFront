@@ -4,10 +4,11 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useParams } from 'react-router'
 import { ArticuloInsumo } from '../../../interfaces/ArticuloInsumo'
 import { getByIdArticuloInsumo } from '../../../Api/ArticuloInsumo'
+import { useCartContext } from '../../../Context/cartContext';
 
 const InsumoDetails = () => {
     const { id } = useParams()
-    console.log(id)
+    const { addItemToCart } = useCartContext()
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloInsumo | null>(null)
 
@@ -49,7 +50,7 @@ const InsumoDetails = () => {
                         </Box>
                     ))}
                 <Grid size={{ xs: 4 }} sx={{ paddingTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Button variant="contained" color="primary" startIcon={<AddShoppingCartIcon />} sx={{ width: '100%' }}>
+                    <Button variant="contained" color="primary" startIcon={<AddShoppingCartIcon />} sx={{ width: '100%' }} onClick={() => articulo && addItemToCart(articulo, null, null, 1)}>
                         <Typography variant='body2'>Agregar al Carrito</Typography>
                     </Button>
                 </Grid>
