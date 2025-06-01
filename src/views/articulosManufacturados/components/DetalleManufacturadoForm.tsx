@@ -18,7 +18,7 @@ const DetalleManufacturadoForm = (props: DetalleManufacturadoFormProps) => {
   useEffect(() => {
     const listInsumos = async () => {
       const { data } = await getListArticuloInsumo()
-      setListInsumos(data)
+      setListInsumos(data.filter((insumo: ArticuloInsumo) => insumo.esParaElaborar === true ))
     }
     listInsumos()
   }, [])

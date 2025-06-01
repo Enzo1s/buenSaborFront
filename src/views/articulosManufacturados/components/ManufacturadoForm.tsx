@@ -37,6 +37,7 @@ const ManufacturadoForm = () => {
     const [viewForm, setViewForm] = useState(false)
     const [viewFormInsumo, setViewFormInsumo] = useState(false)
     const [detalles, setDetalles] = useState<ArticuloManufacturadoDetalle[]>([])
+    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
 
     const newCategoria = (categoria: CategoriaArticuloManufacturado) => {
         if (categoria !== null)
@@ -76,8 +77,9 @@ const ManufacturadoForm = () => {
         try {
             if (id !== undefined) {
                 const { data } = await getArticuloManufacturadoById(id)
-                console.log("data", data)
                 setArticulo(data);
+                setDetalles(data.articuloManufacturadoDetalle || []);
+                setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${img}`) || []);
             }
         } catch (error) {
             console.log(error)

@@ -34,6 +34,8 @@ const InsumoForm = () => {
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const navigate = useNavigate()
 
+    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+
     const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (files && files.length > 0) {
@@ -73,8 +75,8 @@ const InsumoForm = () => {
             try {
                 if (id !== undefined) {
                     const { data } = await getByIdArticuloInsumo(id)
-                    console.log("data", data)
                     setArticulo(data);
+                    setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${img}`) || []);
                 }
             } catch (error) {
                 console.log(error)
@@ -87,7 +89,11 @@ const InsumoForm = () => {
     useEffect(() => {
         const getCategorias = async () => {
             const { data } = await getAllCategoria();
-            setCategorias(data);
+            
+            setCategorias( [
+  ...data,
+  ...data.flatMap((categoria: CategoriaArticulo) => categoria.categoria || []),
+]);
         }
         getCategorias()
     }, [])

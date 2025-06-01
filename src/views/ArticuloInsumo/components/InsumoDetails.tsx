@@ -42,10 +42,10 @@ const InsumoDetails = () => {
                     <Typography variant='h6'><strong>Precio de Venta:</strong> ${articulo?.precioVenta?.toFixed(2)}</Typography>
                     <Typography variant='h6'><strong>Precio de Costo:</strong> ${articulo?.precioCompra?.toFixed(2)}</Typography>
                     <Typography variant='h6'><strong>Es para elaborar:</strong> {articulo?.esParaElaborar ? 'Sí' : 'No'}</Typography>
-                    <Typography variant='h6'><strong>Categoría:</strong> {articulo?.unidadMedida}</Typography>
+                    <Typography variant='h6'><strong>Unidad:</strong> {articulo?.unidadMedida}</Typography>
                     {articulo?.categoriaArticulo && articulo?.categoriaArticulo.map((categoria, index) => (
                         <Box key={index} >
-                            <Typography><strong>Articulo Insumo:</strong> {categoria.denominacion}</Typography>
+                            <Typography><strong>Categoría:</strong> {categoria.denominacion}</Typography>
                             <Typography><strong>SubCategoria:</strong> {categoria.categoria?.denominacion}</Typography>
                         </Box>
                     ))}
