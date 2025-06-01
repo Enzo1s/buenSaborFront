@@ -8,5 +8,8 @@ export interface Empleado {
     telefono: String,
     email: String,
     usuario: Usuario,
-    perfil: Rol
+    perfil: Rol,
+    alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

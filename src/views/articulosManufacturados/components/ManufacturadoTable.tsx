@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import { Button, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +10,7 @@ import Modal from '../../../components/Modal';
 
 const ManufacturadoTable = () => {
   const [aManufacturados, setAManufacturados] = useState<ArticuloManufacturado[]>([])
+  const [aManufacturadosBefore, setAManufacturadosBefore] = useState<ArticuloManufacturado[]>([])
   const [openDelete, setOpenDelete] = useState<{open: boolean, id: string | null}>({open: false, id: null})
 
   const navigate = useNavigate();
@@ -17,10 +18,23 @@ const ManufacturadoTable = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteArticuloManufacturadoById(id);
-      setAManufacturados(aManufacturados.filter((aManufacturado) => aManufacturado.id !== id));
       setOpenDelete({open: false, id: null})
     } catch (error) {
       console.error("Error deleting articulo manufacturado:", error);
+    }
+  }
+
+  const handleSearch = (searchTerm: string) => {
+    if (searchTerm.trim() === "") {
+      setAManufacturados(aManufacturadosBefore);
+    } else {
+      const filtered = aManufacturados.filter((aManufacturado) =>
+        aManufacturado.denominacion.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        aManufacturado.categoriaArticuloManufacturado?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        aManufacturado.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        aManufacturado.articuloManufacturadoDetalle.some(insumo => insumo.articuloInsumo?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setAManufacturados(filtered);
     }
   }
 
@@ -28,6 +42,7 @@ const ManufacturadoTable = () => {
     const getArticulos = async () => {
       const { data } = await getAllArticuloManufacturado();
       setAManufacturados(data);
+      setAManufacturadosBefore(data);
     }
     getArticulos();
 
@@ -38,7 +53,12 @@ const ManufacturadoTable = () => {
       <Grid size={9} sx={{ padding: '20px' }} >
         <Typography variant="h4">Listado articulo Manufacturado</Typography>
         </Grid>
-        <Grid size={3} sx={{ padding: '20px' }} justifyContent={"flex-end"} display={"flex"} >
+        <Grid size={12} sx={{ padding: '20px' }} justifyContent={"space-between"} display={"flex"} >
+          <TextField
+            label="Buscar"
+            variant="outlined"
+            onChange={(e) => handleSearch(e.target.value)}
+          />
           <Button variant="contained" color="primary" onClick={() => navigate("/articulo-manufacturado/crear")}>
             Crear Articulo Manufacturado
           </Button>
@@ -54,6 +74,7 @@ const ManufacturadoTable = () => {
                 <TableCell>Descripcion</TableCell>
                 <TableCell>Insumos</TableCell>
                 <TableCell>Categoría</TableCell>
+                <TableCell>Baja</TableCell>
                 <TableCell>Acciones</TableCell>
             </TableRow>
         </TableHead>
@@ -67,6 +88,7 @@ const ManufacturadoTable = () => {
                     <TableCell>{aManufacturado.descripcion}</TableCell>
                     <TableCell>{aManufacturado.articuloManufacturadoDetalle.map((insumo) => insumo.articuloInsumo?.denominacion).join(', ')}</TableCell>
                     <TableCell>{aManufacturado.categoriaArticuloManufacturado?.denominacion}</TableCell>
+                    <TableCell>{aManufacturado.baja?.toString() || '-'}</TableCell>
                     <TableCell>
                         <IconButton color="primary" onClick={() => navigate(`/articulo-manufacturado/ver/${aManufacturado.id}`)}>
                             <VisibilityIcon />

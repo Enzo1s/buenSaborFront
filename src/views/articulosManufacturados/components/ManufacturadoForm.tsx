@@ -126,7 +126,10 @@ const ManufacturadoForm = () => {
                                 tiempoEstimado: values.tiempoEstimado,
                                 categoriaArticuloManufacturado: values.categoriaArticuloManufacturado,
                                 articuloManufacturadoDetalle: detalles,
-                                pathImagen: previewUrls
+                                pathImagen: previewUrls,
+                                alta: null,
+                                baja: null,
+                                modificacion:null
                             }
                             await crearArticuloManufacturado(nuevoArticulo)
                             setSubmitting(false);

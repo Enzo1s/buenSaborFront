@@ -126,7 +126,10 @@ const InsumoForm = () => {
                             esParaElaborar: values.esParaElaborar === true ? true : false,
                             unidadMedida: values.unidadMedida,
                             categoriaArticulo: values.categoriaArticulo,
-                            pathImagen: previewUrls
+                            pathImagen: previewUrls,
+                            alta: null,
+                            modificacion: null,
+                            baja: null
                         }
                         await createArticuloInsumo(nuevoInsumo)
                         setSubmitting(false);

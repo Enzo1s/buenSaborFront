@@ -5,5 +5,8 @@ export interface SucursalInsumo {
 	stockActual: Number, 
 	stockMinimo: Number, 
 	stockMaximo: Number, 
-	sucursalEmpresa: SucursalEmpresa
+	sucursalEmpresa: SucursalEmpresa,
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

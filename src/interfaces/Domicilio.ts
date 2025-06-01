@@ -5,5 +5,8 @@ export interface Domicilio {
 	calle: String,
 	numero:  Number,
 	cp: Number,
-	localidad: Localidad
+	localidad: Localidad,
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

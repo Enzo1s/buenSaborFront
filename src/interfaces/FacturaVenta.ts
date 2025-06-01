@@ -12,5 +12,8 @@ export interface FacturaVenta {
 	gastosEnvio: Number,
 	totalVenta: Number,
 	datosMP: DatosMercadoPago,
-	facturaVentaDetalle: FacturaVentaDetalle[]
+	facturaVentaDetalle: FacturaVentaDetalle[],
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

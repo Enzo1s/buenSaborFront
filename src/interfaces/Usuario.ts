@@ -7,5 +7,8 @@ export interface Usuario {
 	username: String,
     password: String,
     rol: Rol,
-    sucursalEmpresa: SucursalEmpresa | null
+    sucursalEmpresa: SucursalEmpresa | null,
+    alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

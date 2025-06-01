@@ -5,5 +5,8 @@ export interface Empresa {
 	nombre: String,
 	razonSocial: String,
 	cuil: Number,
-	sucursalEmpresa: SucursalEmpresa[]
+	sucursalEmpresa: SucursalEmpresa[],
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

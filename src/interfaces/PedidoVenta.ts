@@ -23,5 +23,8 @@ export interface PedidoVenta {
 	cliente: Cliente | null,
 	factura: FacturaVenta | null,
 	pedidoVentaDetalle: PedidoVentaDetalle[]
-	fechaPedido: Date
+	fechaPedido: Date,
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

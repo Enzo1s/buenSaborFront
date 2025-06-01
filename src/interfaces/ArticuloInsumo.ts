@@ -8,5 +8,8 @@ export interface ArticuloInsumo {
 	esParaElaborar: Boolean,
 	unidadMedida: String,
 	categoriaArticulo: CategoriaArticulo[],
-	pathImagen: String[]
+	pathImagen: String[],
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

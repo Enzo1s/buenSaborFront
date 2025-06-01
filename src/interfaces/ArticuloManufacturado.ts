@@ -10,5 +10,8 @@ export interface ArticuloManufacturado {
 	tiempoEstimado: Number,
 	categoriaArticuloManufacturado: CategoriaArticuloManufacturado | null,
 	pathImagen: string[]
-	articuloManufacturadoDetalle: ArticuloManufacturadoDetalle[]
+	articuloManufacturadoDetalle: ArticuloManufacturadoDetalle[],
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

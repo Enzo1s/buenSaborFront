@@ -6,6 +6,8 @@ export interface Promocion {
 	fechaDesde: Date,
 	fechaHasta: Date,
 	descuento: Number,
-	promocionDetalle: PromocionDetalle[]
-	
+	promocionDetalle: PromocionDetalle[],
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }

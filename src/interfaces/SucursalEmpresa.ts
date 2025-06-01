@@ -5,5 +5,8 @@ export interface SucursalEmpresa {
 	nombre: string,
 	horarioApertura: String,
 	horarioCIerre: String,
-	domicilio: Domicilio
+	domicilio: Domicilio,
+	alta: Date | null,
+	baja: Date | null,
+	modificacion: Date | null,
 }
