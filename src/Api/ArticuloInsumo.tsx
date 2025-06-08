@@ -1,6 +1,8 @@
 import axios from "axios"
 import { ArticuloInsumo } from "../interfaces/ArticuloInsumo"
 
+axios.defaults.headers.common.Authorization = `${localStorage.getItem('token')}`;
+
 export const getListArticuloInsumo = async () => {
   return await axios.get("http://localhost:8080/api/articulo-insumo")
 }

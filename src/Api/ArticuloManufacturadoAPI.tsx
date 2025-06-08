@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { ArticuloManufacturado } from '../interfaces/ArticuloManufacturado';
 
+axios.defaults.headers.common.Authorization = `${localStorage.getItem('token')}`;
+
 export const getAllArticuloManufacturado = async () => {
   return axios.get("http://localhost:8080/api/articulo-manufacturado");
 }

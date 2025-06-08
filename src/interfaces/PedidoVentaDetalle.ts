@@ -9,7 +9,5 @@ export interface PedidoVentaDetalle {
 	articuloManufacturado: ArticuloManufacturado | null,
 	articuloInsumo: ArticuloInsumo | null,
 	promocion: Promocion[] | null,
-	alta: Date | null,
-	baja: Date | null,
-	modificacion: Date | null,
+
 }

@@ -1,6 +1,3 @@
-import { Estado } from "../enums/Estado"
-import { FormaPago } from "../enums/FormaPago"
-import { TipoEnvio } from "../enums/TipoEnvio"
 import { Cliente } from "./Cliente"
 import { Empleado } from "./Empleado"
 import { FacturaVenta } from "./FacturaVenta"
@@ -15,9 +12,9 @@ export interface PedidoVenta {
 	gastosEnvio: number,
 	total: number,
 	totalCosto: number,
-	estado: Estado,
-	tipoEnvio: TipoEnvio,
-	formaPago: FormaPago,
+	estado: string,
+	tipoEnvio: string,
+	formaPago: string,
 	empleado: Empleado | null,
 	sucursal: SucursalEmpresa | null,
 	cliente: Cliente | null,

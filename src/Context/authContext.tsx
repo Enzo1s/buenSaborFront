@@ -3,6 +3,7 @@ import { Usuario } from '../interfaces/Usuario';
 import { getByToken } from '../Api/UsuarioAPI';
 import { Login } from '../interfaces/Login';
 import { iniciarSesion, registrarUsuario } from '../Api/AuthAPI';
+import { useNavigate } from 'react-router';
 
 
 interface AuthContextType {
@@ -29,6 +30,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
+  const navigate = useNavigate()
+
   const getUser = async (token: string) => {
         const usuario = await getByToken(token);
         setUser(usuario.data);
@@ -51,10 +54,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = useCallback(async (userData: Login) => {
     try {
       const {data: token}  = await iniciarSesion(userData);
-      const { data: user } = await getByToken(token);
-      setUser(user);
+      const { data } = await getByToken(token.replace('"',''));
+      setUser(data);
       setIsAuthenticated(true);
       localStorage.setItem('token', JSON.stringify(token));
+      navigate('/')
     } catch (error) {
       alert('Error al iniciar sesión. Por favor, verifica tus credenciales.');
     }

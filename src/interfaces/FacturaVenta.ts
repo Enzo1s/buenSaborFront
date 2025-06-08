@@ -6,7 +6,7 @@ export interface FacturaVenta {
     id: String | null,
 	fechaFacturacion: Date,
 	numeroComprobante: Number,
-	formaPago: FormaPago,
+	formaPago: string,
 	subTotal: Number,
 	descuento: Number,
 	gastosEnvio: Number,

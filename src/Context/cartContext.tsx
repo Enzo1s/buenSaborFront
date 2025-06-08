@@ -26,37 +26,83 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufacturado:ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => {
+    const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufacturado: ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => {
         if (pedidoVenta) {
-            const existingItem = pedidoVenta.pedidoVentaDetalle.find((detalle) => detalle.articuloManufacturado?.id === itemManufacturado?.id || detalle.articuloInsumo?.id === itemInsumo?.id);
+            const existingItem = pedidoVenta.pedidoVentaDetalle.find((detalle) => {
+                if(itemManufacturado) {
+                    return detalle.articuloManufacturado?.id === itemManufacturado?.id
+                }
+                 else 
+                    return detalle.articuloInsumo?.id === itemInsumo?.id
+                });
             if (existingItem) {
                 const newDetails = pedidoVenta?.pedidoVentaDetalle?.map((detalle) => {
-                if (detalle.articuloManufacturado?.id === itemManufacturado?.id || detalle.articuloInsumo?.id === itemInsumo?.id) {
-                    return {
-                        ...detalle,
-                        cantidad: detalle.cantidad + cantidad,
-                        subTotal: detalle.articuloInsumo ? (detalle.articuloInsumo.precioVenta as number) * (detalle.cantidad + cantidad) : (detalle.articuloManufacturado?.precioVenta as number) * (detalle.cantidad + cantidad)
-                    };
+                    if ((itemManufacturado && detalle.articuloManufacturado?.id === itemManufacturado?.id) || (itemInsumo && detalle.articuloInsumo?.id === itemInsumo?.id)) {
+                        return {
+                            ...detalle,
+                            cantidad: detalle.cantidad + cantidad,
+                            subTotal: detalle.articuloInsumo ? (detalle.articuloInsumo.precioVenta as number) * (detalle.cantidad + cantidad) : (detalle.articuloManufacturado?.precioVenta as number) * (detalle.cantidad + cantidad)
+                        };
+                    }
+                    return detalle;
+                });
+                if(itemInsumo) {
+                    const total = pedidoVenta.total + (itemInsumo?.precioVenta as number) * cantidad
+                    const totalCosto = pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad 
+                    setPedidoVenta({
+                        ...pedidoVenta,
+                        total,
+                    totalCosto,
+                        pedidoVentaDetalle: newDetails
+                    });
+                } else {
+                    const total = pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad
+                    const totalCosto = pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad 
+                    setPedidoVenta({
+                        ...pedidoVenta,
+                        total,
+                    totalCosto,
+                        pedidoVentaDetalle: newDetails
+                    });
                 }
-                return detalle;
-            });
-             setPedidoVenta({
-                    ...pedidoVenta,
-                    pedidoVentaDetalle: newDetails
-                });
             } else {
-                setPedidoVenta({
-                    ...pedidoVenta,
-                    pedidoVentaDetalle: [
-                        ...pedidoVenta.pedidoVentaDetalle,
-                        { id: null,
-                            cantidad,
-                            subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
-                            articuloManufacturado: itemManufacturado,
-                            articuloInsumo: itemInsumo,
-                            promocion: promocion && [promocion] }
-                    ]
-                });
+                if(itemInsumo) {
+                    setPedidoVenta({
+                        ...pedidoVenta,
+
+                        total: pedidoVenta.total + (itemInsumo?.precioVenta as number) * cantidad || pedidoVenta.total,
+                        totalCosto: pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad || pedidoVenta.totalCosto,
+                        pedidoVentaDetalle: [
+                            ...pedidoVenta.pedidoVentaDetalle,
+                            {
+                                id: null,
+                                cantidad,
+                                subTotal: (itemInsumo?.precioVenta as number) * cantidad || 0,
+                                articuloManufacturado: null,
+                                articuloInsumo: itemInsumo,
+                                promocion: promocion && [promocion]
+                            }
+                        ]
+                    })
+                } else {
+
+                    setPedidoVenta({
+                        ...pedidoVenta,
+                        total: pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad,
+                    totalCosto: pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad,
+                        pedidoVentaDetalle: [
+                            ...pedidoVenta.pedidoVentaDetalle,
+                            {
+                                id: null,
+                                cantidad,
+                                subTotal: (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                                articuloManufacturado: itemManufacturado,
+                                articuloInsumo: itemInsumo,
+                                promocion: promocion && [promocion]
+                            }
+                        ]
+                    });
+                }
             }
         } else {
             setPedidoVenta({
@@ -65,32 +111,49 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 subtotal: 0,
                 descuento: 0,
                 gastosEnvio: 0,
-                total: 0,
-                totalCosto: 0,
-                estado: Estado.PENDIENTE,
-                tipoEnvio: TipoEnvio.DELIVERY,
-                formaPago: FormaPago.EFECTIVO,
+                total: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                totalCosto: (itemInsumo?.precioCompra as number) * cantidad || (itemManufacturado?.precioCosto as number) * cantidad || 0,
+                estado: Estado.PENDIENTE.toUpperCase(),
+                tipoEnvio: TipoEnvio.DELIVERY.toUpperCase(),
+                formaPago: FormaPago.EFECTIVO.toUpperCase(),
                 empleado: null,
                 sucursal: null,
                 cliente: null,
                 factura: null,
                 pedidoVentaDetalle: [
-                    { id: null,
-                            cantidad,
-                            subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
-                            articuloManufacturado: itemManufacturado,
-                            articuloInsumo: itemInsumo,
-                            promocion: promocion && [promocion] }
+                    {
+                        id: null,
+                        cantidad,
+                        subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                        articuloManufacturado: itemManufacturado,
+                        articuloInsumo: itemInsumo,
+                        promocion: promocion && [promocion]
+                    }
                 ],
-                fechaPedido: new Date()
+                fechaPedido: new Date(),
+                alta: null,
+                baja: null,
+                modificacion: null
             });
         }
     };
 
     const removeItemFromCart = (itemId: string) => {
         if (pedidoVenta) {
+            const item = pedidoVenta.pedidoVentaDetalle.find((detalle) => {
+                if(detalle.articuloManufacturado) {
+                    return detalle.articuloManufacturado.id === itemId
+                }
+                 else 
+                    return detalle.articuloInsumo?.id === itemId
+                });
+                const total = pedidoVenta.total - (item?.subTotal as number)
+                const totalCosto = pedidoVenta.totalCosto - (item?.subTotal as number)
             setPedidoVenta({
                 ...pedidoVenta,
+                total,
+                totalCosto,
+                subtotal: total,
                 pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId)
             });
         }
