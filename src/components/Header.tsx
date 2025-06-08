@@ -65,6 +65,7 @@ const Header = () => {
         <Button variant="text" onClick={() => navigate('/')}><Typography color='white'>Inicio</Typography></Button>
         <Button variant="text" onClick={() => navigate('/articulo-manufacturado')}><Typography color='white'> Articulos </Typography></Button>
         <Button variant="text" onClick={() => navigate('/articulo-insumo')}><Typography color='white'>Insumos</Typography></Button>
+        <Button variant="text" onClick={() => navigate('/empresa')}><Typography color='white'>Empresa</Typography></Button>
       </Grid>
       <Grid size={3} sx={{ backgroundColor: '#3f51b5', padding: '20px' }}>
       </Grid>
