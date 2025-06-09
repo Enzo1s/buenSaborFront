@@ -51,7 +51,7 @@ const Header = () => {
   }
 
   return (
-    <Grid container sx={{ backgroundColor: '#3f51b5', margin: 0, padding: 0 }}>
+    <Grid container sx={{ bgcolor: 'primary.main', margin: 0, padding: 0 }}>
       <Grid size={9} sx={{ padding: '5px' }} >
         <Typography variant='h2' color='white'>Buen Sabor</Typography>
       </Grid>
@@ -61,17 +61,17 @@ const Header = () => {
         <Button variant="text" onClick={() => isAuthenticated ? logout() : navigate('/login')}><Typography variant='h6' color='white'>{isAuthenticated ? 'Cerrar Sesión' : 'Iniciar Sesión'}</Typography>
         </Button>
       </Grid>
-      <Grid size={3} sx={{ backgroundColor: '#3f51b5', padding: '20px' }}>
+      <Grid size={6} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
         <Button variant="text" onClick={() => navigate('/')}><Typography color='white'>Inicio</Typography></Button>
         <Button variant="text" onClick={() => navigate('/articulo-manufacturado')}><Typography color='white'> Articulos </Typography></Button>
         <Button variant="text" onClick={() => navigate('/articulo-insumo')}><Typography color='white'>Insumos</Typography></Button>
         <Button variant="text" onClick={() => navigate('/empresa')}><Typography color='white'>Empresa</Typography></Button>
+        <Button variant="text" onClick={() => navigate('/sucursal')}><Typography color='white'>Sucursales</Typography></Button>
       </Grid>
-      <Grid size={3} sx={{ backgroundColor: '#3f51b5', padding: '20px' }}>
+      
+      <Grid size={3} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
       </Grid>
-      <Grid size={3} sx={{ backgroundColor: '#3f51b5', padding: '20px' }}>
-      </Grid>
-      <Grid size={3} sx={{ backgroundColor: '#3f51b5', padding: '20px' }}>
+      <Grid size={3} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
       </Grid>
 
       <Popper

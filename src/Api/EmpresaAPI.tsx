@@ -12,3 +12,7 @@ export const getEmpresas = async () => {
 export const getByIdEmpresa = async (id: string) => {
     return await axios.get(`http://localhost:8080/api/empresa/${id}`)
 }
+
+export const deleteEmpresa = async (id: String) => {
+    return axios.delete(`http://localhost:8080/api/empresa/${id}`)
+}

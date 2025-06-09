@@ -10,10 +10,10 @@ import { crearSucursalEmpresa, getByIdSucursal } from '../../../Api/SucursalAPI'
 import { useNavigate, useParams } from 'react-router';
 
 interface SucursalFormProps {
-    sucursales: SucursalEmpresa[];
-    setSucursales: (sucursales: SucursalEmpresa[]) => void;
-    setViewForm: (viewForm: boolean) => void;
-    isFromCompany: boolean;
+    sucursales: SucursalEmpresa[] | null;
+    setSucursales: (sucursales: SucursalEmpresa[]) => void | null;
+    setViewForm: (viewForm: boolean) => void | null;
+    isFromCompany: boolean | null;
 }
 
 const SucursalForm = (props: SucursalFormProps) => {
@@ -37,12 +37,12 @@ const SucursalForm = (props: SucursalFormProps) => {
     }, [])
     
     return (
-        <Grid>
-            <Grid size={12}>
-                <Typography variant='h3'>Formulario de sucursal</Typography>
-            </Grid>
-            <Grid container spacing={2} width={"100%"}>
-                <Grid size={12} width={"100%"}>
+        <Grid sx={{ padding: 2}}>
+            {!isFromCompany && <Grid size={12} >
+                <Typography variant='h4'>Formulario de sucursal</Typography>
+            </Grid>}
+            <Grid container spacing={2} >
+                <Grid size={12}>
                     <Formik
                         enableReinitialize
                         initialValues={{
@@ -125,7 +125,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                             modificacion: null
                         }
                             const {data} = await crearSucursalEmpresa(nuevaSucursal)
-                            if(isFromCompany) {
+                            if(isFromCompany && sucursales) {
                                 setSucursales([...sucursales, data])
                                 setViewForm(false)
                             } else  {
@@ -142,8 +142,8 @@ const SucursalForm = (props: SucursalFormProps) => {
                             /* and other goodies */
                         }) => (
                             <form onSubmit={handleSubmit}>
-                                <Grid container spacing={2} width={"100%"}>
-                                    <Grid size={6} width={"100%"}>
+                                <Grid container spacing={2} >
+                                    <Grid size={6} >
                                         <TextField
                                             fullWidth
                                             id="nombre"
@@ -154,7 +154,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                             onBlur={handleBlur}
                                         />
                                     </Grid>
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="horarioApertura"
@@ -165,7 +165,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                             onBlur={handleBlur}
                                         />
                                     </Grid>
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="horarioCierre"
@@ -177,7 +177,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                         />
                                     </Grid>
                                     {/* Domicilio */}
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.calle"
@@ -188,7 +188,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                             onBlur={handleBlur}
                                         />
                                     </Grid>
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.numero"
@@ -199,7 +199,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                             onBlur={handleBlur}
                                         />
                                     </Grid>
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.cp"
@@ -211,7 +211,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                         />
                                     </Grid>
                                     {/* Localidad */}
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.localidad.nombre"
@@ -222,7 +222,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                             onBlur={handleBlur}
                                         />
                                     </Grid>
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.localidad.provincia.nombre"
@@ -234,7 +234,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                         />
                                     </Grid>
                                     {/* pais */}
-                                    <Grid size={6} width={"100%"}>
+                                    <Grid size={6}>
                                         <TextField
                                             fullWidth
                                             id="domicilio.localidad.provincia.pais.nombre"
@@ -247,7 +247,7 @@ const SucursalForm = (props: SucursalFormProps) => {
                                     </Grid>
                                 </Grid>
                                 
-                                <Grid size={6} sx={{ marginTop: 2 }}>
+                                <Grid size={6} sx={{ margin: 2 }}>
                                     <Button fullWidth variant="contained" type="submit" disabled={isSubmitting}>
                                         Guardar
                                     </Button>

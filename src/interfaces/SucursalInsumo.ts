@@ -1,3 +1,4 @@
+import { ArticuloInsumo } from "./ArticuloInsumo";
 import { SucursalEmpresa } from "./SucursalEmpresa";
 
 export interface SucursalInsumo {
@@ -5,7 +6,8 @@ export interface SucursalInsumo {
 	stockActual: Number, 
 	stockMinimo: Number, 
 	stockMaximo: Number, 
-	sucursalEmpresa: SucursalEmpresa,
+	sucursalEmpresa: SucursalEmpresa | null,
+	articuloInsumo: ArticuloInsumo | null,
 	alta: Date | null,
 	baja: Date | null,
 	modificacion: Date | null,
