@@ -12,3 +12,7 @@ export const createSucursalInsumo = async (sucursalInsumo: SucursalInsumo) => {
 export const findByIdSucursalInsumo = async (id: string) => {
     return await axios.get(`http://localhost:8080/api/sucursal-insumo/${id}`)
 }
+
+export const deleteSucursalInsumo = async (id: String) => {
+    return await axios.delete(`http://localhost:8080/api/sucursal-insumo/${id}`)
+}

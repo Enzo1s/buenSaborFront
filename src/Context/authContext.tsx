@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (token) {
       try {
         getUser(token);
+        setIsAuthenticated(true);
       } catch (error) {
         console.error("Error parsing user from localStorage:", error);
         localStorage.removeItem('token');

@@ -15,7 +15,8 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  IconButton
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import ScheduleIcon from '@mui/icons-material/Schedule';
@@ -23,46 +24,61 @@ import StoreIcon from '@mui/icons-material/Store';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { format } from 'date-fns';
 import { getByIdSucursal } from '../../../Api/SucursalAPI';
 import { SucursalEmpresa } from '../../../interfaces/SucursalEmpresa';
 import { SucursalInsumo } from '../../../interfaces/SucursalInsumo';
-import { getSucursalInsumosByIdSucursal } from '../../../Api/SucursalInsumoAPI';
+import { deleteSucursalInsumo, getSucursalInsumosByIdSucursal } from '../../../Api/SucursalInsumoAPI';
+import Modal from '../../../components/Modal';
 
 const SucursalDetails = () => {
-    const [sucursal, setSucursal] = useState<SucursalEmpresa | null>(null)
-    const [insumos, setInsumos] = useState<SucursalInsumo[] | null>([])
-    const [loadingSucursal, setLoadingSucursal] = useState(false)
-    const [loadingInsumos, setLoadingInsumos] = useState(false)
+  const [sucursal, setSucursal] = useState<SucursalEmpresa | null>(null)
+  const [insumos, setInsumos] = useState<SucursalInsumo[] | null>([])
+  const [loadingSucursal, setLoadingSucursal] = useState(false)
+  const [loadingInsumos, setLoadingInsumos] = useState(false)
+  const [openDelete, setOpenDelete] = useState<{ open: boolean, id: String | null }>({ open: false, id: null })
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
-    const { id } = useParams();
+  const { id } = useParams();
 
-    const getsucursal = async () => {
-        if (id) {
-            try {
-                setLoadingSucursal(true)
-                const { data } = await getByIdSucursal(id);
-                setSucursal(data);
-                setLoadingSucursal(false)
-                setLoadingInsumos(true)
-                const { data: insumos } = await getSucursalInsumosByIdSucursal(id);
-                setInsumos(insumos);
-                setLoadingInsumos(false)
-            } catch (error) {
-                console.log(error)
-                setLoadingSucursal(false)
-                setLoadingInsumos(false)
-            }
-        }
+  const handleDelete = async (id: String) => {
+    try {
+      await deleteSucursalInsumo(id);
+      setOpenDelete({ open: false, id: null })
+      const newInsumos = insumos?.map(insumo => insumo.id === id ? { ...insumo, baja: new Date() } : insumo)
+      setInsumos(newInsumos ?? []);
+    } catch (error) {
+      console.error("Error deleting articulo manufacturado:", error);
     }
-    useEffect(() => {
-      getsucursal();
-    }, [])
-    
-if (loadingSucursal) {
+  }
+
+  const getsucursal = async () => {
+    if (id) {
+      try {
+        setLoadingSucursal(true)
+        const { data } = await getByIdSucursal(id);
+        setSucursal(data);
+        setLoadingSucursal(false)
+        setLoadingInsumos(true)
+        const { data: insumos } = await getSucursalInsumosByIdSucursal(id);
+        setInsumos(insumos);
+        setLoadingInsumos(false)
+      } catch (error) {
+        console.log(error)
+        setLoadingSucursal(false)
+        setLoadingInsumos(false)
+      }
+    }
+  }
+  useEffect(() => {
+    getsucursal();
+  }, [])
+
+  if (loadingSucursal) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />
@@ -78,7 +94,7 @@ if (loadingSucursal) {
           Sucursal no encontrada o no disponible.
         </Typography>
         <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/sucursales')}>
-            Volver a Sucursales
+          Volver a Sucursales
         </Button>
       </Box>
     );
@@ -102,13 +118,13 @@ if (loadingSucursal) {
                   <LocationOnIcon color="action" />
                 </ListItemIcon>
                 <ListItemText primary={
-                    <Typography variant="body1" color="text.secondary">
-                        Dirección: <Typography component="span" variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
-                            {`${sucursal.domicilio?.calle || 'N/A'} ${sucursal.domicilio?.numero || ''}`
-                             + (sucursal.domicilio?.localidad ? `, ${sucursal.domicilio.localidad.nombre}` : '')
-                             + (sucursal.domicilio?.cp ? ` (${sucursal.domicilio.cp})` : '')}
-                        </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Dirección: <Typography component="span" variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                      {`${sucursal.domicilio?.calle || 'N/A'} ${sucursal.domicilio?.numero || ''}`
+                        + (sucursal.domicilio?.localidad ? `, ${sucursal.domicilio.localidad.nombre}` : '')
+                        + (sucursal.domicilio?.cp ? ` (${sucursal.domicilio.cp})` : '')}
                     </Typography>
+                  </Typography>
                 } />
               </ListItem>
               <ListItem disablePadding>
@@ -116,11 +132,11 @@ if (loadingSucursal) {
                   <ScheduleIcon color="action" />
                 </ListItemIcon>
                 <ListItemText primary={
-                    <Typography variant="body1" color="text.secondary">
-                        Horarios: <Typography component="span" variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
-                            {`Desde: ${sucursal.horarioApertura || 'N/A'} - Hasta: ${sucursal.horarioCierre || 'N/A'}`}
-                        </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Horarios: <Typography component="span" variant="body1" color="text.primary" sx={{ fontWeight: 'bold' }}>
+                      {`Desde: ${sucursal.horarioApertura || 'N/A'} - Hasta: ${sucursal.horarioCierre || 'N/A'}`}
                     </Typography>
+                  </Typography>
                 } />
               </ListItem>
             </List>
@@ -135,6 +151,16 @@ if (loadingSucursal) {
                 Insumos
               </Typography>
             </Box>
+            {insumos && insumos.length > 0 &&
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => navigate(`/sucursal-insumo/crear/${sucursal.id}`)}
+              >
+                Agregar Insumo
+              </Button>
+            }
           </Box>
 
           {loadingInsumos ? (
@@ -151,13 +177,16 @@ if (loadingSucursal) {
                     <TableCell sx={{ fontWeight: 'bold' }} align="right">Stock Actual</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }} align="right">Stock Mínimo</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }} align="right">Stock Máximo</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="center">Baja</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }} align="center">Acciones</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {insumos.map((insumo) => (
                     <TableRow key={insumo?.id?.toString() || insumo?.articuloInsumo?.id?.toString()}
-                              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                      }}>
                       <TableCell component="th" scope="row">
                         <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
                           {insumo?.articuloInsumo?.denominacion}
@@ -170,16 +199,17 @@ if (loadingSucursal) {
                       </TableCell>
                       <TableCell align="right">{insumo.stockMinimo.toString()}</TableCell>
                       <TableCell align="right">{insumo.stockMaximo.toString()}</TableCell>
+                       <TableCell component="th" scope="row" sx={{color: insumo?.baja ? 'error.light' : 'inherit',
+                      }} align="center"
+                      >{insumo?.baja ? format(insumo?.baja, 'dd/MM/yyyy HH:mm') : '-'}</TableCell>
                       <TableCell align="center">
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          startIcon={<EditIcon />}
-                          onClick={() => insumo.id && navigate(`/sucursal-insumo/editar/${insumo.id}`)}
-                          disabled={!insumo.id}
-                        >
-                          Editar Stock
-                        </Button>
+
+                        <IconButton color="secondary" onClick={() => navigate(`/sucursal-insumo/editar/${insumo.id}`)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => setOpenDelete({ open: true, id: insumo?.id })}>
+                          <DeleteIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -204,6 +234,16 @@ if (loadingSucursal) {
           )}
         </Grid>
       </Grid>
+      <Modal open={openDelete.open} onClose={() => setOpenDelete({ open: false, id: null })} title="Eliminar Insumo">
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid size={12}>
+            <Typography variant="h5">¿Desea eliminar el insumo de la sucursal?</Typography>
+          </Grid>
+          <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="contained" color="error" onClick={() => handleDelete(openDelete.id ?? "")}>Eliminar</Button>
+          </Grid>
+        </Grid>
+      </Modal>
     </Box>
   );
 }

@@ -63,7 +63,7 @@ const SucursalInsumoForm = () => {
                                 sucursalEmpresa: idSucursal ? sucursal:sucursalInsumo?.sucursalEmpresa ? sucursalInsumo.sucursalEmpresa : null,
                                 articuloInsumo: values.articuloInsumo,
                                 alta: values.alta,
-                                baja: values.baja,
+                                baja: null,
                                 modificacion: values.modificacion
                             }
                             await createSucursalInsumo(nuevoInsumo);
