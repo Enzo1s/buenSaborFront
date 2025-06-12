@@ -5,7 +5,6 @@ const ArticuloManufacturadoView = () => {
   return (
     <Grid>
       <Typography variant="h3">Articulo Manufacturado</Typography>
-      
       <Outlet />
     </Grid>
   )
