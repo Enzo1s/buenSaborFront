@@ -48,17 +48,19 @@ const onSubmit = async (
       console.log(response)
       if(response.status === "approved"){
         const detalleFactura: FacturaVentaDetalle[] = []
-        for(let i = 0; i < pedidoVenta.pedidoVentaDetalle.length; i++){
-          detalleFactura.push({
-            cantidad: pedidoVenta.pedidoVentaDetalle[i].cantidad,
-            articuloInsumo: pedidoVenta.pedidoVentaDetalle[i].articuloInsumo,
-            articuloManufacturado: pedidoVenta.pedidoVentaDetalle[i].articuloManufacturado,
-            subTotal: pedidoVenta.pedidoVentaDetalle[i].subTotal,
-            alta: null,
-baja: null,
-modificacion: null,
-id:null
-          })
+        if(pedidoVenta.pedidoVentaDetalle) {
+          for(let i = 0; i < pedidoVenta.pedidoVentaDetalle.length; i++){
+            detalleFactura.push({
+              cantidad: pedidoVenta.pedidoVentaDetalle[i].cantidad,
+              articuloInsumo: pedidoVenta.pedidoVentaDetalle[i].articuloInsumo,
+              articuloManufacturado: pedidoVenta.pedidoVentaDetalle[i].articuloManufacturado,
+              subTotal: pedidoVenta.pedidoVentaDetalle[i].subTotal,
+              alta: null,
+  baja: null,
+  modificacion: null,
+  id:null
+            })
+          }
         }
         const factura: FacturaVenta = {
           datosMP: response,
@@ -75,8 +77,8 @@ id:null
           totalVenta: pedidoVenta.total,
           facturaVentaDetalle: detalleFactura
         }
-        const {data } =await createFacturaVenta(factura)
-        console.log(data)
+        // const {data } =await createFacturaVenta(factura)
+        // console.log(data)
       }
        resolve();
      })

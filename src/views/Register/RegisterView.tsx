@@ -23,7 +23,6 @@ const RegisterView = () => {
     }, [])
 
     useEffect(() => {
-        console.log(isAuthenticated)
         if (isAuthenticated) {
             navigate('/')
         }
@@ -43,17 +42,22 @@ const RegisterView = () => {
                         rol: Rol.CLIENTE,
                         sucursalEmpresa: null
                     }}
-                    onSubmit={(values) => {
+                    onSubmit={(values, {setSubmitting}) => {
                         const key = Object.keys(Rol).find(k => Rol[k as keyof typeof Rol] === values.rol);
                         const usuario: Usuario = {
                             id: null,
                             auth0Id: '',
                             username: values.username,
                             password: values.password,
+                            empresa: null,
                             rol: key?.toString() as Rol,
-                            sucursalEmpresa: values.sucursalEmpresa
+                            sucursalEmpresa: values.sucursalEmpresa,
+                            alta: null,
+                            baja: null,
+                            modificacion: null
                         }
                         register(usuario);
+                        setSubmitting(false)
                     }}
                 >
                     {({
@@ -126,8 +130,8 @@ const RegisterView = () => {
             </Grid>
             <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
                 <Grid container spacing={2}>
-                    <Grid size={12} sx={{ marginBottom: 2 }}>
-                        <h2>¿Ya tienes cuenta?</h2>
+                    <Grid size={12}  justifyContent={"center"} display={"flex"}>
+                        <Typography variant='h5'>¿Ya tienes cuenta?</Typography>
                     </Grid>
                     <Grid size={12} justifyContent={"center"} display={"flex"}>
                         <Button variant='text' onClick={() => navigate('/login')}>Iniciar Sesión</Button>

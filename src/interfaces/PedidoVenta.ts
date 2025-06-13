@@ -6,7 +6,7 @@ import { SucursalEmpresa } from "./SucursalEmpresa"
 
 export interface PedidoVenta {
     id: string | null,
-	horaEstimadaFinalizacion: Date,
+	horaEstimadaFinalizacion: Date | null,
 	subtotal: number,
 	descuento: number,
 	gastosEnvio: number,
@@ -19,8 +19,8 @@ export interface PedidoVenta {
 	sucursal: SucursalEmpresa | null,
 	cliente: Cliente | null,
 	factura: FacturaVenta | null,
-	pedidoVentaDetalle: PedidoVentaDetalle[]
-	fechaPedido: Date,
+	pedidoVentaDetalle: PedidoVentaDetalle[] | null
+	fechaPedido: Date | null,
 	alta: Date | null,
 	baja: Date | null,
 	modificacion: Date | null,

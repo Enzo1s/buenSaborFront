@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ArticuloInsumo } from "../interfaces/ArticuloInsumo";
 import { ArticuloManufacturado } from "../interfaces/ArticuloManufacturado";
 import { PedidoVenta } from "../interfaces/PedidoVenta";
@@ -6,6 +6,7 @@ import { Promocion } from "../interfaces/Promocion";
 import { Estado } from "../enums/Estado";
 import { TipoEnvio } from "../enums/TipoEnvio";
 import { FormaPago } from "../enums/FormaPago";
+import { set } from "date-fns";
 
 interface CartContextType {
     pedidoVenta: PedidoVenta | null;
@@ -26,9 +27,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
+    useEffect(() => {
+      const pedidos = localStorage.getItem("pedidoVenta");
+      setPedidoVenta(pedidos ? JSON.parse(pedidos) : null);
+    }, [])
+    
+
     const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufacturado: ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => {
         if (pedidoVenta) {
-            const existingItem = pedidoVenta.pedidoVentaDetalle.find((detalle) => {
+            const existingItem = pedidoVenta?.pedidoVentaDetalle?.find((detalle) => {
                 if(itemManufacturado) {
                     return detalle.articuloManufacturado?.id === itemManufacturado?.id
                 }
@@ -53,7 +60,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                         ...pedidoVenta,
                         total,
                     totalCosto,
-                        pedidoVentaDetalle: newDetails
+                        pedidoVentaDetalle: newDetails || []
                     });
                 } else {
                     const total = pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad
@@ -62,7 +69,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                         ...pedidoVenta,
                         total,
                     totalCosto,
-                        pedidoVentaDetalle: newDetails
+                        pedidoVentaDetalle: newDetails ||[]
                     });
                 }
             } else {
@@ -73,7 +80,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                         total: pedidoVenta.total + (itemInsumo?.precioVenta as number) * cantidad || pedidoVenta.total,
                         totalCosto: pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad || pedidoVenta.totalCosto,
                         pedidoVentaDetalle: [
-                            ...pedidoVenta.pedidoVentaDetalle,
+                            ...pedidoVenta?.pedidoVentaDetalle || [],
                             {
                                 id: null,
                                 cantidad,
@@ -91,7 +98,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                         total: pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad,
                     totalCosto: pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad,
                         pedidoVentaDetalle: [
-                            ...pedidoVenta.pedidoVentaDetalle,
+                            ...pedidoVenta.pedidoVentaDetalle || [],
                             {
                                 id: null,
                                 cantidad,
@@ -136,11 +143,12 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 modificacion: null
             });
         }
+        localStorage.setItem("pedidoVenta", JSON.stringify(pedidoVenta));
     };
 
     const removeItemFromCart = (itemId: string) => {
         if (pedidoVenta) {
-            const item = pedidoVenta.pedidoVentaDetalle.find((detalle) => {
+            const item = pedidoVenta.pedidoVentaDetalle?.find((detalle) => {
                 if(detalle.articuloManufacturado) {
                     return detalle.articuloManufacturado.id === itemId
                 }
@@ -154,13 +162,15 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 total,
                 totalCosto,
                 subtotal: total,
-                pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId)
+                pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle?.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId) || null
             });
+            localStorage.setItem("pedidoVenta", JSON.stringify(pedidoVenta));
         }
     };
 
     const clearCart = () => {
         setPedidoVenta(null);
+        localStorage.removeItem("pedidoVenta");
     };
 
     const contextValue: CartContextType = {

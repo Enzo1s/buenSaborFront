@@ -84,6 +84,9 @@ const Header = () => {
             <Button variant="text" onClick={() => navigate('/sucursal')}>
               <Typography color='white'>Sucursales</Typography>
             </Button>
+            <Button variant="text" onClick={() => navigate('/pedido-venta')}>
+              <Typography color='white'>Pedidos</Typography>
+            </Button>
           </>
         )}
       
@@ -130,7 +133,7 @@ const Header = () => {
           </Grid>
           <Grid sx={{ marginTop: '10px' }} size={12}>
             <Typography variant="body1">Productos en el carrito:</Typography>
-            {pedidoVenta && pedidoVenta.pedidoVentaDetalle.length > 0 ? (
+            {pedidoVenta && pedidoVenta?.pedidoVentaDetalle && pedidoVenta?.pedidoVentaDetalle?.length > 0 ? (
               <Grid>
                 <Table size="small">
                   <TableHead>
@@ -142,7 +145,7 @@ const Header = () => {
                       </TableRow>
                   </TableHead>
                   <TableBody>
-              {pedidoVenta.pedidoVentaDetalle.map((item, index) => (
+              {pedidoVenta?.pedidoVentaDetalle?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{item.articuloInsumo?.denominacion || item.articuloManufacturado?.denominacion}</TableCell>
                   <TableCell>{item.cantidad.toString()}</TableCell>

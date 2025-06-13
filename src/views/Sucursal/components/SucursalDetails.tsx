@@ -33,13 +33,18 @@ import { SucursalEmpresa } from '../../../interfaces/SucursalEmpresa';
 import { SucursalInsumo } from '../../../interfaces/SucursalInsumo';
 import { deleteSucursalInsumo, getSucursalInsumosByIdSucursal } from '../../../Api/SucursalInsumoAPI';
 import Modal from '../../../components/Modal';
+import { PedidoVenta } from '../../../interfaces/PedidoVenta';
+import { getPedidoVentaByIdSucursal } from '../../../Api/PedidoVentaApi';
 
 const SucursalDetails = () => {
   const [sucursal, setSucursal] = useState<SucursalEmpresa | null>(null)
   const [insumos, setInsumos] = useState<SucursalInsumo[] | null>([])
+  const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([])
   const [loadingSucursal, setLoadingSucursal] = useState(false)
   const [loadingInsumos, setLoadingInsumos] = useState(false)
+  const [loadingPedidosVenta, setLoadingPedidosVenta] = useState(false)
   const [openDelete, setOpenDelete] = useState<{ open: boolean, id: String | null }>({ open: false, id: null })
+  const [openDeleteClient, setOpenDeleteClient] = useState<{ open: boolean, id: String | null }>({ open: false, id: null })
 
   const navigate = useNavigate()
 
@@ -52,7 +57,7 @@ const SucursalDetails = () => {
       const newInsumos = insumos?.map(insumo => insumo.id === id ? { ...insumo, baja: new Date() } : insumo)
       setInsumos(newInsumos ?? []);
     } catch (error) {
-      console.error("Error deleting articulo manufacturado:", error);
+      console.error("Error deleting articulo:", error);
     }
   }
 
@@ -64,13 +69,18 @@ const SucursalDetails = () => {
         setSucursal(data);
         setLoadingSucursal(false)
         setLoadingInsumos(true)
+        setLoadingPedidosVenta(true)
         const { data: insumos } = await getSucursalInsumosByIdSucursal(id);
         setInsumos(insumos);
         setLoadingInsumos(false)
+        const { data: listPedidosVenta } = await getPedidoVentaByIdSucursal(id);
+        setPedidosVenta(listPedidosVenta);
+        setLoadingPedidosVenta(false)
       } catch (error) {
         console.log(error)
         setLoadingSucursal(false)
         setLoadingInsumos(false)
+        setLoadingPedidosVenta(false)
       }
     }
   }
@@ -233,6 +243,97 @@ const SucursalDetails = () => {
             </Paper>
           )}
         </Grid>
+        <Grid size={12}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} sx={{ mt: 2 }}>
+            <Box display="flex" alignItems="center">
+              <Inventory2Icon color="primary" sx={{ mr: 1, fontSize: 30 }} />
+              <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 0, fontWeight: 'medium' }}>
+                Pedidos Ventas
+              </Typography>
+            </Box>
+            {pedidosVenta && pedidosVenta.length > 0 &&
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => navigate(`/pedido-venta/crear/${sucursal.id}`)}
+              >
+                Crear Pedido Venta
+              </Button>
+            }
+          </Box>
+
+          {loadingPedidosVenta ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+              <CircularProgress size={24} />
+              <Typography variant="body1" sx={{ ml: 2 }}>Cargando pediodos de ventas...</Typography>
+            </Box>
+          ) : pedidosVenta && pedidosVenta.length > 0 ? (
+            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: '8px' }}>
+              <Table aria-label="tabla de pedidos de Venta">
+                <TableHead sx={{ bgcolor: 'grey.200' }}>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Cliente</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">Estado</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">Tipo de Envío</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">Forma de pago</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">factura</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="center">total</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="center">Acciones</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {pedidosVenta.map((pedido) => (
+                    <TableRow key={pedido?.id?.toString()}
+                      sx={{
+                        '&:last-child td, &:last-child th': { border: 0 },
+                      }}>
+                      <TableCell component="th" scope="row">
+                        <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                          {`${pedido?.cliente?.nombre} ${pedido?.cliente?.apellido}`}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography variant="body1">
+                          {pedido.estado}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">{pedido.tipoEnvio}</TableCell>
+                      <TableCell align="right">{pedido.formaPago}</TableCell>
+                      <TableCell align="right">{pedido.factura?.numeroComprobante.toString()}</TableCell>
+                       <TableCell component="th" scope="row" align="center"
+                      >{pedido.total}</TableCell>
+                      <TableCell align="center">
+
+                        <IconButton color="secondary" onClick={() => navigate(`/pedido-venta/editar/${pedido.id}`)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => setOpenDelete({ open: true, id: pedido?.id })}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
+              <Typography variant="h6" color="text.secondary">
+                No hay pedidos de ventas registrados para esta sucursal.
+              </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<AddIcon />}
+                onClick={() => navigate(`/pedido-venta/crear/${sucursal.id}`)}
+                sx={{ mt: 3 }}
+              >
+                Crear Pedido venta
+              </Button>
+            </Paper>
+          )}
+        </Grid>
       </Grid>
       <Modal open={openDelete.open} onClose={() => setOpenDelete({ open: false, id: null })} title="Eliminar Insumo">
         <Grid container spacing={2} sx={{ padding: 2 }}>
@@ -241,6 +342,16 @@ const SucursalDetails = () => {
           </Grid>
           <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button variant="contained" color="error" onClick={() => handleDelete(openDelete.id ?? "")}>Eliminar</Button>
+          </Grid>
+        </Grid>
+      </Modal>
+      <Modal open={openDeleteClient.open} onClose={() => setOpenDeleteClient({ open: false, id: null })} title="Eliminar Insumo">
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid size={12}>
+            <Typography variant="h5">¿Desea eliminar el insumo de la sucursal?</Typography>
+          </Grid>
+          <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="contained" color="error" onClick={() => handleDelete(openDeleteClient.id ?? "")}>Eliminar</Button>
           </Grid>
         </Grid>
       </Modal>

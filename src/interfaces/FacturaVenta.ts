@@ -1,4 +1,3 @@
-import { FormaPago } from "../enums/FormaPago";
 import { DatosMercadoPago } from "./DatosMercadoPago";
 import { FacturaVentaDetalle } from "./FacturaVentaDetalle";
 

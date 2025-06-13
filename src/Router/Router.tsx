@@ -21,6 +21,8 @@ import SucursalForm from "../views/Sucursal/components/SucursalForm"
 import SucursalDetails from "../views/Sucursal/components/SucursalDetails"
 import SucursalInsumoView from "../views/SucursalInsumo/SucursalInsumoView"
 import SucursalInsumoForm from "../views/SucursalInsumo/SucursalInsumoForm"
+import PedidoVentaView from "../views/PedidoVenta/PedidoVentaView"
+import PedidoVentaTable from "../views/PedidoVenta/components/PedidoVentaTable"
 
 const Router = () => {
   return (
@@ -30,7 +32,7 @@ const Router = () => {
       <Route path="/" element={<HomeView />} />
       <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
         <Route path="/empresa" element={<EmpresaView />} >
-        <Route path="" element={<EmpresaMain />} />
+          <Route path="" element={<EmpresaMain />} />
           <Route path="ver/:id" element={<EmpresaDetails />} />
           <Route path="crear" element={<EmpresaForm />} />
           <Route path="editar/:id" element={<EmpresaForm />} />
@@ -39,9 +41,12 @@ const Router = () => {
       <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
         <Route path="/sucursal" element={<SucursalView />} >
           <Route path="" element={<SucursalMain />} />
-          <Route path="crear" element={<SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>} />
-          <Route path="editar/:id" element={<SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>} />
-            <Route path="ver/:id" element={<SucursalDetails />} />
+          <Route path="crear" element={<SucursalForm sucursales={[]} setSucursales={() => { }} setViewForm={() => { }} isFromCompany={false} />} />
+          <Route path="editar/:id" element={<SucursalForm sucursales={[]} setSucursales={() => { }} setViewForm={() => { }} isFromCompany={false} />} />
+          <Route path="ver/:id" element={<SucursalDetails />} />
+        </Route>
+        <Route path="/pedido-venta" element={<PedidoVentaView />}>
+          <Route path="" element={<PedidoVentaTable />} />
         </Route>
         <Route path="/sucursal-insumo" element={<SucursalInsumoView />} >
           <Route path="crear/:idSucursal" element={<SucursalInsumoForm />} />
