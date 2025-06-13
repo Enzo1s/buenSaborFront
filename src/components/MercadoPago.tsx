@@ -33,7 +33,7 @@ const onSubmit = async (
  { selectedPaymentMethod, formData }: { selectedPaymentMethod: any; formData: any }
 ) => {
   console.log("selectedPaymentMethod" ,selectedPaymentMethod)
-  console.log("formData" ,formData)
+  console.log("formData" ,formData) //TODO: MANDA NULL (Revisar).
  // callback llamado al hacer clic en el botón enviar datos
  return new Promise<void>((resolve, reject) => {
    fetch("http://localhost:8080/api/datos-mercadopago/process_payment", {
