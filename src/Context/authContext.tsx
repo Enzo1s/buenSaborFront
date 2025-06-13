@@ -67,10 +67,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const register = useCallback(async (userData: Usuario) => {
-    const { data: token } = await registrarUsuario(userData);
-    setUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('token', JSON.stringify(token)); 
+    try {
+      const { data: token } = await registrarUsuario(userData);
+      setUser(userData);
+      setIsAuthenticated(true);
+      localStorage.setItem('token', JSON.stringify(token));
+
+    } catch (error) {
+      if (error instanceof Error) {
+  alert((error as any).response?.data?.error || error?.message );
+} else {
+    console.error('Unknown error:', error);
+  }
+    }
   }, []);
 
   const contextValue: AuthContextType = {
