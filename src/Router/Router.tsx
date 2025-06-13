@@ -28,7 +28,7 @@ const Router = () => {
       <Route path="/login" element={<LoginView />} />
       <Route path="/register" element={<RegisterView />} />
       <Route path="/" element={<HomeView />} />
-      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'VENDEDOR', 'CLIENTE', 'EMPLEADO']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
         <Route path="/empresa" element={<EmpresaView />} >
         <Route path="" element={<EmpresaMain />} />
           <Route path="ver/:id" element={<EmpresaDetails />} />
@@ -36,7 +36,7 @@ const Router = () => {
           <Route path="editar/:id" element={<EmpresaForm />} />
         </Route>
       </Route>
-      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'VENDEDOR', 'CLIENTE', 'EMPLEADO']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
         <Route path="/sucursal" element={<SucursalView />} >
           <Route path="" element={<SucursalMain />} />
           <Route path="crear" element={<SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>} />
@@ -56,7 +56,7 @@ const Router = () => {
           <Route path="ver/:id" element={<InsumoDetails />} />
         </Route>
       </Route>
-      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'VENDEDOR', 'CLIENTE', 'EMPLEADO']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'CLIENTE', 'EMPLEADO']} />}>
         <Route path="/articulo-manufacturado" element={<ArticuloManufacturadoView />} >
           <Route path="" element={<ManufacturadoTable />} />
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
