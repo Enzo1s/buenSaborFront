@@ -1,3 +1,3 @@
 export enum Rol {
-    ADMIN = "Administrador", VENDEDOR = "Vendedor", CAJERO = "Cajero", EMPLEADO = "Empleado", CLIENTE = "Cliente"
+    CLIENTE = "Cliente", EMPLEADO = "Empleado", ADMIN = "Administrador",   // VENDEDOR = "Vendedor", CAJERO = "Cajero", 
 }

@@ -19,7 +19,7 @@ const Header = () => {
   const [idPreference, setIdPreference] = useState(null)
   const [viewForm, setViewForm] = useState(false)
 
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, user, logout } = useAuth()
   const { pedidoVenta, removeItemFromCart } = useCartContext()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -63,10 +63,30 @@ const Header = () => {
       </Grid>
       <Grid size={6} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
         <Button variant="text" onClick={() => navigate('/')}><Typography color='white'>Inicio</Typography></Button>
-        <Button variant="text" onClick={() => navigate('/articulo-manufacturado')}><Typography color='white'> Articulos </Typography></Button>
-        <Button variant="text" onClick={() => navigate('/articulo-insumo')}><Typography color='white'>Insumos</Typography></Button>
-        <Button variant="text" onClick={() => navigate('/empresa')}><Typography color='white'>Empresa</Typography></Button>
-        <Button variant="text" onClick={() => navigate('/sucursal')}><Typography color='white'>Sucursales</Typography></Button>
+        {isAuthenticated && (user?.rol.toString() === "EMPLEADO" || user?.rol.toString() === "ADMIN") && 
+        (
+          <>
+            <Button variant="text" onClick={() => navigate('/articulo-manufacturado')}>
+              <Typography color='white'>Artículos</Typography>
+            </Button>
+            <Button variant="text" onClick={() => navigate('/articulo-insumo')}>
+              <Typography color='white'>Insumos</Typography>
+            </Button>
+          </>
+        )}
+        
+        {isAuthenticated && user?.rol.toString() === 'ADMIN' && 
+        (
+          <>
+            <Button variant="text" onClick={() => navigate('/empresa')}>
+              <Typography color='white'>Empresa</Typography>
+            </Button>
+            <Button variant="text" onClick={() => navigate('/sucursal')}>
+              <Typography color='white'>Sucursales</Typography>
+            </Button>
+          </>
+        )}
+      
       </Grid>
       
       <Grid size={3} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
