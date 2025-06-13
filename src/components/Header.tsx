@@ -19,6 +19,8 @@ const Header = () => {
   const [idPreference, setIdPreference] = useState(null)
   const [viewForm, setViewForm] = useState(false)
 
+  //TODO: Agregar hook para mostrar el rol
+
   const { isAuthenticated, user, logout } = useAuth()
   const { pedidoVenta, removeItemFromCart } = useCartContext()
 
