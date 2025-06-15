@@ -13,6 +13,6 @@ export const getByIdEmpresa = async (id: string) => {
     return await axios.get(`http://localhost:8080/api/empresa/${id}`)
 }
 
-export const deleteEmpresa = async (id: String) => {
+export const deleteEmpresa = async (id: string) => {
     return axios.delete(`http://localhost:8080/api/empresa/${id}`)
 }

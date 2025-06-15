@@ -6,7 +6,6 @@ import { Promocion } from "../interfaces/Promocion";
 import { Estado } from "../enums/Estado";
 import { TipoEnvio } from "../enums/TipoEnvio";
 import { FormaPago } from "../enums/FormaPago";
-import { set } from "date-fns";
 
 interface CartContextType {
     pedidoVenta: PedidoVenta | null;

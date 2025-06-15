@@ -23,6 +23,11 @@ import SucursalInsumoView from "../views/SucursalInsumo/SucursalInsumoView"
 import SucursalInsumoForm from "../views/SucursalInsumo/SucursalInsumoForm"
 import PedidoVentaView from "../views/PedidoVenta/PedidoVentaView"
 import PedidoVentaTable from "../views/PedidoVenta/components/PedidoVentaTable"
+import EmpleadoView from "../views/Empleado/EmpleadoView"
+import EmpleadoTable from "../views/Empleado/components/EmpleadoTable"
+import EmpleadoForm from "../views/Empleado/components/EmpleadoForm"
+import EmpleadoDetails from "../views/Empleado/components/EmpleadoDetails"
+import PedidoVentaForm from "../views/PedidoVenta/components/PedidoVentaForm"
 
 const Router = () => {
   return (
@@ -39,19 +44,32 @@ const Router = () => {
         </Route>
       </Route>
       <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
+
         <Route path="/sucursal" element={<SucursalView />} >
           <Route path="" element={<SucursalMain />} />
           <Route path="crear" element={<SucursalForm sucursales={[]} setSucursales={() => { }} setViewForm={() => { }} isFromCompany={false} />} />
           <Route path="editar/:id" element={<SucursalForm sucursales={[]} setSucursales={() => { }} setViewForm={() => { }} isFromCompany={false} />} />
           <Route path="ver/:id" element={<SucursalDetails />} />
         </Route>
-        <Route path="/pedido-venta" element={<PedidoVentaView />}>
-          <Route path="" element={<PedidoVentaTable />} />
+
+        <Route path="/empleado" element={<EmpleadoView />} >
+          <Route path="" element={<EmpleadoTable />} />
+          <Route path="crear" element={<EmpleadoForm />} />
+          <Route path="editar/:id" element={<EmpleadoForm />} />
+          <Route path="ver/:id" element={<EmpleadoDetails />} />
         </Route>
+
+        <Route path="/pedido-venta" element={<PedidoVentaView />}>
+          <Route path="" element={<PedidoVentaTable idEmpleado={null} />} />
+          <Route path="crear/:idEmpleado" element={<PedidoVentaForm />} />
+"
+        </Route>
+
         <Route path="/sucursal-insumo" element={<SucursalInsumoView />} >
           <Route path="crear/:idSucursal" element={<SucursalInsumoForm />} />
           <Route path="editar/:id" element={<SucursalInsumoForm />} />
         </Route>
+
         <Route path="/articulo-insumo" element={<ArticuloInsumoView />} >
           <Route path="" element={<InsumosTable />} />
           <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'EMPLEADO']} />}>
@@ -60,7 +78,9 @@ const Router = () => {
           </Route>
           <Route path="ver/:id" element={<InsumoDetails />} />
         </Route>
+
       </Route>
+
       <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'CLIENTE', 'EMPLEADO']} />}>
         <Route path="/articulo-manufacturado" element={<ArticuloManufacturadoView />} >
           <Route path="" element={<ManufacturadoTable />} />

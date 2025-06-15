@@ -77,8 +77,8 @@ const onSubmit = async (
           totalVenta: pedidoVenta.total,
           facturaVentaDetalle: detalleFactura
         }
-        // const {data } =await createFacturaVenta(factura)
-        // console.log(data)
+        const {data } =await createFacturaVenta(factura)
+        console.log(data)
       }
        resolve();
      })

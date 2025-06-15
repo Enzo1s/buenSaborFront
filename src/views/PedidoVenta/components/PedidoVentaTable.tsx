@@ -16,30 +16,42 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from 'react'
 import { PedidoVenta } from '../../../interfaces/PedidoVenta'
 import { useNavigate } from 'react-router';
-import { gePedidoVenta } from '../../../Api/PedidoVentaApi';
+import { gePedidoVenta, getPedidoVentaByEmpleadoId } from '../../../Api/PedidoVentaApi';
 import { format } from 'date-fns';
 
-const PedidoVentaTable = () => {
+interface PedidoVentaTableProps {
+  idEmpleado: string | null;
+}
 
-    const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null> ([])
-    const [loading, setLoading] = useState(false)
+const PedidoVentaTable = (props: PedidoVentaTableProps) => {
 
-    const navigate = useNavigate()
+  const { idEmpleado } = props
 
-    const listadoPedidosVenta = async () => {
-        setLoading(true)
-        const { data } = await gePedidoVenta()
-        setPedidosVenta(data)
-        setLoading(false)
+  const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([])
+  const [loading, setLoading] = useState(false)
+
+  const navigate = useNavigate()
+
+  const listadoPedidosVenta = async () => {
+    setLoading(true)
+    if (idEmpleado) {
+      const { data } = await getPedidoVentaByEmpleadoId(idEmpleado)
+      setPedidosVenta(data)
+      setLoading(false)
+    } else {
+      const { data } = await gePedidoVenta()
+      setPedidosVenta(data)
+      setLoading(false)
     }
+  }
 
-    useEffect(() => {
-      listadoPedidosVenta()
-    }, [])
-    
-    
+  useEffect(() => {
+    listadoPedidosVenta()
+  }, [])
+
+
   return (
-    <Box sx={{ p: 3 }}> 
+    <Box sx={{ p: 3 }}>
       <Box
         display="flex"
         justifyContent="space-between"
@@ -53,7 +65,7 @@ const PedidoVentaTable = () => {
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
-          onClick={() => navigate('/pedido-venta/crear')}
+          onClick={() => idEmpleado ? navigate(`/pedido-venta/crear/${idEmpleado}`) : navigate('/pedido-venta/crear')}
         >
           Crear Pedido
         </Button>
@@ -72,20 +84,20 @@ const PedidoVentaTable = () => {
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Cliente</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Estado</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Tipo de envio</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Descuento</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Total</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Total Costo</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Forma de pago</TableCell>
-                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Fecha del Pedido</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Descuento</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Total</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Total Costo</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Forma de pago</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Fecha del Pedido</TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold', width: '150px' }} align="center">Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {pedidosVenta.map((pedido) => (
                 <TableRow
-                  key={pedido?.id?.toString() || `temp-${pedido.fechaPedido?.toString()}`} 
-                  sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' } }} 
+                  key={pedido?.id?.toString() || `temp-${pedido.fechaPedido?.toString()}`}
+                  sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' } }}
                 >
                   <TableCell>{pedido.cliente?.nombre}</TableCell>
                   <TableCell>
@@ -94,7 +106,7 @@ const PedidoVentaTable = () => {
                   <TableCell>
                     {pedido.tipoEnvio}
                   </TableCell>
-                   <TableCell>
+                  <TableCell>
                     {pedido.subtotal}
                   </TableCell>
                   <TableCell>
@@ -110,7 +122,7 @@ const PedidoVentaTable = () => {
                     {pedido.formaPago}
                   </TableCell>
                   <TableCell>
-                    {pedido.fechaPedido ? format(pedido.fechaPedido, 'dd/MM/yyyy'): 'N/A'}
+                    {pedido.fechaPedido ? format(pedido.fechaPedido, 'dd/MM/yyyy') : 'N/A'}
                   </TableCell>
                   <TableCell align="center">
                     <Button
@@ -118,7 +130,7 @@ const PedidoVentaTable = () => {
                       size="small"
                       startIcon={<VisibilityIcon />}
                       onClick={() => pedido.id && navigate(`/pedido-venta/ver/${pedido.id}`)}
-                      disabled={!pedido.id} 
+                      disabled={!pedido.id}
                     >
                       Ver
                     </Button>
@@ -137,7 +149,7 @@ const PedidoVentaTable = () => {
             variant="contained"
             color="secondary"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/pedido-venta/crear')}
+            onClick={() => idEmpleado ? navigate(`/pedido-venta/crear/${idEmpleado}`) : navigate('/pedido-venta/crear')}
             sx={{ mt: 3 }}
           >
             Añadir Nuevo Pedido

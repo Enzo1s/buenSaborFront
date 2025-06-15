@@ -49,9 +49,7 @@ const RegisterView = () => {
                             auth0Id: '',
                             username: values.username,
                             password: values.password,
-                            empresa: null,
                             rol: key?.toString() as Rol,
-                            sucursalEmpresa: values.sucursalEmpresa,
                             alta: null,
                             baja: null,
                             modificacion: null

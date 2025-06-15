@@ -72,6 +72,9 @@ const Header = () => {
             <Button variant="text" onClick={() => navigate('/articulo-insumo')}>
               <Typography color='white'>Insumos</Typography>
             </Button>
+            <Button variant="text" onClick={() => navigate('/pedido-venta')}>
+              <Typography color='white'>Pedidos</Typography>
+            </Button>
           </>
         )}
         
@@ -84,8 +87,8 @@ const Header = () => {
             <Button variant="text" onClick={() => navigate('/sucursal')}>
               <Typography color='white'>Sucursales</Typography>
             </Button>
-            <Button variant="text" onClick={() => navigate('/pedido-venta')}>
-              <Typography color='white'>Pedidos</Typography>
+            <Button variant="text" onClick={() => navigate('/empleado')}>
+              <Typography color='white'>Empleados</Typography>
             </Button>
           </>
         )}

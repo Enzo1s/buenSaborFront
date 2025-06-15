@@ -1,6 +1,4 @@
 import { Rol } from "../enums/Rol";
-import { Empresa } from "./Empresa";
-import { SucursalEmpresa } from "./SucursalEmpresa";
 
 export interface Usuario {
     id: String | null,
@@ -8,8 +6,6 @@ export interface Usuario {
 	username: String,
     password: String,
     rol: Rol,
-    empresa: Empresa | null,
-    sucursalEmpresa: SucursalEmpresa | null,
     alta: Date | null,
 	baja: Date | null,
 	modificacion: Date | null,
