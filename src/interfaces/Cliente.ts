@@ -7,7 +7,7 @@ export interface Cliente {
 	apellido: String,
 	telefono: String,
 	email: String
-	usuario: Usuario,
+	usuario: Usuario | null,
 	domicilio: Domicilio,
 	alta: Date | null,
 	baja: Date | null,

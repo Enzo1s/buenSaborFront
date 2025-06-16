@@ -8,10 +8,10 @@ const LoginView = () => {
     const navigate = useNavigate()
     return (
         <Grid container spacing={2} justifyContent={"center"}>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"}>
+            <Grid size={12} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"} className="textWhte">
                 <Typography variant='h3'>Inicio de Sesión</Typography>
             </Grid>
-            <Grid size={6} sx={{ margin: 'auto', padding: 2 }}>
+            <Grid size={6} sx={{ margin: 'auto', padding: 2, backgroundColor: "#f5f5f5", borderRadius: 2 }}>
                 <Formik
                     initialValues={{
                         username: '',
@@ -67,13 +67,13 @@ const LoginView = () => {
                     )
                     }
                 </Formik>
+            <Grid size={12} justifyContent={"center"} display={"flex"}>
+                <Button variant='text' onClick={() => navigate('/register')}>Crear Cuenta</Button>
+            </Grid>
             </Grid>
             {/* <Grid size={12} justifyContent={"center"} display={"flex"}>
                 <Typography variant='body1'>Recuperar contraseña</Typography>
             </Grid> */}
-            <Grid size={12} justifyContent={"center"} display={"flex"}>
-                <Button variant='text' onClick={() => navigate('/register')}>Crear Cuenta</Button>
-            </Grid>
 
         </Grid>
     )

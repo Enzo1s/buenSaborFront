@@ -1,4 +1,5 @@
-import { Autocomplete, Box, Button, Grid, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, Button, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router';
 import { PedidoVenta } from '../../../interfaces/PedidoVenta'
@@ -8,7 +9,7 @@ import { getByIdEmpleado } from '../../../Api/EmpleadoAPI';
 import CardArticulos from './CardArticulos';
 import { ArticuloInsumo } from '../../../interfaces/ArticuloInsumo';
 import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado';
-import { addItemToCart } from '../utils/addAndRemove';
+import { addItemToCart, removeItemFromCart } from '../utils/addAndRemove';
 import { Estado } from '../../../enums/Estado';
 import { TipoEnvio } from '../../../enums/TipoEnvio';
 import { FormaPago } from '../../../enums/FormaPago';
@@ -24,6 +25,7 @@ import PagoModal from './PagoModal';
 import { useAuth } from '../../../Context/authContext';
 import { Promocion } from '../../../interfaces/Promocion';
 import { getPromociones } from '../../../Api/PromocionAPI';
+import { PedidoVentaDetalle } from '../../../interfaces/PedidoVentaDetalle';
 
 interface CardArticulosProps {
     imagen: string,
@@ -45,7 +47,7 @@ const PedidoVentaForm = () => {
     const [viewFormBuy, setViewFormBuy] = useState(false)
     const [promociones, setpromociones] = useState<Promocion[]>([])
 
-    const { empleado: user } = useAuth()
+    const { empleado: empleadoLogin, user } = useAuth()
 
     const [listCard, setListCard] = useState<CardArticulosProps[]>([])
 
@@ -84,8 +86,8 @@ const PedidoVentaForm = () => {
                 estado: Estado.PENDIENTE.toUpperCase(),
                 tipoEnvio: TipoEnvio.TAKEAWAY.toUpperCase(),
                 formaPago: FormaPago.EFECTIVO.toUpperCase(),
-                empleado: empleado || null,
-                sucursal: null,
+                empleado: empleado || empleadoLogin || null,
+                sucursal: user?.sucursalEmpresa || null,
                 cliente: null,
                 factura: null,
                 pedidoVentaDetalle: null,
@@ -102,14 +104,14 @@ const PedidoVentaForm = () => {
             const { data } = await getByIdEmpleado(idEmpleado)
             setEmpleado(data)
         } else {
-            setEmpleado(user)
+            setEmpleado(empleadoLogin)
         }
     }
 
     const listadoPromociones = async () => {
         const { data } = await getPromociones()
         setpromociones(data)
-        console.log("promociones por fechas",data)
+        console.log("promociones por fechas", data)
     }
 
     const validacion = () => {
@@ -146,8 +148,28 @@ const PedidoVentaForm = () => {
     }
 
     const agregarArticulo = (insumo: ArticuloInsumo | null, manufacturado: ArticuloManufacturado | null) => {
-        const newPedido = addItemToCart(insumo, manufacturado, null, 1, pedidoVenta)
+        const tienePromo = promociones.find(promo => promo.promocionDetalle?.some(detalle => {
+            if (detalle.articuloInsumo?.id && insumo?.id)
+                return detalle.articuloInsumo?.id === insumo?.id
+            else
+                return detalle.articuloManufacturado?.id === manufacturado?.id
+        }))
+        const newPedido = addItemToCart(insumo, manufacturado, tienePromo || null, 1, pedidoVenta)
+        console.log("newPedido", newPedido)
         setPedidoVenta(newPedido)
+    }
+
+    const handleDelete = (item: PedidoVentaDetalle) => {
+        if (item.articuloInsumo) {
+            const newPedido = removeItemFromCart(item.articuloInsumo.id as string, pedidoVenta)
+            if(newPedido)
+                setPedidoVenta(newPedido)
+        }
+        else {
+            const newPedido = removeItemFromCart(item.articuloManufacturado?.id as string, pedidoVenta)
+            if(newPedido)
+                setPedidoVenta(newPedido)
+        }
     }
 
     const handleSubmit = async () => {
@@ -181,24 +203,40 @@ const PedidoVentaForm = () => {
 
     return (
         <Grid container spacing={2} alignContent={"center"} justifyContent={"center"} >
-            <Grid size={12} display={"flex"} justifyContent={"center"} alignItems={"center"}>
-                <Typography variant='h4' >Nuevo Pedido</Typography>
+            <Grid size={12} justifyContent={"center"} alignItems={"center"}>
+                <Typography variant='h4' className='textWhte' sx={{ textAlign: "center" }} >Nuevo Pedido</Typography>
             </Grid>
             <Grid container size={8} spacing={2}>
-                {listCard && listCard.map((card, index) =>
-                    <Grid size={3} onClick={() => agregarArticulo(card.articuloInsumo || null, card.articuloManufacturado || null)}>
-                        <CardArticulos key={index} imagen={card.imagen} titulo={card.titulo} descripcion={card.descripcion} />
-                    </Grid>
+                {listCard && listCard.map((card, index) => {
+                    const tienePromo = promociones.find(promo => promo.promocionDetalle?.some(detalle => {
+                        if (detalle.articuloInsumo?.id && card.articuloInsumo?.id)
+                            return detalle.articuloInsumo?.id === card.articuloInsumo?.id
+                        else
+                            return detalle.articuloManufacturado?.id === card.articuloManufacturado?.id
+                    }))
+                    if (tienePromo) {
+                        return (
+                            <Grid size={3} onClick={() => agregarArticulo(card.articuloInsumo || null, card.articuloManufacturado || null)}>
+                                <CardArticulos key={index} imagen={card.imagen} titulo={card.titulo} descripcion={card.descripcion} promocion={tienePromo} />
+                            </Grid>
+                        )
+                    }
+                    return (
+                        <Grid size={3} onClick={() => agregarArticulo(card.articuloInsumo || null, card.articuloManufacturado || null)}>
+                            <CardArticulos key={index} imagen={card.imagen} titulo={card.titulo} descripcion={card.descripcion} promocion={null} />
+                        </Grid>
+                    )
+                }
                 )}
             </Grid>
             <Grid container size={4} spacing={2}>
                 <Grid size={12}>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} sx={{ marginBottom: 2, borderBottom: 1, borderColor: "#f5f5f5", backgroundColor: "#f5f5f5", borderRadius: 2, padding: 2 }}>
                         <Grid size={11}>
                             <Autocomplete
                                 fullWidth
                                 id="sucursal"
-                                value={pedidoVenta?.sucursal || null}
+                                value={pedidoVenta?.sucursal || user?.sucursalEmpresa || null}
                                 options={sucursales}
                                 onChange={(_, newValue) => {
                                     const sucursal = newValue as SucursalEmpresa || null
@@ -236,13 +274,30 @@ const PedidoVentaForm = () => {
                             <Typography variant='h5'>Hora finalizacion: {pedidoVenta && pedidoVenta.horaEstimadaFinalizacion ? format(pedidoVenta?.horaEstimadaFinalizacion, 'HH:mm') : format(new Date(), 'HH:mm')}</Typography>
                         </Grid>
                         <Grid size={23} sx={{ marginBottom: 2, borderBottom: 1 }}>
-                            {pedidoVenta && pedidoVenta.pedidoVentaDetalle && pedidoVenta.pedidoVentaDetalle.map((detalle, index) =>
-                                <Box key={index} display={"flex"} justifyContent={"space-between"}>
-                                    <Typography variant='h5'>Articulo: {detalle.articuloInsumo ? detalle.articuloInsumo.denominacion : detalle?.articuloManufacturado?.denominacion}</Typography>
-                                    <Typography variant='h5'>Cantidad: {detalle.cantidad}</Typography>
-                                    <Typography variant='h5'>Precio: ${detalle.articuloInsumo ? detalle.articuloInsumo.precioVenta.toFixed(2) : detalle?.articuloManufacturado?.precioVenta.toFixed(2)}</Typography>
+                            {pedidoVenta && pedidoVenta.pedidoVentaDetalle &&
+                                <Box display={"flex"} justifyContent={"space-between"}>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell><Typography variant="h6">Articulo</Typography></TableCell>
+                                                <TableCell><Typography variant="h6">Cantidad</Typography></TableCell>
+                                                <TableCell><Typography variant="h6">Precio</Typography></TableCell>
+                                                <TableCell />
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {pedidoVenta.pedidoVentaDetalle.map((detalle, index) =>
+                                                <TableRow key={index}>
+                                                    <TableCell><Typography variant="h6">{detalle.articuloInsumo ? detalle.articuloInsumo.denominacion : detalle?.articuloManufacturado?.denominacion}</Typography></TableCell>
+                                                    <TableCell><Typography variant="h6">{detalle.cantidad}</Typography></TableCell>
+                                                    <TableCell><Typography variant="h6">${detalle.articuloInsumo ? detalle.articuloInsumo.precioVenta.toFixed(2) : detalle?.articuloManufacturado?.precioVenta.toFixed(2)}</Typography></TableCell>
+                                                    <TableCell><IconButton color="error" onClick={() => handleDelete(detalle)}>
+                                                        <DeleteOutlineIcon /></IconButton></TableCell>
+                                                </TableRow>)}
+                                        </TableBody>
+                                    </Table>
                                 </Box>
-                            )}
+                            }
                         </Grid>
                         <Grid size={12} sx={{ marginBottom: 2 }} display={"flex"} justifyContent={"space-between"}>
                             <Typography variant='h5'>Subtotal: </Typography>

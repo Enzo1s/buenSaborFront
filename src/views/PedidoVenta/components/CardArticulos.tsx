@@ -3,20 +3,20 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import { Grid } from '@mui/material';
+import { Promocion } from '../../../interfaces/Promocion';
 
 interface CardArticulosProps {
     imagen: string,
     titulo: string,
-    descripcion: string
+    descripcion: string,
+    promocion: Promocion | null
 }
 
 const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
 
  const CardArticulos = (props: CardArticulosProps) => {
-    const { imagen, titulo, descripcion } = props;
-    console.log(imagen)
-    console.log(titulo)
-    console.log(descripcion)
+    const { imagen, titulo, descripcion, promocion } = props;
+
   return (
     <Card sx={{ maxWidth: 300 }}>
       <CardActionArea>
@@ -33,7 +33,12 @@ const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
           <Typography color='text.primary' gutterBottom variant="h5" component="div">
             {titulo}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.primary' }}>
+          {promocion && 
+            <Typography variant="body1" sx={{ color: 'white', fontWeight: 'bold' , backgroundColor: 'red'  }}>
+              {`${promocion.denominacion} - descuento: ${promocion.descuento}%`}
+            </Typography>
+          }
+          <Typography variant="body1" sx={{ color: 'text.primary' }}>
             {descripcion}
           </Typography>
         </CardContent>

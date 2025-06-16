@@ -27,7 +27,7 @@ const InsumoDetails = () => {
     }, [])
 
     return (
-        <Box sx={{ backgroundColor: "#f5f5f5", padding: 2, borderRadius: 2 }}>
+        <Box sx={{ padding: 2, borderRadius: 2 }} className="textWhte">
             <Grid container >
                 <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
                     <Typography variant='h3'>Detalles del Artículo</Typography>

@@ -43,7 +43,7 @@ const HomeView = () => {
 
 
     return (
-        <Grid display={"flex"} spacing={2} alignContent={"center"} justifyContent="center" sx={{ backgroundColor: "#f5f5f5", padding: 2, borderRadius: 2, flexWrap: 'wrap' }}>
+        <Grid display={"flex"} spacing={2} alignContent={"center"} justifyContent="center" sx={{ padding: 2, borderRadius: 2, flexWrap: 'wrap' }}>
             {listCard && listCard.map((itemCard: CardProps) => (
                 <Grid size={3} key={itemCard.itemCard.id} margin={2} >
                     <CardObject itemCard={itemCard.itemCard} />
