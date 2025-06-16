@@ -21,6 +21,9 @@ import MercadoPago from '../../../components/MercadoPago';
 import { getSucursales } from '../../../Api/SucursalAPI';
 import { SucursalEmpresa } from '../../../interfaces/SucursalEmpresa';
 import PagoModal from './PagoModal';
+import { useAuth } from '../../../Context/authContext';
+import { Promocion } from '../../../interfaces/Promocion';
+import { getPromociones } from '../../../Api/PromocionAPI';
 
 interface CardArticulosProps {
     imagen: string,
@@ -40,7 +43,9 @@ const PedidoVentaForm = () => {
     const [idPreference, setIdPreference] = useState(null)
     const [sucursales, setSucursales] = useState<SucursalEmpresa[]>([])
     const [viewFormBuy, setViewFormBuy] = useState(false)
+    const [promociones, setpromociones] = useState<Promocion[]>([])
 
+    const { empleado: user } = useAuth()
 
     const [listCard, setListCard] = useState<CardArticulosProps[]>([])
 
@@ -96,7 +101,15 @@ const PedidoVentaForm = () => {
         if (idEmpleado) {
             const { data } = await getByIdEmpleado(idEmpleado)
             setEmpleado(data)
+        } else {
+            setEmpleado(user)
         }
+    }
+
+    const listadoPromociones = async () => {
+        const { data } = await getPromociones()
+        setpromociones(data)
+        console.log("promociones por fechas",data)
     }
 
     const validacion = () => {
@@ -159,6 +172,7 @@ const PedidoVentaForm = () => {
 
     useEffect(() => {
         getPedidoVenta()
+        listadoPromociones()
         getManufacturados()
         listadoSucursales()
         getEmpleado()

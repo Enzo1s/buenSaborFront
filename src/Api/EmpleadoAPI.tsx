@@ -9,6 +9,11 @@ export const getByIdEmpleado = async (id: string) => {
     return axios.get(`http://localhost:8080/api/empleado/${id}`)
 }
 
+export const getByUsuarioId = async (id: String) => {
+    return axios.get(`http://localhost:8080/api/empleado/usuario?id=${id}`)
+}
+
+
 export const createEmpleado = async (empleado: Empleado) => {
     return axios.post(`http://localhost:8080/api/empleado/create`, empleado)
 }

@@ -77,6 +77,9 @@ const Header = () => {
             <Button variant="text" onClick={() => navigate('/pedido-venta')}>
               <Typography color='white'>Pedidos</Typography>
             </Button>
+            <Button variant="text" onClick={() => navigate('/promocion')}>
+              <Typography color='white'>Promoción</Typography>
+            </Button>
           </>
         )}
         

@@ -28,6 +28,10 @@ import EmpleadoTable from "../views/Empleado/components/EmpleadoTable"
 import EmpleadoForm from "../views/Empleado/components/EmpleadoForm"
 import EmpleadoDetails from "../views/Empleado/components/EmpleadoDetails"
 import PedidoVentaForm from "../views/PedidoVenta/components/PedidoVentaForm"
+import PromocionView from "../views/Promocion/PromocionView"
+import PromocionForm from "../views/Promocion/components/PromocionForm"
+import PromocionTable from "../views/Promocion/components/PromocionTable"
+import PromocionDetails from "../views/Promocion/components/PromocionDetails"
 
 const Router = () => {
   return (
@@ -61,8 +65,9 @@ const Router = () => {
 
         <Route path="/pedido-venta" element={<PedidoVentaView />}>
           <Route path="" element={<PedidoVentaTable idEmpleado={null} />} />
+          <Route path="crear" element={<PedidoVentaForm />} />
           <Route path="crear/:idEmpleado" element={<PedidoVentaForm />} />
-"
+          <Route path="editar/:id" element={<PedidoVentaForm />} />
         </Route>
 
         <Route path="/sucursal-insumo" element={<SucursalInsumoView />} >
@@ -77,6 +82,13 @@ const Router = () => {
             <Route path="editar/:id" element={<InsumoForm />} />
           </Route>
           <Route path="ver/:id" element={<InsumoDetails />} />
+        </Route>
+
+        <Route path="/promocion" element={<PromocionView />} >
+          <Route path="" element={<PromocionTable />} />
+          <Route path="crear" element={<PromocionForm />} />
+          <Route path="editar/:id" element={<PromocionForm />} />
+          <Route path="ver/:id" element={<PromocionDetails />} />
         </Route>
 
       </Route>

@@ -4,12 +4,15 @@ import { getByToken } from '../Api/UsuarioAPI';
 import { Login } from '../interfaces/Login';
 import { iniciarSesion, registrarUsuario } from '../Api/AuthAPI';
 import { useNavigate } from 'react-router';
+import { Empleado } from '../interfaces/Empleado';
+import { getByUsuarioId } from '../Api/EmpleadoAPI';
 
 
 interface AuthContextType {
   user: Usuario | null;
   isAuthenticated: boolean;
   loading: boolean;
+  empleado: Empleado | null;
   login: (userData: Login) => Promise<void>;
   logout: () => void;
   register: (userData: Usuario) => Promise<void>;
@@ -23,6 +26,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<Usuario | null>(null);
+  const [empleado, setEmpleado] = useState<Empleado | null>(null)
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
@@ -33,11 +37,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(usuario.data);
         setIsAuthenticated(true);
   }
+
+  const getEmpleado = async () => {
+    if(user && user.id) {
+      const empleado = await getByUsuarioId(user?.id);
+      setEmpleado(empleado.data);
+    }
+  }
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         getUser(token);
+        getEmpleado();
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Error parsing user from localStorage:", error);
@@ -87,6 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     isAuthenticated,
     loading,
+    empleado,
     login,
     logout,
     register,
