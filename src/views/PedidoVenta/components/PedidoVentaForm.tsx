@@ -15,7 +15,7 @@ import { TipoEnvio } from '../../../enums/TipoEnvio';
 import { FormaPago } from '../../../enums/FormaPago';
 import { getAllArticuloManufacturado } from '../../../Api/ArticuloManufacturadoAPI';
 import { getListArticuloInsumo } from '../../../Api/ArticuloInsumo';
-import { format } from 'date-fns';
+import { format, isWithinInterval } from 'date-fns';
 import Modal from '../../../components/Modal';
 import { createPreference } from '../../../Api/DatosMPAPI';
 import MercadoPago from '../../../components/MercadoPago';
@@ -45,7 +45,7 @@ const PedidoVentaForm = () => {
     const [idPreference, setIdPreference] = useState(null)
     const [sucursales, setSucursales] = useState<SucursalEmpresa[]>([])
     const [viewFormBuy, setViewFormBuy] = useState(false)
-    const [promociones, setpromociones] = useState<Promocion[]>([])
+    const [promociones, setPromociones] = useState<Promocion[]>([])
 
     const { empleado: empleadoLogin, user } = useAuth()
 
@@ -110,8 +110,8 @@ const PedidoVentaForm = () => {
 
     const listadoPromociones = async () => {
         const { data } = await getPromociones()
-        setpromociones(data)
-        console.log("promociones por fechas", data)
+        const promocionesActivas = data.filter((promocion: Promocion) => isWithinInterval(new Date(), { start: promocion.fechaDesde, end: promocion.fechaHasta }))
+        setPromociones(promocionesActivas)
     }
 
     const validacion = () => {
@@ -155,7 +155,6 @@ const PedidoVentaForm = () => {
                 return detalle.articuloManufacturado?.id === manufacturado?.id
         }))
         const newPedido = addItemToCart(insumo, manufacturado, tienePromo || null, 1, pedidoVenta)
-        console.log("newPedido", newPedido)
         setPedidoVenta(newPedido)
     }
 

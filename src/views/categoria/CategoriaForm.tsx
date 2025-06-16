@@ -34,10 +34,12 @@ const CategoriaForm = (props: CategoriaFormProps) => {
             const nuevaCategoria: CategoriaArticulo = {
               id: null,
               denominacion: values.denominacion,
-              categoria: values.categoria
+              categoria: values.categoria,
+              alta: null,
+              baja: null,
+              modificacion: null
             }
             const { data } = await crearCategoria(nuevaCategoria);
-            console.log(data)
             setCategoria(data as CategoriaArticulo)
             setSubmitting(false);
           }}

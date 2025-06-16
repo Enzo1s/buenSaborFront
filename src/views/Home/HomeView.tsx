@@ -26,7 +26,6 @@ const HomeView = () => {
             }))
             const { data } = await getListArticuloInsumo()
             const insumos = data.filter((insumo: ArticuloInsumo) => insumo.esParaElaborar === false)
-            console.log("insumos", insumos)
             const insumosCardProps: CardProps[] = insumos.map((articulo: ArticuloInsumo) => ({
                 itemCard: {
                     id: articulo.id,

@@ -25,10 +25,12 @@ const CategoriaManufacturadoForm = (props: CategoriaFormProps) => {
           onSubmit={async (values, { setSubmitting }) => {
             const nuevaCategoria: CategoriaArticuloManufacturado = {
               id: null,
-              denominacion: values.denominacion
+              denominacion: values.denominacion,
+              alta: null,
+              baja: null,
+              modificacion: null
             }
             const { data } = await createCategoriaManufacturado(nuevaCategoria);
-            console.log(data)
             setCategoria(data as CategoriaArticuloManufacturado)
             setSubmitting(false);
           }}

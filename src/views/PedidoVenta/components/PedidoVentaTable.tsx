@@ -10,14 +10,20 @@ import {
   Paper,
   Box,
   CircularProgress,
+  Grid,
+  Autocomplete,
+  TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from 'react'
 import { PedidoVenta } from '../../../interfaces/PedidoVenta'
 import { useNavigate } from 'react-router';
-import { gePedidoVenta, getPedidoVentaByEmpleadoId } from '../../../Api/PedidoVentaApi';
+import { gePedidoVenta, getPedidoVentaByEmpleadoId, updateStatusPedidoVenta } from '../../../Api/PedidoVentaApi';
 import { format } from 'date-fns';
+import Modal from '../../../components/Modal';
+import { Estado } from '../../../enums/Estado';
 
 interface PedidoVentaTableProps {
   idEmpleado: string | null;
@@ -29,6 +35,8 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
 
   const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([])
   const [loading, setLoading] = useState(false)
+  const [viewFormStatus, setViewFormStatus] = useState(false)
+  const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null)
 
   const navigate = useNavigate()
 
@@ -134,6 +142,15 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     >
                       Ver
                     </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<EditIcon />}
+                      onClick={() => {setViewFormStatus(true); setPedidoVenta(pedido)}}
+                      disabled={!pedido.id}
+                    >
+                      Estado
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -156,6 +173,41 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
           </Button>
         </Paper>
       )}
+
+      {pedidoVenta && <Modal open={viewFormStatus} onClose={() => setViewFormStatus(false)} title="Estado actual del pedido">
+        <Grid container spacing={2} sx={{ padding: 2 }}>
+          <Grid size={12} sx={{ marginBottom: 2 }}>
+            <Autocomplete
+              fullWidth
+              id="estado"
+              value={pedidoVenta?.estado as Estado || null}
+              options={Object.values(Estado)}
+              onChange={(_, newValue) => {
+                if (newValue) {
+                  const key = Object.keys(Estado).find(k => Estado[k as keyof typeof Estado] === newValue);
+                  const newPedido: PedidoVenta = { ...pedidoVenta, estado: key?.toString() as Estado }
+                  setPedidoVenta(newPedido)
+                }
+              }}
+              getOptionLabel={(option: Estado) => option.toString()}
+              renderInput={(params) => <TextField {...params} label="Estado" />}
+            />
+            <Button variant="contained" color="primary" onClick={async () => {
+              if (pedidoVenta && pedidoVenta.id) {
+                try {
+                  const { data } = await updateStatusPedidoVenta(pedidoVenta.id, pedidoVenta.estado)
+                  setViewFormStatus(false)
+                  setPedidoVenta(null)
+                  setPedidosVenta((pedidosVenta ?? []).map((pedido) => pedido.id === data.id ? data : pedido));
+                  alert("Estado del pedido actualizado con exito");
+                } catch (error) {
+                  alert("Error al actualizar el estado del pedido, falla en el servidor")
+                }
+              }
+            }}>Actualizar</Button>
+          </Grid>
+        </Grid>
+      </Modal>}
     </Box>
   );
 }

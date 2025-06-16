@@ -6,6 +6,7 @@ import { Promocion } from "../interfaces/Promocion";
 import { Estado } from "../enums/Estado";
 import { TipoEnvio } from "../enums/TipoEnvio";
 import { FormaPago } from "../enums/FormaPago";
+import { addMinutes } from "date-fns";
 
 interface CartContextType {
     pedidoVenta: PedidoVenta | null;
@@ -14,6 +15,33 @@ interface CartContextType {
     addItemToCart: (itemInsumo: ArticuloInsumo | null, itemManufacturado: ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => void;
     removeItemFromCart: (itemId: string) => void;
     clearCart: () => void;
+}
+
+const aplicaPromocion = (promocion: Promocion, insumo: ArticuloInsumo | null, manufacturado: ArticuloManufacturado | null) => {
+    const tienePromo = promocion.promocionDetalle?.some(detalle => {
+        if (detalle.articuloInsumo?.id && insumo?.id)
+            return detalle.articuloInsumo?.id === insumo?.id
+        else
+            return detalle.articuloManufacturado?.id === manufacturado?.id
+    })
+    return tienePromo ? promocion : null
+}
+
+const promoInsumo = (promocion: Promocion, insumo: ArticuloInsumo | null) => {
+    const tienePromo = promocion.promocionDetalle?.some(detalle => {
+        if (detalle.articuloInsumo?.id && insumo?.id)
+            return detalle.articuloInsumo?.id === insumo?.id
+    })
+    return tienePromo ? promocion : null
+}
+
+const promoManufacturado = (promocion: Promocion, manufacturado: ArticuloManufacturado | null) => {
+    const tienePromo = promocion.promocionDetalle?.some(detalle => {
+        if (detalle.articuloManufacturado?.id && manufacturado?.id)
+            return detalle.articuloManufacturado?.id === manufacturado?.id
+
+    })
+    return tienePromo ? promocion : null
 }
 
 const CartContextType = createContext<CartContextType | undefined>(undefined);
@@ -33,136 +61,182 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     
 
     const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufacturado: ArticuloManufacturado | null, promocion: Promocion | null, cantidad: number) => {
-        if (pedidoVenta) {
-            const existingItem = pedidoVenta?.pedidoVentaDetalle?.find((detalle) => {
-                if(itemManufacturado) {
-                    return detalle.articuloManufacturado?.id === itemManufacturado?.id
-                }
-                 else 
-                    return detalle.articuloInsumo?.id === itemInsumo?.id
-                });
-            if (existingItem) {
-                const newDetails = pedidoVenta?.pedidoVentaDetalle?.map((detalle) => {
-                    if ((itemManufacturado && detalle.articuloManufacturado?.id === itemManufacturado?.id) || (itemInsumo && detalle.articuloInsumo?.id === itemInsumo?.id)) {
-                        return {
-                            ...detalle,
-                            cantidad: detalle.cantidad + cantidad,
-                            subTotal: detalle.articuloInsumo ? (detalle.articuloInsumo.precioVenta as number) * (detalle.cantidad + cantidad) : (detalle.articuloManufacturado?.precioVenta as number) * (detalle.cantidad + cantidad)
-                        };
+        const promocionInsumo = promocion ? promoInsumo(promocion, itemInsumo) : null
+            const promocionManufacturado = promocion ? promoManufacturado(promocion, itemManufacturado) : null
+            if (pedidoVenta) {
+                const existingItem = pedidoVenta?.pedidoVentaDetalle?.find((detalle) => {
+                    if (itemManufacturado) {
+                        return detalle.articuloManufacturado?.id === itemManufacturado?.id
                     }
-                    return detalle;
+                    else
+                        return detalle.articuloInsumo?.id === itemInsumo?.id
                 });
-                if(itemInsumo) {
-                    const total = pedidoVenta.total + (itemInsumo?.precioVenta as number) * cantidad
-                    const totalCosto = pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad 
-                    setPedidoVenta({
-                        ...pedidoVenta,
-                        total,
-                    totalCosto,
-                        pedidoVentaDetalle: newDetails || []
+                if (existingItem) {
+                    const newDetails = pedidoVenta?.pedidoVentaDetalle?.map((detalle) => {
+                        if ((itemManufacturado && detalle.articuloManufacturado?.id === itemManufacturado?.id) || (itemInsumo && detalle.articuloInsumo?.id === itemInsumo?.id)) {
+                            const promoAplicada = promocion && aplicaPromocion(promocion, itemInsumo, itemManufacturado)
+                            return {
+                                ...detalle,
+                                promocion: promoAplicada ? [promoAplicada] : null,
+                                cantidad: detalle.cantidad + cantidad,
+                                subTotal: detalle.articuloInsumo ? (detalle.articuloInsumo.precioVenta as number) * (detalle.cantidad + cantidad) : (detalle.articuloManufacturado?.precioVenta as number) * (detalle.cantidad + cantidad)
+                            };
+                        }
+                        return detalle;
                     });
+                    if (itemInsumo) {
+                        const subTotal = pedidoVenta.subtotal + (itemInsumo?.precioVenta as number) * cantidad
+                        const total = promocionInsumo ? subTotal - pedidoVenta.descuento - ((itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100) : subTotal - pedidoVenta.descuento
+                        const totalCosto = pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad
+                        setPedidoVenta( {
+                            ...pedidoVenta,
+                            total,
+                            subtotal: subTotal,
+                            totalCosto,
+                            descuento: promocionInsumo ? pedidoVenta.descuento + ((itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100) : pedidoVenta.descuento + 0,
+                            pedidoVentaDetalle: newDetails || []
+                        });
+                    } else {
+                        const subTotal = pedidoVenta.subtotal + (itemManufacturado?.precioVenta as number) * cantidad
+                        const total = promocionManufacturado ? subTotal - pedidoVenta.descuento - ((itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100) : subTotal - pedidoVenta.descuento
+                        const totalCosto = pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad
+                        setPedidoVenta( {
+                            ...pedidoVenta,
+                            horaEstimadaFinalizacion: pedidoVenta.horaEstimadaFinalizacion && addMinutes(pedidoVenta.horaEstimadaFinalizacion, itemManufacturado?.tiempoEstimado as number),
+                            total,
+                            subtotal: subTotal,
+                            totalCosto,
+                            descuento: promocionManufacturado ? pedidoVenta.descuento + ((itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100) : pedidoVenta.descuento + 0,
+                            pedidoVentaDetalle: newDetails || []
+                        });
+                    }
                 } else {
-                    const total = pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad
-                    const totalCosto = pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad 
-                    setPedidoVenta({
-                        ...pedidoVenta,
-                        total,
-                    totalCosto,
-                        pedidoVentaDetalle: newDetails ||[]
-                    });
+                    if (itemInsumo) {
+                        const subTotal = pedidoVenta.subtotal + (itemInsumo?.precioVenta as number) * cantidad
+                        const total = promocionInsumo ? subTotal - pedidoVenta.descuento - ((itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100) : subTotal - pedidoVenta.descuento
+                        setPedidoVenta( {
+                            ...pedidoVenta,
+                            descuento: promocionInsumo ? pedidoVenta.descuento + ((itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100) : pedidoVenta.descuento + 0,
+                            total,
+                            subtotal: subTotal,
+                            totalCosto: pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad || pedidoVenta.totalCosto,
+                            pedidoVentaDetalle: [
+                                ...pedidoVenta?.pedidoVentaDetalle || [],
+                                {
+                                    id: null,
+                                    cantidad,
+                                    subTotal: (itemInsumo?.precioVenta as number) * cantidad || 0,
+                                    articuloManufacturado: null,
+                                    articuloInsumo: itemInsumo,
+                                    promocion: promocion && [promocion]
+                                }
+                            ]
+                        })
+                    } else {
+                        const subTotal = pedidoVenta.subtotal + (itemManufacturado?.precioVenta as number) * cantidad
+                        const total = promocionManufacturado ? subTotal - pedidoVenta.descuento - ((itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100) : subTotal - pedidoVenta.descuento
+                        setPedidoVenta( {
+                            ...pedidoVenta,
+                            horaEstimadaFinalizacion: pedidoVenta.horaEstimadaFinalizacion && addMinutes(pedidoVenta.horaEstimadaFinalizacion, itemManufacturado?.tiempoEstimado as number),
+                            total,
+                            descuento: promocionManufacturado ? pedidoVenta.descuento + ((itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100) : pedidoVenta.descuento + 0,
+                            subtotal: subTotal,
+                            totalCosto: pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad,
+                            pedidoVentaDetalle: [
+                                ...pedidoVenta.pedidoVentaDetalle || [],
+                                {
+                                    id: null,
+                                    cantidad,
+                                    subTotal: (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                                    articuloManufacturado: itemManufacturado,
+                                    articuloInsumo: itemInsumo,
+                                    promocion: promocion && [promocion]
+                                }
+                            ]
+                        });
+                    }
                 }
             } else {
-                if(itemInsumo) {
-                    setPedidoVenta({
-                        ...pedidoVenta,
-
-                        total: pedidoVenta.total + (itemInsumo?.precioVenta as number) * cantidad || pedidoVenta.total,
-                        totalCosto: pedidoVenta.totalCosto + (itemInsumo?.precioCompra as number) * cantidad || pedidoVenta.totalCosto,
-                        pedidoVentaDetalle: [
-                            ...pedidoVenta?.pedidoVentaDetalle || [],
-                            {
-                                id: null,
-                                cantidad,
-                                subTotal: (itemInsumo?.precioVenta as number) * cantidad || 0,
-                                articuloManufacturado: null,
-                                articuloInsumo: itemInsumo,
-                                promocion: promocion && [promocion]
-                            }
-                        ]
-                    })
-                } else {
-
-                    setPedidoVenta({
-                        ...pedidoVenta,
-                        total: pedidoVenta.total + (itemManufacturado?.precioVenta as number) * cantidad,
-                    totalCosto: pedidoVenta.totalCosto + (itemManufacturado?.precioCosto as number) * cantidad,
-                        pedidoVentaDetalle: [
-                            ...pedidoVenta.pedidoVentaDetalle || [],
-                            {
-                                id: null,
-                                cantidad,
-                                subTotal: (itemManufacturado?.precioVenta as number) * cantidad || 0,
-                                articuloManufacturado: itemManufacturado,
-                                articuloInsumo: itemInsumo,
-                                promocion: promocion && [promocion]
-                            }
-                        ]
-                    });
-                }
+                const totalInsumo = promocionInsumo && itemInsumo ? (itemInsumo?.precioVenta as number) * cantidad - (itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100 : itemInsumo ? (itemInsumo?.precioVenta as number) * cantidad : null
+                const totalManufacturado = promocionManufacturado && itemManufacturado ? (itemManufacturado?.precioVenta as number) * cantidad - (itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100 : itemManufacturado ? (itemManufacturado?.precioVenta as number) * cantidad : null
+                const total = totalInsumo || totalManufacturado
+                setPedidoVenta( {
+                    id: null,
+                    horaEstimadaFinalizacion: new Date(),
+                    subtotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                    descuento: promocionInsumo ? (itemInsumo?.precioVenta as number) * cantidad * (promocionInsumo.descuento as number) / 100 : promocionManufacturado ? (itemManufacturado?.precioVenta as number) * cantidad * (promocionManufacturado.descuento as number) / 100 : 0,
+                    gastosEnvio: 0,
+                    total: total || 0,
+                    totalCosto: (itemInsumo?.precioCompra as number) * cantidad || (itemManufacturado?.precioCosto as number) * cantidad || 0,
+                    estado: Estado.PENDIENTE.toUpperCase(),
+                    tipoEnvio: TipoEnvio.DELIVERY.toUpperCase(),
+                    formaPago: FormaPago.EFECTIVO.toUpperCase(),
+                    empleado: null,
+                    sucursal: null,
+                    cliente: null,
+                    factura: null,
+                    pedidoVentaDetalle: [
+                        {
+                            id: null,
+                            cantidad,
+                            subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
+                            articuloManufacturado: itemManufacturado,
+                            articuloInsumo: itemInsumo,
+                            promocion: promocion && [promocion]
+                        }
+                    ],
+                    fechaPedido: new Date(),
+                    alta: null,
+                    baja: null,
+                    modificacion: null
+                });
             }
-        } else {
-            setPedidoVenta({
-                id: null,
-                horaEstimadaFinalizacion: new Date(),
-                subtotal: 0,
-                descuento: 0,
-                gastosEnvio: 0,
-                total: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
-                totalCosto: (itemInsumo?.precioCompra as number) * cantidad || (itemManufacturado?.precioCosto as number) * cantidad || 0,
-                estado: Estado.PENDIENTE.toUpperCase(),
-                tipoEnvio: TipoEnvio.DELIVERY.toUpperCase(),
-                formaPago: FormaPago.EFECTIVO.toUpperCase(),
-                empleado: null,
-                sucursal: null,
-                cliente: null,
-                factura: null,
-                pedidoVentaDetalle: [
-                    {
-                        id: null,
-                        cantidad,
-                        subTotal: (itemInsumo?.precioVenta as number) * cantidad || (itemManufacturado?.precioVenta as number) * cantidad || 0,
-                        articuloManufacturado: itemManufacturado,
-                        articuloInsumo: itemInsumo,
-                        promocion: promocion && [promocion]
-                    }
-                ],
-                fechaPedido: new Date(),
-                alta: null,
-                baja: null,
-                modificacion: null
-            });
-        }
         localStorage.setItem("pedidoVenta", JSON.stringify(pedidoVenta));
     };
 
     const removeItemFromCart = (itemId: string) => {
         if (pedidoVenta) {
             const item = pedidoVenta.pedidoVentaDetalle?.find((detalle) => {
-                if(detalle.articuloManufacturado) {
-                    return detalle.articuloManufacturado.id === itemId
-                }
-                 else 
-                    return detalle.articuloInsumo?.id === itemId
-                });
-                const total = pedidoVenta.total - (item?.subTotal as number)
-                const totalCosto = pedidoVenta.totalCosto - (item?.subTotal as number)
-            setPedidoVenta({
-                ...pedidoVenta,
-                total,
-                totalCosto,
-                subtotal: total,
-                pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle?.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId) || null
-            });
+            if (detalle.articuloManufacturado) {
+                return detalle.articuloManufacturado.id === itemId
+            }
+            else
+                return detalle.articuloInsumo?.id === itemId
+        });
+        const promocion = item?.promocion?.find(promo => promo.promocionDetalle?.some(detalle => detalle.articuloInsumo?.id === itemId || detalle.articuloManufacturado?.id === itemId))
+        if (promocion) {
+            const horaEstimadaFinalizacion = pedidoVenta.horaEstimadaFinalizacion && item?.articuloManufacturado ?
+            addMinutes(pedidoVenta.horaEstimadaFinalizacion, item?.articuloManufacturado?.tiempoEstimado as number) : pedidoVenta.horaEstimadaFinalizacion;
+            const total = pedidoVenta.total - ((item?.subTotal as number) -(item?.subTotal as number) * (promocion.descuento as number) / 100)
+            const descuento = (item?.subTotal as number) * (promocion.descuento as number) / 100
+
+            const costoInsumo =  item?.articuloInsumo ? (item?.articuloInsumo?.precioCompra as number) * item?.cantidad : null
+            const costoManufacturado = item?.articuloManufacturado ? (item.articuloManufacturado.precioCosto as number) * item?.cantidad : null
+            const totalCosto = costoInsumo || costoManufacturado || 0
+            return {
+            ...pedidoVenta,
+            total,
+            totalCosto,
+            descuento: pedidoVenta.descuento - descuento,
+            subtotal: total,
+            horaEstimadaFinalizacion,
+            pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle?.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId) || null
+        };
+        }
+        
+        const total = pedidoVenta.total - (item?.subTotal as number)
+        const totalCosto = pedidoVenta.totalCosto - (item?.articuloInsumo ? (item.articuloInsumo.precioCompra as number)* item.cantidad : (item?.articuloManufacturado?.precioCosto as number)* (item?.cantidad as number))
+        const subtotal = pedidoVenta.subtotal - (item?.subTotal as number)
+        const horaEstimadaFinalizacion = pedidoVenta.horaEstimadaFinalizacion && item?.articuloManufacturado ?
+            addMinutes(pedidoVenta.horaEstimadaFinalizacion, item?.articuloManufacturado?.tiempoEstimado as number) : pedidoVenta.horaEstimadaFinalizacion;
+        setPedidoVenta( {
+            ...pedidoVenta,
+            total,
+            totalCosto,
+            subtotal,
+            horaEstimadaFinalizacion,
+            pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle?.filter((detalle) => detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId) || null
+        });
             localStorage.setItem("pedidoVenta", JSON.stringify(pedidoVenta));
         }
     };

@@ -1,7 +1,7 @@
 body {
     margin: 0%;
     padding: 0%;
-    background-image: url('/assets/burger.jpg');
+    background-image: url('../src/assets/burger.jpg');
     background-size: cover; /* Cubre todo el espacio */
     background-position: center; /* Centra la imagen */
     background-repeat: no-repeat; /* Evita que se repita */

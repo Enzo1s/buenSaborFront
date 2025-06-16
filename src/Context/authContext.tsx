@@ -90,7 +90,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(data);
       setIsAuthenticated(true);
       localStorage.setItem('token', JSON.stringify(token));
-      console.log(data.rol);
       navigate('/')
     } catch (error) {
       alert('Error al iniciar sesión. Por favor, verifica tus credenciales.');
