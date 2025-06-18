@@ -71,9 +71,6 @@ const LoginView = () => {
                 <Button variant='text' onClick={() => navigate('/register')}>Crear Cuenta</Button>
             </Grid>
             </Grid>
-            {/* <Grid size={12} justifyContent={"center"} display={"flex"}>
-                <Typography variant='body1'>Recuperar contraseña</Typography>
-            </Grid> */}
 
         </Grid>
     )

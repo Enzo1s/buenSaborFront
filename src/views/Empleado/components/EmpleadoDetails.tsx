@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Empleado } from '../../../interfaces/Empleado'
-import { useParams } from 'react-router';
-import { getByIdEmpleado } from '../../../Api/EmpleadoAPI';
 import { Box, Grid, Paper, Typography } from '@mui/material';
+import { useParams } from 'react-router';
+import { Empleado } from '../../../interfaces/Empleado'
+import { getByIdEmpleado } from '../../../Api/EmpleadoAPI';
 import PedidoVentaTable from '../../PedidoVenta/components/PedidoVentaTable';
 
 const EmpleadoDetails = () => {

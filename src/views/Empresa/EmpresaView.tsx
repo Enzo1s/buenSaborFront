@@ -5,7 +5,7 @@ const EmpresaView = () => {
 
     return (
         <Grid>
-            <Typography variant='h5'>Empresa</Typography>
+            <Typography variant='h5' className="textWhte">Empresa</Typography>
             
             <Outlet />
         </Grid>

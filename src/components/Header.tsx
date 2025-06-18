@@ -21,7 +21,7 @@ const Header = () => {
 
   //TODO: Agregar hook para mostrar el rol
 
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, logout, cliente } = useAuth()
   const { pedidoVenta, removeItemFromCart } = useCartContext()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,10 +33,12 @@ const Header = () => {
     try {
 
       if (pedidoVenta) {
-        const { data } = await createPedidoVenta(pedidoVenta)
-        const response = await createPreference(data.id)
-        setIdPreference(response.data.idPreference)
-        setViewForm(true)
+        if(user) {
+          const { data } = await createPedidoVenta({...pedidoVenta, sucursal: user?.sucursalEmpresa, cliente: cliente})
+          const response = await createPreference(data.id)
+          setIdPreference(response.data.idPreference)
+          setViewForm(true)
+        }
       }
     } catch (error) {
       console.error(error)
@@ -53,7 +55,7 @@ const Header = () => {
   }
 
   return (
-    <Grid container sx={{ bgcolor: 'primary.main', margin: 0, padding: 0 }}>
+    <Grid container sx={{ bgcolor:'rgba(50, 50, 50, 0.9)', margin: 0, padding: 0 }}>
       <Grid size={9} sx={{ padding: '5px' }} >
         <Typography variant='h2' color='white'>Buen Sabor</Typography>
       </Grid>
@@ -63,7 +65,7 @@ const Header = () => {
         <Button variant="text" onClick={() => isAuthenticated ? logout() : navigate('/login')}><Typography variant='h6' color='white'>{isAuthenticated ? 'Cerrar Sesión' : 'Iniciar Sesión'}</Typography>
         </Button>
       </Grid>
-      <Grid size={6} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
+      <Grid size={9} sx={{ bgcolor: 'rgba(50, 50, 50, 0.9)', padding: '20px' }}>
         <Button variant="text" onClick={() => navigate('/')}><Typography color='white'>Inicio</Typography></Button>
         {isAuthenticated && (user?.rol.toString() === "EMPLEADO" || user?.rol.toString() === "ADMIN") && 
         (
@@ -79,6 +81,12 @@ const Header = () => {
             </Button>
             <Button variant="text" onClick={() => navigate('/promocion')}>
               <Typography color='white'>Promoción</Typography>
+            </Button>
+            <Button variant="text" onClick={() => navigate('/cliente')}>
+              <Typography color='white'>Clientes</Typography>
+            </Button>
+            <Button variant="text" onClick={() => navigate('/reporte')}>
+              <Typography color='white'>Reporte</Typography>
             </Button>
           </>
         )}
@@ -100,9 +108,8 @@ const Header = () => {
       
       </Grid>
       
-      <Grid size={3} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
-      </Grid>
-      <Grid size={3} sx={{ bgcolor: 'primary.main', padding: '20px' }}>
+      
+      <Grid size={3} sx={{ bgcolor: 'rgba(50, 50, 50, 0.9)', padding: '20px' }}>
       </Grid>
 
       <Popper
@@ -185,7 +192,7 @@ const Header = () => {
       </Popper>
       <Modal open={viewForm} onClose={() => setViewForm(false)} title="Método de pago">
                 {idPreference && pedidoVenta && <Grid sx={{ marginTop: '10px' }} size={12}>
-            <MercadoPago idPreference={idPreference} monto={pedidoVenta?.total || 10} pedidoVenta={pedidoVenta}/>
+            <MercadoPago idPreference={idPreference} monto={pedidoVenta?.total || 10} pedidoVenta={pedidoVenta} setViewForm={setViewForm}/>
           </Grid>
 }
             </Modal>

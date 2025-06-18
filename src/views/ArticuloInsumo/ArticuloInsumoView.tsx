@@ -5,7 +5,7 @@ const ArticuloInsumoView = () => {
   
   return (
     <div>
-      <Typography variant="h3" className="textWhte">Articulo Insumo</Typography>
+      <Typography variant="h5" className="textWhte">Articulo Insumo</Typography>
       
       <Outlet />
     </div>

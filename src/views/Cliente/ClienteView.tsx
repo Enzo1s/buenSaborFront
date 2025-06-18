@@ -1,13 +1,13 @@
 import { Typography } from '@mui/material'
 import { Outlet } from 'react-router'
 
-const EmpleadoView = () => {
+const ClienteView = () => {
   return (
     <div>
-        <Typography variant='h5' className='textWhte'>Empleado</Typography>
+        <Typography variant='h5' className="textWhte">Cliente</Typography>
         <Outlet />
     </div>
   )
 }
 
-export default EmpleadoView
+export default ClienteView

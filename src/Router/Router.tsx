@@ -33,6 +33,11 @@ import PromocionForm from "../views/Promocion/components/PromocionForm"
 import PromocionTable from "../views/Promocion/components/PromocionTable"
 import PromocionDetails from "../views/Promocion/components/PromocionDetails"
 import MercadoPagoResponse from "../views/PedidoVenta/MercadoPagoResponse"
+import ClienteView from "../views/Cliente/ClienteView"
+import ClienteTable from "../views/Cliente/components/ClienteTable"
+import ClienteForm from "../views/Cliente/components/ClienteForm"
+import ClienteDetails from "../views/Cliente/components/ClienteDetails"
+import ReporteView from "../views/Reporte/ReporteView"
 
 const Router = () => {
   return (
@@ -55,6 +60,7 @@ const Router = () => {
           <Route path="editar/:id" element={<SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>}/>
           <Route path="ver/:id" element={<SucursalDetails />} />
         </Route>
+        <Route path="/reporte" element={<ReporteView />} />
 
         <Route path="/empleado" element={<EmpleadoView />}>
           <Route path="" element={<EmpleadoTable />} />
@@ -92,6 +98,13 @@ const Router = () => {
           <Route path="crear" element={<PromocionForm />} />
           <Route path="editar/:id" element={<PromocionForm />} />
           <Route path="ver/:id" element={<PromocionDetails />} />
+        </Route>
+
+        <Route path="/cliente" element={<ClienteView />}>
+        <Route path="" element={<ClienteTable />} />
+          <Route path="crear" element={<ClienteForm />} />
+          <Route path="editar/:id" element={<ClienteForm />} />
+          <Route path="ver/:id" element={<ClienteDetails />} />
         </Route>
       </Route>
 

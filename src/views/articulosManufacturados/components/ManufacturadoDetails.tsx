@@ -1,5 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Key, useEffect, useState } from 'react'
+import {
+    Box,
+    Grid,
+    Typography,
+    Button,
+    Paper, // Usaremos Paper para un efecto de tarjeta
+    Divider, // Para separar secciones
+    List, // Para listar los detalles de insumos
+    ListItem,
+    ListItemText,
+} from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useParams } from 'react-router'
 import { getArticuloManufacturadoById } from '../../../Api/ArticuloManufacturadoAPI'
@@ -13,6 +23,8 @@ const ManufacturadoDetails = () => {
     const { addItemToCart } = useCartContext()
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloManufacturado | null>(null)
+    const [mainImage, setMainImage] = useState<string | null>(null)
+    const [galleryImages, setGalleryImages] = useState<string[]>([])
 
     useEffect(() => {
         const getArticuloManufacturado = async () => {
@@ -20,6 +32,10 @@ const ManufacturadoDetails = () => {
                 if (id !== undefined) {
                     const { data } = await getArticuloManufacturadoById(id);
                     setArticulo(data);
+                    const image = data.pathImagen && data.pathImagen.length > 0 ? `${baseURL}${data.pathImagen[0]}` : null;
+                    setMainImage(image)
+                    const images = data.pathImagen ? data.pathImagen.slice(1) : [];
+                    setGalleryImages(images);
                 }
             } catch (error) {
                 console.error(error);
@@ -29,37 +45,210 @@ const ManufacturadoDetails = () => {
     }, [])
 
     return (
-        <Box sx={{ backgroundColor: "#f5f5f5", padding: 2, borderRadius: 2 }}>
-            <Grid container >
-                <Grid size={12} sx={{ margin: 'auto', padding: 2 }}>
-                    <Typography variant='h3'>Detalles del Artículo</Typography>
-                </Grid>
-                <Grid size={{ xs: 4 }}>
-                    {articulo?.pathImagen && articulo.pathImagen.length > 0 && articulo.pathImagen.map((imagen, index) => (
-                        <img src={`${baseURL}${imagen}`} alt={`Imagen ${index + 1}`} key={index} style={{ height: '300px' }} />
-                    ))}
-                </Grid>
-                <Grid size={{ xs: 6 }} sx={{ padding: 2 }}>
-                    <Typography variant='h6'><strong>Denominación:</strong> {articulo?.denominacion}</Typography>
-                    <Typography variant='h6'><strong>Descripción:</strong> {articulo?.descripcion}</Typography>
-                    <Typography variant='h6'><strong>Precio de Venta:</strong> ${articulo?.precioVenta?.toFixed(2)}</Typography>
-                    <Typography variant='h6'><strong>Precio de Costo:</strong> ${articulo?.precioCosto?.toFixed(2)}</Typography>
-                    <Typography variant='h6'><strong>Tiempo de Estimación:</strong> {articulo?.tiempoEstimado?.toString()}</Typography>
-                    <Typography variant='h6'><strong>Categoría:</strong> {articulo?.categoriaArticuloManufacturado?.denominacion}</Typography>
-                    {articulo?.articuloManufacturadoDetalle && articulo?.articuloManufacturadoDetalle.map((detalle, index) => (
-                        <Box key={index} >
-                            <Typography variant='h5' >Detalle</Typography>
-                            <Typography><strong>Articulo Insumo:</strong> {detalle.articuloInsumo?.denominacion}</Typography>
-                            <Typography><strong>Cantidad:</strong> {detalle.cantidad.toString()}</Typography>
+        <Box
+            sx={{
+                padding: { xs: 2, md: 4 },
+                color: '#e0e0e0', // Texto claro por defecto para toda la sección
+                minHeight: '80vh', // Asegura un mínimo de altura
+            }}
+        >
+            <Paper
+                elevation={8}
+                sx={{
+                    p: { xs: 3, md: 5 },
+                    borderRadius: '16px',
+                    backgroundColor: 'rgba(35, 35, 35, 0.98)',
+                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)',
+                    border: '1px solid rgba(70, 70, 70, 0.6)',
+                }}
+            >
+                <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
+                    {/* Título Principal de la Vista */}
+                    <Grid size={12}>
+                        <Typography
+                            variant='h3'
+                            component='h1'
+                            gutterBottom
+                            sx={{
+                                color: '#90CAF9',
+                                fontWeight: 'bold',
+                                textAlign: { xs: 'center', md: 'left' },
+                                mb: { xs: 3, md: 4 }
+                            }}
+                        >
+                            Detalles del Artículo Manufacturado
+                        </Typography>
+                        <Divider sx={{ borderColor: 'rgba(100, 100, 100, 0.5)', mb: { xs: 3, md: 4 } }} />
+                    </Grid>
+
+                    {/* Sección de Imagen Principal */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        {mainImage ? (
+                            <Paper
+                                elevation={6}
+                                sx={{
+                                    borderRadius: '12px',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: 'rgba(60, 60, 60, 0.9)',
+                                    minHeight: { xs: 250, sm: 350, md: 450 },
+                                    maxHeight: 500,
+                                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
+                                }}
+                            >
+                                <img
+                                    src={mainImage}
+                                    alt={articulo?.denominacion}
+                                    style={{
+                                        maxWidth: '100%',
+                                        maxHeight: '100%',
+                                        objectFit: 'contain',
+                                        display: 'block',
+                                    }}
+                                />
+                            </Paper>
+                        ) : (
+                            <Paper
+                                elevation={3}
+                                sx={{
+                                    borderRadius: '12px',
+                                    p: 3,
+                                    backgroundColor: 'rgba(60, 60, 60, 0.8)',
+                                    textAlign: 'center',
+                                    minHeight: { xs: 250, sm: 350, md: 450 },
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Typography variant="body1" sx={{ color: '#a0a0a0' }}>
+                                    No hay imagen disponible para este artículo.
+                                </Typography>
+                            </Paper>
+                        )}
+
+                        {/* Galería de Imágenes Adicionales (opcional) */}
+                        {galleryImages.length > 0 && (
+                            <Box sx={{ mt: 3, display: 'flex', gap: 2, overflowX: 'auto', pb: 1 }}>
+                                {galleryImages.map((imagen, index) => (
+                                    <Paper
+                                        key={index}
+                                        elevation={3}
+                                        sx={{
+                                            borderRadius: '8px',
+                                            overflow: 'hidden',
+                                            minWidth: 100,
+                                            height: 100,
+                                            backgroundColor: 'rgba(70, 70, 70, 0.9)',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            cursor: 'pointer',
+                                            '&:hover': {
+                                                boxShadow: '0 0 0 2px #90CAF9',
+                                            },
+                                        }}
+                                    >
+                                        <img
+                                            src={`${baseURL}${imagen}`}
+                                            alt={`Galería ${index + 1}`}
+                                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                                        />
+                                    </Paper>
+                                ))}
+                            </Box>
+                        )}
+                    </Grid>
+
+                    {/* Sección de Detalles del Artículo */}
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <Box sx={{ p: { xs: 0, sm: 2 } }}>
+                            <Typography variant='h4' component='h2' gutterBottom sx={{ color: '#fff', fontWeight: 'bold', mb: 2 }}>
+                                {articulo?.denominacion}
+                            </Typography>
+                            <Divider sx={{ borderColor: 'rgba(100, 100, 100, 0.3)', mb: 3 }} />
+
+                            <Grid container spacing={2}>
+                                <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Descripción:</Typography> {articulo?.descripcion}
+                                    </Typography>
+                                </Grid>
+                                <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Precio de Venta:</Typography> ${articulo?.precioVenta.toFixed(2)}
+                                    </Typography>
+                                </Grid>
+                                <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Precio de Costo:</Typography> ${articulo?.precioCosto.toFixed(2)}
+                                    </Typography>
+                                </Grid>
+                                <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Tiempo de Elaboración:</Typography> {articulo?.tiempoEstimado.toFixed(2)} minutos
+                                    </Typography>
+                                </Grid>
+                                <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Categoría:</Typography> {articulo?.categoriaArticuloManufacturado?.denominacion || 'N/A'}
+                                    </Typography>
+                                </Grid>
+
+                                {articulo?.articuloManufacturadoDetalle && articulo?.articuloManufacturadoDetalle.length > 0 && (
+                                    <Grid size={12}>
+                                        <Typography variant='h6' sx={{ mt: 3, mb: 1, color: '#fff', fontWeight: 'bold' }}>Insumos Necesarios:</Typography>
+                                        <List sx={{ bgcolor: 'rgba(50, 50, 50, 0.8)', borderRadius: '8px', border: '1px solid rgba(80, 80, 80, 0.7)' }}>
+                                            {articulo?.articuloManufacturadoDetalle.map((detalle, index) => (
+                                                <ListItem key={detalle.id as Key || index} sx={{ borderBottom: index < articulo?.articuloManufacturadoDetalle.length - 1 ? '1px dashed rgba(100, 100, 100, 0.4)' : 'none' }}>
+                                                    <ListItemText
+                                                        primary={
+                                                            <Typography sx={{ color: '#e0e0e0', fontWeight: 'bold' }}>
+                                                                {detalle.articuloInsumo?.denominacion || 'Insumo Desconocido'}
+                                                            </Typography>
+                                                        }
+                                                        secondary={
+                                                            <Typography sx={{ color: '#a0a0a0' }}>
+                                                                Cantidad: {detalle.cantidad.toString()} {detalle.articuloInsumo?.unidadMedida || ''}
+                                                            </Typography>
+                                                        }
+                                                    />
+                                                </ListItem>
+                                            ))}
+                                        </List>
+                                    </Grid>
+                                )}
+                            </Grid>
+
+                            {/* Botón de Agregar al Carrito */}
+                            <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<AddShoppingCartIcon />}
+                                    sx={{
+                                        width: { xs: '100%', sm: 'auto' },
+                                        px: 6,
+                                        py: 1.8,
+                                        fontSize: '1.1rem',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
+                                        '&:hover': {
+                                            backgroundColor: '#64B5F6',
+                                            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
+                                        },
+                                    }}
+                                    onClick={() => articulo && addItemToCart(null, articulo, null, 1)}
+                                >
+                                    Agregar al Carrito
+                                </Button>
+                            </Grid>
                         </Box>
-                    ))}
-                    <Grid size={{ xs: 4 }} sx={{ paddingTop: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <Button variant="contained" color="primary" startIcon={<AddShoppingCartIcon />} sx={{ width: '100%' }} onClick={() => articulo && addItemToCart(null, articulo, null, 1)}>
-                            <Typography variant='body2'>Agregar al Carrito</Typography>
-                        </Button>
                     </Grid>
                 </Grid>
-            </Grid>
+            </Paper>
         </Box>
     )
 }

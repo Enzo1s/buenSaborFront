@@ -322,7 +322,7 @@ const PedidoVentaForm = () => {
             </Modal>
             <Modal open={viewForm} onClose={() => setViewForm(false)} title="Método de pago">
                 {idPreference && pedidoVenta && <Grid sx={{ marginTop: '10px' }} size={12}>
-                    <MercadoPago idPreference={idPreference} monto={pedidoVenta?.total || 10} pedidoVenta={pedidoVenta} />
+                    <MercadoPago idPreference={idPreference} monto={pedidoVenta?.total || 10} pedidoVenta={pedidoVenta} setViewForm={setViewForm} />
                 </Grid>
                 }
             </Modal>
