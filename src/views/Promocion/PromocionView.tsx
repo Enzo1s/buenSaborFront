@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 const PromocionView = () => {
   return (
     <div>
-        <Typography variant='h5'>Promoción</Typography>
+        <Typography variant='h5' className='textWhte'>Promoción</Typography>
         <Outlet />
     </div>
   )

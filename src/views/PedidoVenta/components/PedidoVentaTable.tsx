@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from 'react'
 import { PedidoVenta } from '../../../interfaces/PedidoVenta'
@@ -25,40 +26,65 @@ import { useNavigate } from 'react-router';
 import { gePedidoVenta, getPedidoVentaByEmpleadoId, updateStatusPedidoVenta } from '../../../Api/PedidoVentaApi';
 import { format } from 'date-fns';
 import { Estado } from '../../../enums/Estado';
+import axios from 'axios';
 
 interface PedidoVentaTableProps {
-  idEmpleado: string | null;
+    idEmpleado: string | null;
 }
 
 const PedidoVentaTable = (props: PedidoVentaTableProps) => {
 
-  const { idEmpleado } = props
+    const { idEmpleado } = props
 
-  const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([])
-  const [loading, setLoading] = useState(false)
-  const [viewFormStatus, setViewFormStatus] = useState(false)
-  const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null)
+    const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([])
+    const [loading, setLoading] = useState(false)
+    const [viewFormStatus, setViewFormStatus] = useState(false)
+    const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null)
 
-  const navigate = useNavigate()
+    const navigate = useNavigate()
 
-  const listadoPedidosVenta = async () => {
-    setLoading(true)
-    if (idEmpleado) {
-      const { data } = await getPedidoVentaByEmpleadoId(idEmpleado)
-      setPedidosVenta(data)
-      setLoading(false)
-    } else {
-      const { data } = await gePedidoVenta()
-      setPedidosVenta(data)
-      setLoading(false)
+    const listadoPedidosVenta = async () => {
+        setLoading(true)
+        if (idEmpleado) {
+            const { data } = await getPedidoVentaByEmpleadoId(idEmpleado)
+            setPedidosVenta(data)
+            setLoading(false)
+        } else {
+            const { data } = await gePedidoVenta()
+            setPedidosVenta(data)
+            setLoading(false)
+        }
     }
-  }
 
-  useEffect(() => {
-    listadoPedidosVenta()
-  }, [])
+    const getPdf = async (id: string) => {
+        axios.get(`http://localhost:8080/api/reportes/pdf?id=${id}`, {
+    responseType: 'blob' // 👈 Esto es clave para manejar archivos binarios (como PDF)
+  })
+  .then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
 
-const getEstadoColor = (estado: Estado | null) => {
+    // Usar el nombre sugerido por el backend o uno propio
+    const filename = `ReporteInstrumento_${id}.pdf`;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+
+    // Limpiar el objeto URL después de usarlo
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  })
+  .catch((error) => {
+    console.error('Error al descargar el PDF:', error);
+  });
+    }
+
+    useEffect(() => {
+        listadoPedidosVenta()
+    }, [])
+
+    const getEstadoColor = (estado: Estado | null) => {
         switch (estado) {
             case Estado.PENDIENTE: return '#FFC107';
             case Estado.PREPARACION: return '#FF9800';
@@ -69,8 +95,8 @@ const getEstadoColor = (estado: Estado | null) => {
         }
     };
 
-  return (
-     <Box sx={{ p: 3, color: '#e0e0e0' }}>
+    return (
+        <Box sx={{ p: 3, color: '#e0e0e0' }}>
             <Box
                 display="flex"
                 justifyContent="space-between"
@@ -187,6 +213,14 @@ const getEstadoColor = (estado: Estado | null) => {
                                             sx={{ color: '#FFC107', '&:hover': { backgroundColor: 'rgba(255, 193, 7, 0.1)' } }}
                                         >
                                             <EditIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            aria-label="cambiar estado"
+                                            onClick={() => { getPdf(pedido?.id as string); }}
+                                            disabled={!pedido.id}
+                                            sx={{ color: 'rgb(255, 15, 7)', '&:hover': { backgroundColor: 'rgba(255, 15, 7, 0.1)' } }}
+                                        >
+                                            <PictureAsPdfIcon />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>
@@ -324,7 +358,7 @@ const getEstadoColor = (estado: Estado | null) => {
                                     onClick={async () => {
                                         if (pedidoVenta && pedidoVenta.id && pedidoVenta.estado) {
                                             try {
-                                                const { data } = await updateStatusPedidoVenta(pedidoVenta.id, pedidoVenta.estado);
+                                                const { data } = await updateStatusPedidoVenta(pedidoVenta.id, pedidoVenta.estado.toUpperCase().replace('Ó', 'O'));
                                                 setViewFormStatus(false);
                                                 setPedidoVenta(null);
                                                 setPedidosVenta((prevPedidos) =>
@@ -355,7 +389,7 @@ const getEstadoColor = (estado: Estado | null) => {
                 </Paper>
             </Modal>
         </Box>
-  );
+    );
 }
 
 export default PedidoVentaTable

@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 const SucursalView = () => {
     return (
         <Grid>
-            <Typography variant='h5'>Sucursal</Typography>
+            <Typography variant='h5' className='textWhte'>Sucursal</Typography>
 
             <Outlet />
         </Grid>

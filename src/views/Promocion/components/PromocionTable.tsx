@@ -44,7 +44,8 @@ const PromocionTable = () => {
         alignItems="center"
         mb={3}
       >
-        <Typography variant="h4" component="h1">
+        <Typography variant="h4" component="h1" sx={{color: 'white',
+    textShadow: '1px 1px 3px rgba(0,0,0,0.8)'}}>
           Listado de Promociones
         </Typography>
         <Button
@@ -63,34 +64,50 @@ const PromocionTable = () => {
           <Typography variant="h6" sx={{ ml: 2 }}>Cargando promociones...</Typography>
         </Box>
       ) : promociones && promociones.length > 0 ? (
-        <TableContainer component={Paper} elevation={3} sx={{ borderRadius: '8px' }}>
+        <TableContainer
+                            component={Paper}
+                            elevation={6}
+                            sx={{
+                                borderRadius: '12px',
+                                backgroundColor: 'rgba(30, 30, 30, 0.9)',
+                                boxShadow: '0px 8px 25px rgba(0, 0, 0, 0.4)',
+                                backdropFilter: 'blur(5px)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                overflow: 'hidden',
+                            }}
+                        >
           <Table aria-label="tabla de promociones">
-            <TableHead sx={{ bgcolor: 'primary.main' }}>
+            <TableHead sx={{ backgroundColor: 'rgba(50, 50, 50, 0.9)' }}>
               <TableRow>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nombre</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>fechaDesde</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>fechaHasta</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Descuento</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold', width: '150px' }} align="center">Acciones</TableCell>
+                <TableCell sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444'  }}>Nombre</TableCell>
+                <TableCell sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444'  }}>fechaDesde</TableCell>
+                <TableCell sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444'  }}>fechaHasta</TableCell>
+                <TableCell sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444'  }}>Descuento</TableCell>
+                <TableCell sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444' , width: '150px' }} align="center">Acciones</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {promociones.map((promocion) => (
                 <TableRow
                   key={promocion?.id?.toString() || `temp-${promocion.denominacion}`} 
-                  sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' } }} 
+                  sx={{
+                                        '&:nth-of-type(odd)': { backgroundColor: 'rgba(40, 40, 40, 0.8)' },
+                                        '&:nth-of-type(even)': { backgroundColor: 'rgba(35, 35, 35, 0.8)' },
+                                        '&:hover': { backgroundColor: 'rgba(60, 60, 60, 0.9) !important' },
+                                        transition: 'background-color 0.3s ease',
+                                    }}
                 >
-                  <TableCell>{promocion.denominacion}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>{promocion.denominacion}</TableCell>
+                  <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
                     {promocion.fechaDesde ? format(promocion.fechaDesde, 'dd/MM/yyyy') : 'N/A'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
                     {promocion.fechaHasta ? format(promocion.fechaHasta, 'dd/MM/yyyy') : 'N/A'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
                     {promocion.descuento ? `${promocion.descuento}%` : 'N/A'}
                   </TableCell>
-                  <TableCell align="center">
+                  <TableCell align="center" sx={{ borderBottom: '1px solid #333' }}>
                     <Button
                       variant="outlined"
                       size="small"
