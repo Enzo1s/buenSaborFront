@@ -12,3 +12,7 @@ export const crearSucursalEmpresa = async (sucursal: SucursalEmpresa) => {
 export const getByIdSucursal = async ( id: string) => {
   return await axios.get(`http://localhost:8080/api/sucursal-empresa/${id}`)
 }
+
+export const deleteSucursal = async (id: string) => {
+  return await axios.delete(`http://localhost:8080/api/sucursal-empresa/${id}`)
+}
