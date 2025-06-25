@@ -1,5 +1,4 @@
-export interface MercadoPagoResponse 
-{
+export interface MercadoPagoResponse {
   collection_id: string;
   collection_status: string;
   payment_id: string;
@@ -11,5 +10,4 @@ export interface MercadoPagoResponse
   site_id: string;
   processing_mode: string;
   merchant_account_id: string | null;
-
 }

@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { useNavigate} from "react-router";
 import { MercadoPagoResponse as PaymentResponse } from "../../interfaces/MercadoPagoResponse";
 import { useCartContext } from "../../Context/cartContext";
+import { proccesPay } from "../../Api/DatosMPAPI";
 
 const MercadoPagoResponse = () => {
   const navigate = useNavigate();
   const {clearCart} = useCartContext();
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     const params = new URLSearchParams(window.location.search);
 
     const response: PaymentResponse = {
@@ -23,27 +25,31 @@ const MercadoPagoResponse = () => {
       processing_mode: params.get("processing_mode") || "",
       merchant_account_id: params.get("merchant_account_id"),
     };
+    
+    // console.log("Respuesta de Mercado Pago recibida:", response);
 
-    console.log("Respuesta de Mercado Pago recibida:", response);
+    // let mensaje = "";
+    
+    // switch (response.status) {
+    //   case "approved":
+    //     mensaje = "Pago exitoso";
+        
+    //     clearCart();
+    //     break;
+    //   case "pending":
+    //     mensaje = "Pago pendiente";
+    //     break;
+    //   case "rejected":
+    //     mensaje = "Pago rechazado";
+    //     break;
+    //   default:
+    //     mensaje = "Error en el pago";
+    //     break;
+    // }
 
-    let mensaje = "";
-
-    //TODO LLAMADO A API PARA ACTUALIZAR PAGO.
-    switch (response.status) {
-      case "approved":
-        mensaje = "Pago exitoso";
-        clearCart();
-        break;
-      case "pending":
-        mensaje = "Pago pendiente";
-        break;
-      case "rejected":
-      default:
-        mensaje = "Pago fallido";
-        break;
-    }
-
-    alert(mensaje);
+    if (response.status === "approved") clearCart();
+    
+    proccesPay(response);
     navigate("/");
   }, []);
 

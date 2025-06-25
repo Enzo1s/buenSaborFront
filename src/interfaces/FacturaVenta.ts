@@ -2,14 +2,14 @@ import { DatosMercadoPago } from "./DatosMercadoPago";
 import { FacturaVentaDetalle } from "./FacturaVentaDetalle";
 
 export interface FacturaVenta {
-    id: String | null,
+    id: string | null,
 	fechaFacturacion: Date,
-	numeroComprobante: Number,
+	numeroComprobante: number,
 	formaPago: string,
-	subTotal: Number,
-	descuento: Number,
-	gastosEnvio: Number,
-	totalVenta: Number,
+	subTotal: number,
+	descuento: number,
+	gastosEnvio: number,
+	totalVenta: number,
 	datosMP: DatosMercadoPago,
 	facturaVentaDetalle: FacturaVentaDetalle[],
 	alta: Date | null,

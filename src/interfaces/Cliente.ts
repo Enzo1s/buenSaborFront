@@ -2,11 +2,11 @@ import { Domicilio } from "./Domicilio";
 import { Usuario } from "./Usuario";
 
 export interface Cliente {
-    id: String | null,
-	nombre: String,
-	apellido: String,
-	telefono: String,
-	email: String
+    id: string | null,
+	nombre: string,
+	apellido: string,
+	telefono: string,
+	email: string
 	usuario: Usuario | null,
 	domicilio: Domicilio | null,
 	alta: Date | null,
