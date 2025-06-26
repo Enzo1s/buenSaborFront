@@ -3,7 +3,7 @@ import  { ReactNode } from 'react'
 
 export interface SimpleDialogProps {
     open: boolean;
-    title: String,
+    title: string,
     onClose: (value: string) => void;
     children: ReactNode;
   }

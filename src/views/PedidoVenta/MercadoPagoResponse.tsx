@@ -1,15 +1,14 @@
 import { useEffect } from "react";
-import { useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 import { MercadoPagoResponse as PaymentResponse } from "../../interfaces/MercadoPagoResponse";
 import { useCartContext } from "../../Context/cartContext";
 import { proccesPay } from "../../Api/DatosMPAPI";
 
 const MercadoPagoResponse = () => {
   const navigate = useNavigate();
-  const {clearCart} = useCartContext();
+  const { clearCart } = useCartContext();
 
-  useEffect(() => 
-  {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
     const response: PaymentResponse = {
@@ -25,33 +24,24 @@ const MercadoPagoResponse = () => {
       processing_mode: params.get("processing_mode") || "",
       merchant_account_id: params.get("merchant_account_id"),
     };
-    
-    // console.log("Respuesta de Mercado Pago recibida:", response);
-
-    // let mensaje = "";
-    
-    // switch (response.status) {
-    //   case "approved":
-    //     mensaje = "Pago exitoso";
-        
-    //     clearCart();
-    //     break;
-    //   case "pending":
-    //     mensaje = "Pago pendiente";
-    //     break;
-    //   case "rejected":
-    //     mensaje = "Pago rechazado";
-    //     break;
-    //   default:
-    //     mensaje = "Error en el pago";
-    //     break;
-    // }
 
     if (response.status === "approved") clearCart();
-    
+
     proccesPay(response);
+
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage(
+        { pagoTerminado: true, status: response.status },
+        window.origin
+      );
+    }
+
+    setTimeout(() => {
+      window.close();
+    }, 500);
+    
     navigate("/");
-  }, []);
+  }, [navigate, clearCart]);
 
   return null;
 };

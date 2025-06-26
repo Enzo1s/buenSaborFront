@@ -13,6 +13,20 @@ const HomeView = () => {
     const [listCard, setListCard] = useState<CardProps[]>([])
 
     useEffect(() => {
+      const handler = (event: MessageEvent) => {
+        if (event.origin !== window.origin) return;
+
+        if (event.data?.pagoTerminado) {
+          window.location.reload();
+        }
+      };
+
+      window.addEventListener("message", handler);
+      return () => window.removeEventListener("message", handler);
+    }, []);
+      
+
+    useEffect(() => {
         const getManufacturados = async () => {
             const { data: manufacturados } = await getAllArticuloManufacturado()
             const cardProps: CardProps[] = manufacturados.map((articulo: ArticuloManufacturado) => ({

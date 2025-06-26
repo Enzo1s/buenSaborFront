@@ -8,10 +8,16 @@ import { initMercadoPago } from '@mercadopago/sdk-react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
+import { useEffect } from 'react'
 
 initMercadoPago('TEST-0eb3340e-778a-4577-a53d-999e4feab5ed');
 
 function App() {
+
+  useEffect(() => {
+    window.name = "main_app_window";
+  }, []);
+  
 
   return (
     <BrowserRouter>
