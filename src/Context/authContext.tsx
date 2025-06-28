@@ -6,16 +6,18 @@ import {
   ReactNode,
   useCallback,
 } from "react";
-import { Usuario } from "../interfaces/Usuario";
-import { getByToken } from "../Api/UsuarioAPI";
-import { Login } from "../interfaces/Login";
-import { iniciarSesion, registrarUsuario } from "../Api/AuthAPI";
 import { useNavigate } from "react-router";
+
+import { Usuario } from "../interfaces/Usuario";
 import { Empleado } from "../interfaces/Empleado";
-import { getByUsuarioId } from "../Api/EmpleadoAPI";
 import { Cliente } from "../interfaces/Cliente";
-import { getClienteByIdUsuario } from "../Api/ClienteAPI";
+import { Login } from "../interfaces/Login";
 import { Rol } from "../enums/Rol";
+
+import { getByToken } from "../Api/UsuarioAPI";
+import { getByUsuarioId } from "../Api/EmpleadoAPI";
+import { getClienteByIdUsuario } from "../Api/ClienteAPI";
+import { iniciarSesion, registrarUsuario } from "../Api/AuthAPI";
 
 interface AuthContextType {
   user: Usuario | null;
@@ -44,27 +46,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const navigate = useNavigate();
-
-  const fetchUserAndRoleData = async (token: string) => {
+  
+  const fetchUser = async (token: string) => {
     try {
       const usuarioRes = await getByToken(token);
       const usuario = usuarioRes.data;
       setUser(usuario);
       setIsAuthenticated(true);
-
-      if (usuario.rol === Rol.CLIENTE) {
-        const { data: clienteData } = await getClienteByIdUsuario(usuario.id);
+      
+      if (usuario.rol === "CLIENTE") {
+        const { data: clienteData }: { data: Cliente } = await getClienteByIdUsuario(usuario.id);
         setCliente(clienteData);
         setEmpleado(null);
-        console.log("Cliente cargado:", clienteData);
-      } else if (usuario.rol === Rol.EMPLEADO || usuario.rol === Rol.ADMIN) {
-        const { data: empleadoData } = await getByUsuarioId(usuario.id);
+      } else if (usuario.rol === "EMPLEADO") {
+        const { data: empleadoData }: { data: Empleado } = await getByUsuarioId(usuario.id);
         setEmpleado(empleadoData);
         setCliente(null);
-        console.log("Empleado cargado:", empleadoData);
       }
     } catch (error) {
-      console.error("Error al cargar usuario y rol:", error);
+      console.error("Error al cargar usuario:", error);
       localStorage.removeItem("token");
     } finally {
       setLoading(false);
@@ -73,53 +73,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token")?.replace(/"/g, "");
-
-    const fetchUser = async () => {
-      try {
-        if (token) {
-          const { data: usuario } = await getByToken(token);
-          setUser(usuario);
-          setIsAuthenticated(true);
-          console.log("Usuario cargado:", usuario);
-        }
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
-        localStorage.removeItem("token");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    if (token) {
+      fetchUser(token);
+    } else {
+      setLoading(false);
+    }
   }, []);
-
-  useEffect(() => {
-    const fetchRolEspecifico = async () => {
-      if (!user || !user.id) return;
-
-      try {
-        if (user.rol?.toString() === "CLIENTE") {
-          const { data } = await getClienteByIdUsuario(user.id);
-          console.log("Cliente cargado:", data);
-          setCliente(data);
-        } else if (user.rol?.toString() === "EMPLEADO" || user.rol?.toString() === "ADMIN") {
-          const { data } = await getByUsuarioId(user.id);
-          console.log("Empleado cargado:", data);
-          setEmpleado(data);
-        }
-      } catch (error) {
-        console.error("Error al obtener cliente/empleado:", error);
-      }
-    };
-
-    fetchRolEspecifico();
-  }, [user]); // ⬅️ Solo se ejecuta cuando `user` ya está seteado
 
   const login = useCallback(async (userData: Login) => {
     try {
       const { data: token } = await iniciarSesion(userData);
       localStorage.setItem("token", JSON.stringify(token));
-      await fetchUserAndRoleData(token.replace(/"/g, ""));
+      await fetchUser(token.replace(/"/g, ""));
       navigate("/");
     } catch (error) {
       alert("Error al iniciar sesión. Verificá tus credenciales.");
@@ -164,7 +129,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     []
   );
-  
 
   const contextValue: AuthContextType = {
     user,
