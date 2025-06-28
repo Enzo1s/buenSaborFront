@@ -21,6 +21,8 @@ import { createPreference } from "../Api/DatosMPAPI";
 import MercadoPago from "./MercadoPago";
 import Modal from "./Modal";
 import { PedidoVentaDetalle } from "../interfaces/PedidoVentaDetalle";
+import { TipoEnvio } from "../enums/TipoEnvio";
+import { FormaPago } from "../enums/FormaPago";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -82,6 +84,7 @@ const Header = () => {
           sucursal: user.sucursalEmpresa,
           cliente: cliente,
           empleado: empleado,
+          formaPago: FormaPago.MERCADOPAGO
         });
         
         const response = await createPreference(data.id);
