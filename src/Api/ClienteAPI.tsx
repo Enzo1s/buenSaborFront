@@ -5,7 +5,7 @@ export const getClienteById = async (id: string) => {
     return axios.get(`http://localhost:8080/api/cliente/${id}`)
 }
 
-export const getClienteByIdUsuario = async (id: String) => {
+export const getClienteByIdUsuario = async (id: string) => {
     return axios.get(`http://localhost:8080/api/cliente/usuario?id=${id}`)
 }
 

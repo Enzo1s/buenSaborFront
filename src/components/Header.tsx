@@ -26,32 +26,28 @@ const Header = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
-  const [idPreference, setIdPreference] = useState<string | null>(null);
+  const [idPreference] = useState<string | null>(null);
   const [viewForm, setViewForm] = useState(false);
 
-  const { isAuthenticated, user, logout, cliente } = useAuth();
+  const { isAuthenticated, user, logout, cliente, empleado } = useAuth();
   const { pedidoVenta, removeItemFromCart } = useCartContext();
-
-  // Refs para ventana y timer
+  
   const ventanaPagoRef = useRef<Window | null>(null);
   const timerRef = useRef<number | null>(null);
   const pagoTerminadoRef = useRef(false);
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      // Asegurarse que el mensaje viene del mismo origen
       if (event.origin !== window.origin) return;
 
       if (event.data?.pagoTerminado) {
         pagoTerminadoRef.current = true;
 
-        // Limpiar timer de chequeo cierre manual
         if (timerRef.current) {
           clearInterval(timerRef.current);
           timerRef.current = null;
         }
-
-        // Recargar o actualizar la página cuando el pago termina
+        
         window.location.reload();
       }
     };
@@ -71,6 +67,13 @@ const Header = () => {
     setOpen(!open);
   };
 
+  // useEffect(() => {
+  //   console.log("user:", user);
+  //   console.log("cliente:", cliente);
+  //   console.log("empleado:", empleado);
+  // }, [user, cliente, empleado]);
+  
+
   const buy = async () => {
     try {
       if (pedidoVenta && user) {
@@ -78,7 +81,11 @@ const Header = () => {
           ...pedidoVenta,
           sucursal: user.sucursalEmpresa,
           cliente: cliente,
+          empleado: empleado,
         });
+        
+        console.log("Quien lo envia:", cliente, empleado, user);
+        
 
         const response = await createPreference(data.id);
         const preferenceUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${response.data.idPreference}`;

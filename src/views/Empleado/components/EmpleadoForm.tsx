@@ -87,7 +87,7 @@ const EmpleadoForm = () => {
                                 telefono: values?.telefono,
                                 email: values?.email,
                                 usuario: values?.usuario,
-                                perfil: values?.perfil?.toUpperCase() || 'EMPLEDADO',
+                                perfil: values?.perfil?.toUpperCase() || 'EMPLEADO',
                                 alta: null,
                                 baja: null,
                                 modificacion: null
@@ -98,8 +98,8 @@ const EmpleadoForm = () => {
                                     nuevoEmpleado.usuario = data
                                 } else {
                                     const { data } = await createUser({
-                                        username: values.username as String,
-                                        password: values.password as String,
+                                        username: values.username as string,
+                                        password: values.password as string,
                                         rol: Object.keys(Rol).find(k => Rol[k as keyof typeof Rol] === 'Empleado'),
                                         alta: null,
                                         baja: null,
