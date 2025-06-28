@@ -27,7 +27,7 @@ interface AuthContextType {
   setEmpleado: React.Dispatch<React.SetStateAction<Empleado | null>>;
   login: (userData: Login) => Promise<void>;
   logout: () => void;
-  register: (userData: Usuario) => Promise<void>;
+  register: (userData: Usuario) => Promise<Usuario | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setCliente(null);
         }
 
-        return usuario; // ✅ Devolvés el usuario creado
+        return usuario;
       } catch (error) {
         alert("Error al registrarse.");
         return null;

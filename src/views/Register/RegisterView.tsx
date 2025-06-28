@@ -155,7 +155,7 @@ const RegisterView = () => {
                     apellido: values?.apellido,
                     telefono: values?.telefono,
                     email: values?.email,
-                    usuario: usuarioCreado, // <-- uso correcto del usuario con id ya cargado
+                    usuario: usuarioCreado,
                     perfil: "EMPLEADO",
                     alta: null,
                     baja: null,
@@ -172,7 +172,7 @@ const RegisterView = () => {
                     apellido: values?.apellido,
                     telefono: values?.telefono,
                     email: values?.email,
-                    usuario: usuarioCreado, // <-- idem
+                    usuario: usuarioCreado,
                     domicilio: values?.domicilio,
                     alta: null,
                     baja: null,
@@ -185,7 +185,9 @@ const RegisterView = () => {
                 setSubmitting(false);
 
                 if (isAuthenticated) {
+                  setSubmitting(false);
                   navigate("/login");
+
                 }
               }}
             >
