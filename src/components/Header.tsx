@@ -84,9 +84,6 @@ const Header = () => {
           empleado: empleado,
         });
         
-        console.log("Quien lo envia:", cliente, empleado, user);
-        
-
         const response = await createPreference(data.id);
         const preferenceUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${response.data.idPreference}`;
         

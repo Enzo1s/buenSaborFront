@@ -88,6 +88,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       navigate("/");
     } catch (error) {
       alert("Error al iniciar sesión. Verificá tus credenciales.");
+      navigate("/login");
     }
   }, []);
 
