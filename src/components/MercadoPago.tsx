@@ -37,7 +37,7 @@ const MercadoPago = (props: MercadoPagoProps) => {
     { selectedPaymentMethod, formData }: { selectedPaymentMethod: any; formData: any }
   ) => {
     console.log("selectedPaymentMethod", selectedPaymentMethod)
-    console.log("formData", formData) //TODO: MANDA NULL (Revisar).
+    console.log("formData", formData)
     // callback llamado al hacer clic en el botón enviar datos
     return new Promise<void>((resolve, reject) => {
       fetch("http://localhost:8080/api/datos-mercadopago/process_payment", {
