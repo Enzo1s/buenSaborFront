@@ -11,6 +11,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  Modal,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { useEffect, useState } from "react";
@@ -32,7 +33,7 @@ import { FormaPago } from "../../../enums/FormaPago";
 import { getAllArticuloManufacturado } from "../../../Api/ArticuloManufacturadoAPI";
 import { getListArticuloInsumo } from "../../../Api/ArticuloInsumo";
 import { format, isWithinInterval } from "date-fns";
-import Modal from "../../../components/Modal";
+// import Modal from "../../../components/Modal";
 import { createPreference } from "../../../Api/DatosMPAPI";
 import MercadoPago from "../../../components/MercadoPago";
 import { getSucursales } from "../../../Api/SucursalAPI";
@@ -194,6 +195,10 @@ const PedidoVentaForm = () => {
       }
     } catch (error) {
       console.error("Error en compra: ", error);
+      if((error as any)?.response)
+        alert((error as any)?.response?.data)
+      else 
+        alert("Error al procesar el pago. Por favor, intentá nuevamente más tarde.");
     }
   };
 
@@ -460,16 +465,42 @@ const PedidoVentaForm = () => {
               {pedidoVenta && pedidoVenta.pedidoVentaDetalle && (
                 <Box display={"flex"} justifyContent={"space-between"}>
                   <Table>
-                    <TableHead sx={{ backgroundColor: 'rgba(50, 50, 50, 0.9)' }}>
+                    <TableHead
+                      sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}
+                    >
                       <TableRow>
                         <TableCell>
-                          <Typography sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444' }}>Articulo</Typography>
+                          <Typography
+                            sx={{
+                              color: "#f0f0f0",
+                              fontWeight: "bold",
+                              borderBottom: "1px solid #444",
+                            }}
+                          >
+                            Articulo
+                          </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444' }}>Cantidad</Typography>
+                          <Typography
+                            sx={{
+                              color: "#f0f0f0",
+                              fontWeight: "bold",
+                              borderBottom: "1px solid #444",
+                            }}
+                          >
+                            Cantidad
+                          </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography sx={{ color: '#f0f0f0', fontWeight: 'bold', borderBottom: '1px solid #444' }}>Precio</Typography>
+                          <Typography
+                            sx={{
+                              color: "#f0f0f0",
+                              fontWeight: "bold",
+                              borderBottom: "1px solid #444",
+                            }}
+                          >
+                            Precio
+                          </Typography>
                         </TableCell>
                         <TableCell />
                       </TableRow>
@@ -477,19 +508,34 @@ const PedidoVentaForm = () => {
                     <TableBody>
                       {pedidoVenta.pedidoVentaDetalle.map((detalle, index) => (
                         <TableRow key={index}>
-                          <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
+                          <TableCell
+                            sx={{
+                              color: "#e0e0e0",
+                              borderBottom: "1px solid #333",
+                            }}
+                          >
                             <Typography variant="h6">
                               {detalle.articuloInsumo
                                 ? detalle.articuloInsumo.denominacion
                                 : detalle?.articuloManufacturado?.denominacion}
                             </Typography>
                           </TableCell>
-                          <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
+                          <TableCell
+                            sx={{
+                              color: "#e0e0e0",
+                              borderBottom: "1px solid #333",
+                            }}
+                          >
                             <Typography variant="h6">
                               {detalle.cantidad}
                             </Typography>
                           </TableCell>
-                          <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
+                          <TableCell
+                            sx={{
+                              color: "#e0e0e0",
+                              borderBottom: "1px solid #333",
+                            }}
+                          >
                             <Typography variant="h6">
                               $
                               {detalle.articuloInsumo
@@ -499,7 +545,12 @@ const PedidoVentaForm = () => {
                                   )}
                             </Typography>
                           </TableCell>
-                          <TableCell sx={{ color: '#e0e0e0', borderBottom: '1px solid #333' }}>
+                          <TableCell
+                            sx={{
+                              color: "#e0e0e0",
+                              borderBottom: "1px solid #333",
+                            }}
+                          >
                             <IconButton
                               color="error"
                               onClick={() => handleDelete(detalle)}
@@ -564,47 +615,45 @@ const PedidoVentaForm = () => {
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
-        title={"Elija la forma de pago"}
       >
         <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: { xs: '90%', sm: 400 },
-                  bgcolor: 'background.paper',
-                  boxShadow: 24,
-                  p: 4,
-                  borderRadius: '8px',
-                  backgroundColor: '#424242',
-                  color: '#e0e0e0',
-                }}
-              >
-        <Grid
-          display={"flex"}
-          justifyContent={"space-between"}
-          sx={{ margin: "10px", width: "30rem" }}
-          size={12}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 400 },
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "8px",
+            backgroundColor: "#424242",
+            color: "#e0e0e0",
+          }}
         >
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={handlePagoMercadoPago}
-          >
-            Mercado Pago
-          </Button>
-          <Button
-            type="button"
-            variant="contained"
-            color="success"
-            onClick={handlePagoEfectivo}
-          >
-            {" "}
-            Efectivo{" "}
-          </Button>
-        </Grid>
+          <Grid container spacing={2}>
+            <Grid size={12}>
+              <Typography variant="h5" sx={{ mb: 1, color: '#fff' }}>Elija la forma de pago</Typography>
+              
+            </Grid>
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              onClick={handlePagoMercadoPago}
+            >
+              Mercado Pago
+            </Button>
+            <Button
+              type="button"
+              variant="contained"
+              color="success"
+              onClick={handlePagoEfectivo}
+            >
+              {" "}
+              Efectivo{" "}
+            </Button>
+          </Grid>
         </Box>
       </Modal>
 
@@ -614,30 +663,30 @@ const PedidoVentaForm = () => {
         title="Método de pago"
       >
         <Box
-                        sx={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          width: { xs: '90%', sm: 400 },
-                          bgcolor: 'background.paper',
-                          boxShadow: 24,
-                          p: 4,
-                          borderRadius: '8px',
-                          backgroundColor: '#424242',
-                          color: '#e0e0e0',
-                        }}
-                      >
-        {idPreference && pedidoVenta && (
-          <Grid sx={{ marginTop: "10px" }} size={12}>
-            <MercadoPago
-              idPreference={idPreference}
-              monto={pedidoVenta?.total || 10}
-              pedidoVenta={pedidoVenta}
-              setViewForm={setViewForm}
-            />
-          </Grid>
-        )}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 400 },
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "8px",
+            backgroundColor: "#424242",
+            color: "#e0e0e0",
+          }}
+        >
+          {idPreference && pedidoVenta && (
+            <Grid sx={{ marginTop: "10px" }} size={12}>
+              <MercadoPago
+                idPreference={idPreference}
+                monto={pedidoVenta?.total || 10}
+                pedidoVenta={pedidoVenta}
+                setViewForm={setViewForm}
+              />
+            </Grid>
+          )}
         </Box>
       </Modal>
       <Modal
@@ -646,21 +695,21 @@ const PedidoVentaForm = () => {
         title="Método de pago"
       >
         <Box
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: { xs: '90%', sm: 400 },
-                  bgcolor: 'background.paper',
-                  boxShadow: 24,
-                  p: 4,
-                  borderRadius: '8px',
-                  backgroundColor: '#424242',
-                  color: '#e0e0e0',
-                }}
-              >
-        <PagoModal pedidoVenta={pedidoVenta} handleSubmit={handleSubmit} />
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 400 },
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "8px",
+            backgroundColor: "#424242",
+            color: "#e0e0e0",
+          }}
+        >
+          <PagoModal pedidoVenta={pedidoVenta} handleSubmit={handleSubmit} />
         </Box>
       </Modal>
     </Grid>

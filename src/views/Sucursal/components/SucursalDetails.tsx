@@ -406,7 +406,7 @@ const SucursalDetails = () => {
                           color={
                             insumo.stockActual <= insumo.stockMinimo
                               ? "error"
-                              : "text.primary"
+                              : "#e0e0e0"
                           }
                         >
                           {insumo.stockActual.toString()}
