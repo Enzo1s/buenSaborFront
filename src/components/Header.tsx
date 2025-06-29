@@ -68,14 +68,7 @@ const Header = () => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setOpen(!open);
   };
-
-  // useEffect(() => {
-  //   console.log("user:", user);
-  //   console.log("cliente:", cliente);
-  //   console.log("empleado:", empleado);
-  // }, [user, cliente, empleado]);
   
-
   const buy = async () => {
     try {
       if (pedidoVenta && user) {
