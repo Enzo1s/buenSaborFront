@@ -84,8 +84,8 @@ const PedidoVentaForm = () => {
                 total: 0,
                 totalCosto: 0,
                 estado: Estado.PENDIENTE.toUpperCase(),
-                tipoEnvio: TipoEnvio.TAKEAWAY.toUpperCase(),
-                formaPago: FormaPago.EFECTIVO.toUpperCase(),
+                tipoEnvio: "",
+                formaPago: "",
                 empleado: empleado || empleadoLogin || null,
                 sucursal: user?.sucursalEmpresa || null,
                 cliente: null,
@@ -97,6 +97,8 @@ const PedidoVentaForm = () => {
                 modificacion: null
             })
         }
+
+        console.log("Get: ",pedidoVenta);
     }
 
     const getEmpleado = async () => {
@@ -126,7 +128,6 @@ const PedidoVentaForm = () => {
             }
             setPedidoVenta({
                 ...pedidoVenta,
-                formaPago: FormaPago.EFECTIVO.toUpperCase()
             })
             setViewFormBuy(true)
             setOpenModal(false)
@@ -136,11 +137,21 @@ const PedidoVentaForm = () => {
     const buy = async () => {
         try {
             validacion()
-            if (pedidoVenta) {
+            if (pedidoVenta) 
+            {
                 const { data } = await createPedidoVenta(pedidoVenta)
-                const response = await createPreference(data.id)
-                setIdPreference(response.data.idPreference)
-                setViewForm(true)
+                
+                if (pedidoVenta.formaPago == FormaPago.EFECTIVO)
+                {
+                    setViewFormBuy(true);
+                    setOpenModal(false);
+                }
+                else if (pedidoVenta.formaPago == FormaPago.MERCADOPAGO)
+                {
+                     const response = await createPreference(data.id)
+                    setIdPreference(response.data.idPreference)
+                    setViewForm(true)
+                }
             }
         } catch (error) {
             console.error(error)
@@ -190,6 +201,30 @@ const PedidoVentaForm = () => {
         const { data } = await getSucursales()
         setSucursales(data)
     }
+
+    const handlePagoMercadoPago = () => {
+    if (!pedidoVenta) return;
+
+    setPedidoVenta({
+        ...pedidoVenta,
+        formaPago: FormaPago.MERCADOPAGO
+    });
+
+    buy();
+    };
+
+    const handlePagoEfectivo = () => {
+        if (!pedidoVenta) return;
+        //TODO: No se setea.
+        setPedidoVenta({
+            ...pedidoVenta,
+            formaPago: FormaPago.EFECTIVO
+        });
+
+        buy();
+        
+    };
+
 
     useEffect(() => {
         getPedidoVenta()
@@ -316,10 +351,11 @@ const PedidoVentaForm = () => {
             </Grid>
             <Modal open={openModal} onClose={() => setOpenModal(false)} title={"Elija la forma de pago"} >
                 <Grid display={"flex"} justifyContent={"space-between"} sx={{ margin: '10px', width: '30rem' }} size={12}>
-                    <Button type='button' variant='contained' color='primary' onClick={buy}>Mercado Pago</Button>
-                    <Button type='button' variant='contained' color='success' onClick={validacion}>Efectivo</Button>
+                    <Button type='button' variant='contained' color='primary' onClick={handlePagoMercadoPago}>Mercado Pago</Button>
+                    <Button type='button' variant='contained' color='success' onClick={handlePagoEfectivo}> Efectivo </Button>
                 </Grid>
             </Modal>
+
             <Modal open={viewForm} onClose={() => setViewForm(false)} title="Método de pago">
                 {idPreference && pedidoVenta && <Grid sx={{ marginTop: '10px' }} size={12}>
                     <MercadoPago idPreference={idPreference} monto={pedidoVenta?.total || 10} pedidoVenta={pedidoVenta} setViewForm={setViewForm} />

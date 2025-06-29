@@ -170,7 +170,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                     totalCosto: (itemInsumo?.precioCompra as number) * cantidad || (itemManufacturado?.precioCosto as number) * cantidad || 0,
                     estado: Estado.PENDIENTE.toUpperCase(),
                     tipoEnvio: TipoEnvio.DELIVERY.toUpperCase(),
-                    formaPago: FormaPago.EFECTIVO.toUpperCase(),
+                    formaPago: "",
                     empleado: null,
                     sucursal: null,
                     cliente: null,
