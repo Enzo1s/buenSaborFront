@@ -31,7 +31,7 @@ const Header = () => {
 
   const { isAuthenticated, user, logout, cliente, empleado } = useAuth();
   const { pedidoVenta, removeItemFromCart } = useCartContext();
-  
+
   const ventanaPagoRef = useRef<Window | null>(null);
   const timerRef = useRef<number | null>(null);
   const pagoTerminadoRef = useRef(false);
@@ -47,7 +47,7 @@ const Header = () => {
           clearInterval(timerRef.current);
           timerRef.current = null;
         }
-        
+
         window.location.reload();
       }
     };
@@ -72,7 +72,6 @@ const Header = () => {
   //   console.log("cliente:", cliente);
   //   console.log("empleado:", empleado);
   // }, [user, cliente, empleado]);
-  
 
   const buy = async () => {
     try {
@@ -83,10 +82,10 @@ const Header = () => {
           cliente: cliente,
           empleado: empleado,
         });
-        
+
         const response = await createPreference(data.id);
         const preferenceUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${response.data.idPreference}`;
-        
+
         ventanaPagoRef.current = window.open(
           preferenceUrl,
           "_blank",
@@ -99,16 +98,14 @@ const Header = () => {
         }
 
         pagoTerminadoRef.current = false;
-        
+
         timerRef.current = window.setInterval(() => {
           if (ventanaPagoRef.current && ventanaPagoRef.current.closed) {
             clearInterval(timerRef.current!);
             timerRef.current = null;
 
             if (!pagoTerminadoRef.current) {
-              console.log(
-                "Ventana de pago cerrada manualmente"
-              );
+              console.log("Ventana de pago cerrada manualmente");
             }
           }
         }, 500);
@@ -242,20 +239,24 @@ const Header = () => {
         <Grid
           container
           sx={{
-            backgroundColor: "#fff",
+            textAlign: "center",
+            borderRadius: "12px",
+            backgroundColor: "rgba(30, 30, 30, 0.9)",
+            color: "#e0e0e0",
+            boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(5px)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             padding: "10px",
-            borderRadius: "4px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
             width: "400px",
             height: "300px",
           }}
         >
           <Grid size={12}>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ color: "#f0f0f0", mb: 2 }}>
               Carrito de Compras
             </Typography>
           </Grid>
-          <Grid sx={{ marginTop: "10px" }} size={12}>
+          <Grid sx={{ color: "#f0f0f0", marginTop: "10px" }} size={12}>
             <Typography variant="body1">Productos en el carrito:</Typography>
             {pedidoVenta &&
             pedidoVenta?.pedidoVentaDetalle &&
@@ -264,24 +265,24 @@ const Header = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Producto</TableCell>
-                      <TableCell>Cantidad</TableCell>
-                      <TableCell>Precio</TableCell>
+                      <TableCell sx={{color: "#f0f0f0"}}>Producto</TableCell>
+                      <TableCell sx={{color: "#f0f0f0"}}>Cantidad</TableCell>
+                      <TableCell sx={{color: "#f0f0f0"}}>Precio</TableCell>
                       <TableCell />
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {pedidoVenta?.pedidoVentaDetalle?.map((item, index) => (
                       <TableRow key={index}>
-                        <TableCell>
+                        <TableCell sx={{color: "#f0f0f0"}}>
                           {item.articuloInsumo?.denominacion ||
                             item.articuloManufacturado?.denominacion}
                         </TableCell>
-                        <TableCell>{item.cantidad.toString()}</TableCell>
-                        <TableCell>${item.subTotal.toFixed(2)}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{color: "#f0f0f0"}}>{item.cantidad.toString()}</TableCell>
+                        <TableCell sx={{color: "#f0f0f0"}}>${item.subTotal.toFixed(2)}</TableCell>
+                        <TableCell sx={{color: "#f0f0f0"}}>
                           <IconButton onClick={() => handleDelete(item)}>
-                            <DeleteOutlineIcon />
+                            <DeleteOutlineIcon sx={{color: "#f0f0f0"}}/>
                           </IconButton>
                         </TableCell>
                       </TableRow>

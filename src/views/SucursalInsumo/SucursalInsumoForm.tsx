@@ -35,11 +35,33 @@ const SucursalInsumoForm = () => {
     }, [])
 
     return (
-        <Grid container spacing={2} alignContent={"center"} justifyContent="center">
+        <Grid container
+            spacing={2}
+            alignContent={"center"}
+            justifyContent="center"
+            sx={{
+                backgroundColor: 'rgba(35, 35, 35, 0.95)', // Fondo oscuro para la tarjeta del formulario
+                padding: { xs: 2, md: 4 },
+                borderRadius: '12px',
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+                color: '#e0e0e0', // Texto claro por defecto
+                maxWidth: '1000px', // Mayor ancho para este formulario
+                margin: 'auto',
+                mt: 5,
+                border: '1px solid rgba(70, 70, 70, 0.5)'
+            }}>
             <Grid size={12}>
-                <Typography variant='h2'>Nuevo Insumo</Typography>
+                <Typography  variant="h3"
+                    component="h1"
+                    sx={{
+                        color: '#90CAF9',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        mb: 3,
+                    }}>
+                       {sucursalInsumo?.id ? "Editar Insumo" : "Crear Insumo"} </Typography>
             </Grid>
-            <Grid container spacing={2} width={"100%"}>
+            
                 <Grid size={12} width={"100%"}>
                     <Formik
                         enableReinitialize
@@ -79,8 +101,8 @@ const SucursalInsumoForm = () => {
                             setFieldValue
                         }) => (
                             <form onSubmit={handleSubmit}>
-                                <Grid container spacing={2}>
-                                    <Grid size={12} sx={{ marginBottom: 2 }}>
+                                <Grid container spacing={3}>
+                                    <Grid size={{ xs: 12, sm: 6 }} sx={{ marginBottom: 2 }}>
                                         <Autocomplete
                                             id="articuloInsumo"
                                             value={values.articuloInsumo}
@@ -90,7 +112,20 @@ const SucursalInsumoForm = () => {
                                                 setFieldValue("articuloInsumo", newValue);
                                             }}
                                             getOptionLabel={(option: ArticuloInsumo) => option.denominacion as string}
-                                            renderInput={(params) => <TextField {...params} label="Articulo Insumo" />}
+                                            renderInput={(params) => <TextField {...params} label="Articulo Insumo" variant="outlined"
+                                                        sx={{
+                                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                                            borderRadius: '4px',
+                                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                                            '& .MuiInputLabel-root': {
+                                                                color: '#a0a0a0',
+                                                                '&.Mui-focused': { color: '#fff' },
+                                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                                            },
+                                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                                        }} />}
                                         />
                                     </Grid>
                                     <Grid size={6} sx={{ marginBottom: 2 }}>
@@ -103,6 +138,19 @@ const SucursalInsumoForm = () => {
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             value={values.stockActual}
+                                            sx={{
+                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                            borderRadius: '4px',
+                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                            '& .MuiInputLabel-root': {
+                                                color: '#a0a0a0',
+                                                '&.Mui-focused': { color: '#fff' },
+                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                        }}
                                         />
                                     </Grid>
                                     <Grid size={6} sx={{ marginBottom: 2 }}>
@@ -115,6 +163,19 @@ const SucursalInsumoForm = () => {
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             value={values.stockMinimo}
+                                            sx={{
+                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                            borderRadius: '4px',
+                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                            '& .MuiInputLabel-root': {
+                                                color: '#a0a0a0',
+                                                '&.Mui-focused': { color: '#fff' },
+                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                        }}
                                         />
                                     </Grid>
                                     <Grid size={6} sx={{ marginBottom: 2 }}>
@@ -127,10 +188,27 @@ const SucursalInsumoForm = () => {
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             value={values.stockMaximo}
+                                            sx={{
+                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                            borderRadius: '4px',
+                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                            '& .MuiInputLabel-root': {
+                                                color: '#a0a0a0',
+                                                '&.Mui-focused': { color: '#fff' },
+                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                        }}
                                         />
                                     </Grid>
-                                    <Grid size={12} sx={{ marginBottom: 2 }}>
-                                        <Button variant="contained" type="submit" disabled={isSubmitting}>
+                                    <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
+                                        <Button variant="contained"
+                                        color="primary"
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        sx={{ px: 4, py: 1.5, fontWeight: 'bold' }}>
                                             {sucursalInsumo ? "Actualizar" : "Crear"}
                                         </Button>
                                     </Grid>
@@ -139,7 +217,7 @@ const SucursalInsumoForm = () => {
                         )}
                     </Formik>
                 </Grid>
-            </Grid>
+            
         </Grid>
     )
 }

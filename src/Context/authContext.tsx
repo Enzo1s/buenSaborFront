@@ -83,11 +83,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = useCallback(async (userData: Login) => {
     try {
       const { data: token } = await iniciarSesion(userData);
+      if(token === 'Credenciales inválidas') {
+        alert("Error al iniciar sesión. Verificá tus credenciales.");
+      localStorage.removeItem("token");
+      return;
+      }
       localStorage.setItem("token", JSON.stringify(token));
       await fetchUser(token.replace(/"/g, ""));
       navigate("/");
     } catch (error) {
       alert("Error al iniciar sesión. Verificá tus credenciales.");
+      localStorage.removeItem("token");
       navigate("/login");
     }
   }, []);

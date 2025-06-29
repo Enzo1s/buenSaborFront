@@ -7,11 +7,32 @@ const LoginView = () => {
     const {login, isAuthenticated} = useAuth()
     const navigate = useNavigate()
     return (
-        <Grid container spacing={2} justifyContent={"center"}>
-            <Grid size={12} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"} className="textWhte">
-                <Typography variant='h3'>Inicio de Sesión</Typography>
+        <Grid container
+            spacing={2}
+            alignContent={"center"}
+            justifyContent="center"
+            sx={{
+                backgroundColor: 'rgba(35, 35, 35, 0.95)', // Fondo oscuro para la tarjeta del formulario
+                padding: { xs: 2, md: 4 },
+                borderRadius: '12px',
+                boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+                color: '#e0e0e0', // Texto claro por defecto
+                maxWidth: '1000px', // Mayor ancho para este formulario
+                margin: 'auto',
+                mt: 5,
+                border: '1px solid rgba(70, 70, 70, 0.5)'
+            }}>
+            <Grid size={12} >
+                <Typography component="h1"
+                variant="h3"
+                    sx={{
+                        color: '#90CAF9',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        mb: 3,
+                    }}>Inicio de Sesión</Typography>
             </Grid>
-            <Grid size={6} sx={{ margin: 'auto', padding: 2, backgroundColor: "#f5f5f5", borderRadius: 2 }}>
+            <Grid size={6} >
                 <Formik
                     initialValues={{
                         username: '',
@@ -44,6 +65,19 @@ const LoginView = () => {
                                         onBlur={handleBlur}
                                         fullWidth
                                         required
+                                        sx={{
+                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                            borderRadius: '4px',
+                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                            '& .MuiInputLabel-root': {
+                                                color: '#a0a0a0',
+                                                '&.Mui-focused': { color: '#fff' },
+                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid size={12} sx={{ marginBottom: 2 }}>
@@ -57,6 +91,19 @@ const LoginView = () => {
                                         onBlur={handleBlur}
                                         fullWidth
                                         required
+                                        sx={{
+                                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                                            borderRadius: '4px',
+                                            '& .MuiInputBase-input': { color: '#e0e0e0' },
+                                            '& .MuiInputLabel-root': {
+                                                color: '#a0a0a0',
+                                                '&.Mui-focused': { color: '#fff' },
+                                                '&.MuiFormLabel-filled': { color: '#fff' },
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': { borderColor: '#757575' },
+                                            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#e0e0e0' },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9', borderWidth: '2px' },
+                                        }}
                                     />
                                 </Grid>
                                 <Grid size={12} justifyContent={"center"} display={"flex"}>

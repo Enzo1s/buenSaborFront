@@ -4,7 +4,7 @@ import { Outlet } from 'react-router'
 const PedidoVentaView = () => {
   return (
     <div>
-        <Typography variant='h5'>Pedido Venta</Typography>
+        <Typography variant='h5' className='textWhte'>Pedido Venta</Typography>
         <Outlet />
     </div>
   )
