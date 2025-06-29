@@ -23,7 +23,7 @@ const DetallePromocionForm = (props: DetallePromocionFormProps) => {
         const listArticulos = async () => {
           const { data } = await getAllArticuloManufacturado()
           const { data: aInsumos } = await getListArticuloInsumo()
-          setInsumos(aInsumos)
+          setInsumos(aInsumos.filter((insumo: ArticuloInsumo) => insumo.esParaElaborar !== true))
           setArticulos(data)
         }
         listArticulos()
