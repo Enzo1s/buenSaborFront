@@ -57,28 +57,46 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
     }
 
     const getPdf = async (id: string) => {
-        axios.get(`http://localhost:8080/api/reportes/pdf?id=${id}`, {
-    responseType: 'blob' // 👈 Esto es clave para manejar archivos binarios (como PDF)
-  })
-  .then((response) => {
-    const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-    const link = document.createElement('a');
-    link.href = url;
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/reportes/pdf?id=${id}`,
+          {
+            responseType: "blob",
+            withCredentials: true,
+          }
+        );
 
-    // Usar el nombre sugerido por el backend o uno propio
-    const filename = `ReporteInstrumento_${id}.pdf`;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
 
-    // Limpiar el objeto URL después de usarlo
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  })
-  .catch((error) => {
-    console.error('Error al descargar el PDF:', error);
-  });
-    }
+        console.log(response.headers);
+
+        // ✅ extraer nombre desde el header
+        const contentDisposition = response.headers["content-disposition"];
+        let filename = "reporte.pdf";
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) {
+            filename = match[1];
+          }
+        }
+
+        // ✅ descargar con nombre correcto
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error al descargar el PDF:", error);
+      }
+    };
+      
+      
+      
 
     useEffect(() => {
         listadoPedidosVenta()
