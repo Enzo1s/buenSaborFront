@@ -21,7 +21,6 @@ import { createPreference } from "../Api/DatosMPAPI";
 import MercadoPago from "./MercadoPago";
 import Modal from "./Modal";
 import { PedidoVentaDetalle } from "../interfaces/PedidoVentaDetalle";
-import { TipoEnvio } from "../enums/TipoEnvio";
 import { FormaPago } from "../enums/FormaPago";
 
 const Header = () => {
@@ -109,6 +108,10 @@ const Header = () => {
       }
     } catch (error) {
       console.error(error);
+      if((error as any)?.response)
+        alert((error as any)?.response?.data)
+      else 
+        alert("Error al procesar el pago. Por favor, intentá nuevamente más tarde.");
     }
   };
 

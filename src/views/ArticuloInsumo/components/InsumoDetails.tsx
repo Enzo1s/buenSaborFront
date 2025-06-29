@@ -10,16 +10,27 @@ import {
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useParams } from 'react-router'
 import { ArticuloInsumo } from '../../../interfaces/ArticuloInsumo'
-import { getByIdArticuloInsumo } from '../../../Api/ArticuloInsumo'
+import { getByIdArticuloInsumo, getByIdArticuloInsumoAndIdSucursal } from '../../../Api/ArticuloInsumo'
 import { useCartContext } from '../../../Context/cartContext';
+import { useAuth } from '../../../Context/authContext';
 
 const InsumoDetails = () => {
     const { id } = useParams()
     const { addItemToCart } = useCartContext()
+    const { user } = useAuth()
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloInsumo | null>(null)
     const [mainImage, setMainImage] = useState<string | null>(null)
     const [galleryImages, setGalleryImages] = useState<string[]>([])
+    const [stock, setStock] = useState(0)
+
+    const agregarACarrito = () => {
+        if (articulo && stock > 0) {
+            addItemToCart(articulo, null, null, 1);
+        } else if(stock === 0) {
+            alert("No hay stock disponible para este artículo.");
+        }
+    }
 
     useEffect(() => {
         const getArticuloInsumo = async () => {
@@ -31,6 +42,8 @@ const InsumoDetails = () => {
                     setMainImage(image);
                    const images = data.pathImagen ? data.pathImagen.slice(1) : [];
                    setGalleryImages(images);
+                   const {data: stockData} = await getByIdArticuloInsumoAndIdSucursal(id, user?.sucursalEmpresa?.id as string);
+                   setStock(stockData.stock);
                 }
             } catch (error) {
                 console.error(error);
@@ -187,6 +200,11 @@ const InsumoDetails = () => {
                                         <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Unidad de Medida:</Typography> {articulo?.unidadMedida}
                                     </Typography>
                                 </Grid>
+                                 <Grid size={12}>
+                                    <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
+                                        <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Stock:</Typography> {stock > 0 ? stock : 'Sin Stock'}
+                                    </Typography>
+                                </Grid>
 
                                 {articulo?.categoriaArticulo && articulo?.categoriaArticulo.length > 0 && (
                                     <Grid size={12}>
@@ -227,7 +245,8 @@ const InsumoDetails = () => {
                                             boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
                                         },
                                     }}
-                                    onClick={() => articulo && addItemToCart(articulo,null,null,1)}
+                                    disabled={stock <= 0} // Deshabilitar si no hay stock
+                                    onClick={() => agregarACarrito()}
                                 >
                                     Agregar al Carrito
                                 </Button>

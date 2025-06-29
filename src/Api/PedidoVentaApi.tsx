@@ -20,7 +20,7 @@ export const updateStatusPedidoVenta = async (id: string, status: string) => {
 }
 
 export const createPedidoVenta = async (pedidoVenta: PedidoVenta) => {
-    return await axios.post("http://localhost:8080/api/pedido-venta/create", pedidoVenta);
+    return await axios.post("http://localhost:8080/api/pedido-venta/create-stock", pedidoVenta);
 }
 
 export const getPedidoVentaByIdSucursal = async (id: string) => {
