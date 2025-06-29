@@ -65,11 +65,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
             withCredentials: true,
           }
         );
-
-
-        console.log(response.headers);
-
-        // ✅ extraer nombre desde el header
+        
         const contentDisposition = response.headers["content-disposition"];
         let filename = "reporte.pdf";
 
@@ -79,8 +75,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
             filename = match[1];
           }
         }
-
-        // ✅ descargar con nombre correcto
+        
         const blob = new Blob([response.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
