@@ -56,8 +56,8 @@ const Router = () => {
       <Route element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}>
         <Route path="/sucursal" element={<SucursalView />}>
           <Route path="" element={<SucursalMain />} />
-          <Route path="crear" element={ <SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>}/>
-          <Route path="editar/:id" element={<SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false}/>}/>
+          <Route path="crear" element={ <SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false} />}/>
+          <Route path="editar/:id" element={ <SucursalForm sucursales={[]} setSucursales={() => {}} setViewForm={() => {}} isFromCompany={false} />}/>
           <Route path="ver/:id" element={<SucursalDetails />} />
         </Route>
         <Route path="/reporte" element={<ReporteView />} />
@@ -74,7 +74,6 @@ const Router = () => {
           <Route path="crear" element={<PedidoVentaForm />} />
           <Route path="crear/:idEmpleado" element={<PedidoVentaForm />} />
           <Route path="editar/:id" element={<PedidoVentaForm />} />
-          {/* <Route path="Pago" element={<MercadoPagoResponse />} /> */}
         </Route>
 
         <Route path="/sucursal-insumo" element={<SucursalInsumoView />}>
@@ -101,14 +100,15 @@ const Router = () => {
         </Route>
 
         <Route path="/cliente" element={<ClienteView />}>
-        <Route path="" element={<ClienteTable />} />
+          <Route path="" element={<ClienteTable />} />
           <Route path="crear" element={<ClienteForm />} />
           <Route path="editar/:id" element={<ClienteForm />} />
           <Route path="ver/:id" element={<ClienteDetails />} />
         </Route>
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["ADMIN", "CLIENTE", "EMPLEADO"]} />}>
+      <Route
+        element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO", "CLIENTE" ]}/>}>
         <Route path="/articulo-manufacturado" element={<ArticuloManufacturadoView />}>
           <Route path="" element={<ManufacturadoTable />} />
           <Route element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}>

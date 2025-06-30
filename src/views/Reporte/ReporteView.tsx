@@ -2,88 +2,169 @@ import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { PedidoVenta } from "../../interfaces/PedidoVenta";
 import { gePedidoVenta } from "../../Api/PedidoVentaApi";
-import { Grid } from "@mui/material";
+import { FormaPago } from "../../enums/FormaPago";
 
 const ReporteView = () => {
+    const [graficoEstado, setGraficoEstado] = useState<(string | number)[][]>([
+      ["Estado", "Cantidad"],
+    ]);
+    const [graficoFormaPago, setGraficoFormaPago] = useState<
+      (string | number | object)[][]
+    >([["Forma de pago", "Cantidad", { role: "style" }]]);
+    const [graficoPorProducto, setGraficoPorProducto] = useState<
+      (string | number)[][]
+    >([["Producto", "Cantidad"]]);
+    const [graficoPorEmpleado, setGraficoPorEmpleado] = useState<
+      (string | number)[][]
+    >([["Empleado", "Cantidad"]]);
+    
 
-    const [pedidosVenta, setPedidosVenta] = useState([["", 0]]);
-    const [grafo2, setgrafo2] = useState([["", 0]])
+  useEffect(() => {
+    const fetchPedidosVenta = async () => {
+      try {
+        const { data } = await gePedidoVenta();
 
-    useEffect(() => {
-        const fetchPedidosVenta = async () => {
-            try {
-                const { data } = await gePedidoVenta();
-                const preparacion = data.filter((pedido: PedidoVenta) => pedido.estado === "PREPARACION");
-                const pendiente = data.filter((pedido: PedidoVenta) => pedido.estado === "PENDIENTE");
-                const cancelado = data.filter((pedido: PedidoVenta) => pedido.estado === "CANCELADO");
-                const rechazado = data.filter((pedido: PedidoVenta) => pedido.estado === "RECHAZADO");
-                const entregado = data.filter((pedido: PedidoVenta) => pedido.estado === "ENTREGADO");
-                setPedidosVenta([["Estado", "Cantidad"], [
-                    "Preparacion",
-                    preparacion ? preparacion.length : 0
-                ],
-                ["Pendiente",
-                    pendiente ? pendiente.length : 0]
-                    ,
-                ["Cancelado",
-                    cancelado ? cancelado.length : 0]
-                    ,
-                ["Rechazado",
-                    rechazado ? rechazado.length : 0]
-                    ,
-                ["Entregado",
-                    entregado ? entregado.length : 0]
-                ]);
+        const estados = [
+          "PREPARACION",
+          "PENDIENTE",
+          "CANCELADO",
+          "RECHAZADO",
+          "ENTREGADO",
+        ];
+        const estadoData = [["Estado", "Cantidad"]];
+        estados.forEach((estado) => {
+          const cantidad = data.filter(
+            (pedido : PedidoVenta) => pedido.estado === estado
+          ).length;
+          estadoData.push([estado, cantidad]);
+        });
+        setGraficoEstado(estadoData);
 
-                const pagoEfectivo = data.filter((pedido: PedidoVenta) => pedido.formaPago === "EFECTIVO");
-                const pagoMercado = data.filter((pedido: PedidoVenta) => pedido.formaPago === "MERCADOPAGO");
-                setgrafo2([["Forma de pago", "Cantidad",{ role: "style" }], [
-                    "Efectivo",
-                    pagoEfectivo ? pagoEfectivo.length : 0,
-                    "color:rgb(73, 161, 0)"
-                ],
-                ["MercadoPago",
-                    pagoMercado ? pagoMercado.length : 0,
-                    "color:rgb(40, 113, 182)"]
-                ])
-            } catch (error) {
-                console.error("Error al obtener los pedidos de venta:", error);
-            }
-        }
-        fetchPedidosVenta()
-    }, [])
+        const pagoEfectivo = data.filter(
+          (pedido : PedidoVenta) => pedido.formaPago === FormaPago.EFECTIVO
+        );
+        const pagoMercado = data.filter(
+          (pedido : PedidoVenta) => pedido.formaPago === FormaPago.MERCADOPAGO
+        );
+        setGraficoFormaPago([
+          ["Forma de pago", "Cantidad", { role: "style" }],
+          ["Efectivo", pagoEfectivo.length, "color:rgb(73, 161, 0)"],
+          ["MercadoPago", pagoMercado.length, "color:rgb(40, 113, 182)"],
+        ]);
 
-    const data = [
-  ["Element", "Density", { role: "style" }],
-  ["Copper", 8.94, "#b87333"], // RGB value
-  ["Silver", 10.49, "silver"], // English color name
-  ["Gold", 19.3, "gold"],
-  ["Platinum", 21.45, "color: #e5e4e2"], // CSS-style declaration
-];
+        const productoMap = new Map<string, number>();
+        data.forEach((pedido : PedidoVenta) => {
+          pedido.pedidoVentaDetalle?.forEach((detalle) => {
+            const nombre =
+              detalle.articuloManufacturado?.denominacion ?? "Desconocido";
+            const cantidad = detalle.cantidad ?? 0;
+            productoMap.set(nombre, (productoMap.get(nombre) ?? 0) + cantidad);
+          });
+        });
+        const productoData = [["Producto", "Cantidad"]];
+        productoMap.forEach((cantidad, nombre) => {
+          productoData.push([nombre, cantidad]);
+        });
+        setGraficoPorProducto(productoData);
 
-    const options = {
-        title: "Pedidos Venta por estado",
+        const empleadoMap = new Map<string, number>();
+        data.forEach((pedido : PedidoVenta) => {
+          const nombre = pedido.empleado?.nombre ?? "Sin asignar";
+          empleadoMap.set(nombre, (empleadoMap.get(nombre) ?? 0) + 1);
+        });
+        const empleadoData = [["Empleado", "Cantidad"]];
+        empleadoMap.forEach((cantidad, nombre) => {
+          empleadoData.push([nombre, cantidad]);
+        });
+        setGraficoPorEmpleado(empleadoData);
+      } catch (error) {
+        console.error("Error al obtener los pedidos de venta:", error);
+      }
     };
-    return (
-        <>
-        {pedidosVenta && 
-        <Grid container spacing={2} >
-            <Grid size={6} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"} >
-        <Chart
-            chartType="PieChart"
-            data={pedidosVenta}
-            options={options}
-            width={"100%"}
-            height={"400px"}
-            />
-            </Grid>
-            <Grid size={6} sx={{ margin: 'auto', padding: 2 }} justifyContent={"center"}  display={"flex"} >
-            <Chart chartType="ColumnChart" width="100%" height="400px" data={grafo2} />
-            </Grid>
-        </Grid>
-            }
-            </>
-    );
-}
 
-export default ReporteView
+    fetchPedidosVenta();
+  }, []);
+
+  const optionsEstado = {
+    title: "Pedidos por estado",
+    pieHole: 0.4,
+  };
+
+  const optionsFormaPago = {
+    title: "Ventas por forma de pago",
+    legend: "none",
+    hAxis: { title: "Forma de pago" },
+    vAxis: { title: "Cantidad" },
+  };
+
+  const optionsProducto = {
+    title: "Ventas por producto",
+    legend: "none",
+    hAxis: { title: "Cantidad vendida" },
+    vAxis: { title: "Producto" },
+  };
+
+  const optionsEmpleado = {
+    title: "Ventas por empleado",
+    legend: "none",
+    hAxis: { title: "Empleado" },
+    vAxis: { title: "Cantidad de pedidos" },
+  };
+
+  const gridContainerStyle: React.CSSProperties = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "16px",
+    padding: "16px",
+    justifyContent: "flex-start",
+  };
+
+  const chartItemStyle: React.CSSProperties = {
+    flex: "1 1 calc(49% - 16px)",
+    minWidth: "400px",
+    maxWidth: "100%",
+  };
+
+  return (
+    <div style={gridContainerStyle}>
+      <div style={chartItemStyle}>
+        <Chart
+          chartType="PieChart"
+          data={graficoEstado}
+          options={optionsEstado}
+          width="100%"
+          height="500px"
+        />
+      </div>
+      <div style={chartItemStyle}>
+        <Chart
+          chartType="ColumnChart"
+          data={graficoFormaPago}
+          options={optionsFormaPago}
+          width="100%"
+          height="500px"
+        />
+      </div>
+      <div style={chartItemStyle}>
+        <Chart
+          chartType="BarChart"
+          data={graficoPorProducto}
+          options={optionsProducto}
+          width="100%"
+          height="500px"
+        />
+      </div>
+      <div style={chartItemStyle}>
+        <Chart
+          chartType="BarChart"
+          data={graficoPorEmpleado}
+          options={optionsEmpleado}
+          width="100%"
+          height="500px"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default ReporteView;
