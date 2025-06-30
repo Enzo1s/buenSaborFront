@@ -31,7 +31,7 @@ const Header = () => {
   const [viewForm, setViewForm] = useState(false);
 
   const { isAuthenticated, user, logout, cliente, empleado } = useAuth();
-  const { pedidoVenta, removeItemFromCart } = useCartContext();
+  const { pedidoVenta, removeItemFromCart, clearCart } = useCartContext();
 
   const ventanaPagoRef = useRef<Window | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -103,6 +103,8 @@ const Header = () => {
             if (!pagoTerminadoRef.current) {
               console.log("Ventana de pago cerrada manualmente");
             }
+            clearCart()
+            navigate("/")
           }
         }, 500);
       }

@@ -5,7 +5,6 @@ import { PedidoVenta } from "../interfaces/PedidoVenta";
 import { Promocion } from "../interfaces/Promocion";
 import { Estado } from "../enums/Estado";
 import { TipoEnvio } from "../enums/TipoEnvio";
-import { FormaPago } from "../enums/FormaPago";
 import { addMinutes } from "date-fns";
 
 interface CartContextType {

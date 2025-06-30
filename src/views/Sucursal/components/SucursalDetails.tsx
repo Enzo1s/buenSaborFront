@@ -32,7 +32,6 @@ import {
   deleteSucursalInsumo,
   getSucursalInsumosByIdSucursal,
 } from "../../../Api/SucursalInsumoAPI";
-import Modal from "../../../components/Modal";
 import { PedidoVenta } from "../../../interfaces/PedidoVenta";
 import { getPedidoVentaByIdSucursal } from "../../../Api/PedidoVentaApi";
 

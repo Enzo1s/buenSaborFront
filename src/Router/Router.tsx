@@ -117,8 +117,10 @@ const Router = () => {
           </Route>
           <Route path="ver/:id" element={<ManufacturadoDetails />} />
         </Route>
-        <Route path="/pedido-venta/pago" element={<MercadoPagoResponse />} />
       </Route>
+      <Route path="/pedido-venta" element={<PedidoVentaView />}>
+          <Route path="Pago" element={<MercadoPagoResponse />} />
+        </Route>
     </Routes>
   );
 }
