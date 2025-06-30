@@ -26,8 +26,8 @@ const MercadoPagoResponse = () => {
     };
 
     if (response.status === "approved") clearCart();
-
-    proccesPay(response);
+    if(response.external_reference)
+      proccesPay(response);
 
     if (window.opener && !window.opener.closed) {
       window.opener.postMessage(

@@ -74,7 +74,7 @@ const Router = () => {
           <Route path="crear" element={<PedidoVentaForm />} />
           <Route path="crear/:idEmpleado" element={<PedidoVentaForm />} />
           <Route path="editar/:id" element={<PedidoVentaForm />} />
-          <Route path="Pago" element={<MercadoPagoResponse />} />
+          {/* <Route path="Pago" element={<MercadoPagoResponse />} /> */}
         </Route>
 
         <Route path="/sucursal-insumo" element={<SucursalInsumoView />}>
@@ -118,6 +118,9 @@ const Router = () => {
           <Route path="ver/:id" element={<ManufacturadoDetails />} />
         </Route>
       </Route>
+      <Route path="/pedido-venta" element={<PedidoVentaView />}>
+          <Route path="Pago" element={<MercadoPagoResponse />} />
+        </Route>
     </Routes>
   );
 }
