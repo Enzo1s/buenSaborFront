@@ -14,8 +14,8 @@ import {
   Modal,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import { PedidoVenta } from "../../../interfaces/PedidoVenta";
 import {
   createPedidoVenta,
@@ -33,7 +33,6 @@ import { FormaPago } from "../../../enums/FormaPago";
 import { getAllArticuloManufacturado } from "../../../Api/ArticuloManufacturadoAPI";
 import { getListArticuloInsumo } from "../../../Api/ArticuloInsumo";
 import { format, isWithinInterval } from "date-fns";
-// import Modal from "../../../components/Modal";
 import { createPreference } from "../../../Api/DatosMPAPI";
 import MercadoPago from "../../../components/MercadoPago";
 import { getSucursales } from "../../../Api/SucursalAPI";
@@ -53,6 +52,7 @@ interface CardArticulosProps {
 }
 
 const PedidoVentaForm = () => {
+  const Navigate = useNavigate();
   const { id, idEmpleado } = useParams();
   const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -66,6 +66,10 @@ const PedidoVentaForm = () => {
   const { empleado: empleadoLogin, user } = useAuth();
 
   const [listCard, setListCard] = useState<CardArticulosProps[]>([]);
+
+  const ventanaPagoRef = useRef<Window | null>(null);
+  const timerRef = useRef<number | null>(null);
+  const pagoTerminadoRef = useRef(false);
 
   const getManufacturados = async () => {
     const { data: manufacturados } = await getAllArticuloManufacturado();
@@ -188,7 +192,32 @@ const PedidoVentaForm = () => {
         } else if (pedidoFinal.formaPago === FormaPago.MERCADOPAGO) {
           const response = await createPreference(data.id);
           setIdPreference(response.data.idPreference);
-          setViewForm(true);
+          const preferenceUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${response.data.idPreference}`;
+          
+          ventanaPagoRef.current = window.open(
+            preferenceUrl,
+            "_blank",
+            "width=1100,height=700"
+          );
+
+          if (!ventanaPagoRef.current) {
+            alert("Por favor desbloqueá las ventanas emergentes.");
+            return;
+          }
+
+          pagoTerminadoRef.current = false;
+
+          timerRef.current = window.setInterval(() => {
+            if (ventanaPagoRef.current && ventanaPagoRef.current.closed) {
+              clearInterval(timerRef.current!);
+              timerRef.current = null;
+
+              if (!pagoTerminadoRef.current) {
+                console.log("Ventana de pago cerrada manualmente");
+              }
+              Navigate("/pedido-venta");
+            }
+          }, 500);
         }
 
         setOpenModal(false);
@@ -261,6 +290,32 @@ const PedidoVentaForm = () => {
     if (!pedidoVenta) return;
     buy(FormaPago.EFECTIVO);
   };
+
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.origin !== window.origin) return;
+
+      if (event.data?.pagoTerminado) {
+        pagoTerminadoRef.current = true;
+
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener("message", handler);
+
+    return () => {
+      window.removeEventListener("message", handler);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     getPedidoVenta();
