@@ -39,7 +39,7 @@ const MercadoPagoResponse = () => {
     setTimeout(() => {
       window.close();
     }, 500);
-    
+    clearCart();
     navigate("/");
   }, [navigate, clearCart]);
 
