@@ -42,6 +42,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   const { idEmpleado } = props;
 
   const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([]);
+  const [pedidosVentaBefore, setPedidosVentaBefore] = useState<PedidoVenta[] | null>([])
   const [loading, setLoading] = useState(false);
   const [viewFormStatus, setViewFormStatus] = useState(false);
   const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
@@ -58,9 +59,11 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
     if (idEmpleado) {
       const { data } = await getPedidoVentaByEmpleadoId(idEmpleado);
       setPedidosVenta(data);
+      setPedidosVentaBefore(data)
     } else {
       const { data } = await gePedidoVenta();
       setPedidosVenta(data);
+      setPedidosVentaBefore(data)
     }
     setLoading(false);
   };
@@ -144,6 +147,26 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
     }
   };
 
+
+  const handleSearch = (searchTerm: string) => {
+    if (searchTerm.trim() === "") {
+      setPedidosVenta(pedidosVentaBefore);
+    } else {
+      const filtered = pedidosVentaBefore?.filter((pedido) =>
+        pedido.cliente?.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pedido.cliente?.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `${pedido.cliente?.nombre.toLowerCase()} ${pedido.cliente?.apellido.toLowerCase()}`.includes(searchTerm.toLowerCase()) ||
+        pedido.empleado?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        pedido.empleado?.apellido?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        `${pedido.empleado?.nombre?.toLowerCase()} ${pedido.empleado?.apellido?.toLowerCase()}`.includes(searchTerm.toLowerCase()) ||
+        pedido.pedidoVentaDetalle?.some(detalle => detalle?.articuloInsumo ?
+           detalle?.articuloInsumo?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()) :
+           detalle?.articuloManufacturado?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setPedidosVenta(filtered || []);
+    }
+  }
+
   useEffect(() => {
     listadoPedidosVenta();
   }, []);
@@ -182,7 +205,43 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
         >
           Listado de Pedidos de Venta
         </Typography>
-        <Box display="flex" gap={2} alignItems="center">
+        {/* Sección de Búsqueda y Botón de Creación */}
+              <Grid size={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
+                <TextField
+                  label="Buscar "
+                  variant="outlined"
+                  onChange={(e) => handleSearch(e.target.value)}
+                  sx={{
+                    flexGrow: 1,
+                    mr: { xs: 0, sm: 2 },
+                    minWidth: { xs: '100%', sm: 'auto' },
+                    backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                    borderRadius: '4px',
+                    '& .MuiInputBase-input': {
+                      color: '#e0e0e0',
+                    },
+                    '& .MuiInputLabel-root': {
+                      color: '#a0a0a0',
+                      '&.Mui-focused': {
+                        color: '#fff',
+                      },
+                      '&.MuiFormLabel-filled': {
+                        color: '#fff',
+                      },
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#757575',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#e0e0e0',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#90CAF9',
+                      borderWidth: '2px',
+                    },
+                  }}
+                />
+                <Box display="flex" gap={2} alignItems="center">
           <Button
             variant="contained"
             startIcon={<FaFileExcel style={{ color: "white" }} />}
@@ -217,6 +276,42 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
             Crear Pedido
           </Button>
         </Box>
+              </Grid>
+        {/* <Box display="flex" gap={2} alignItems="center">
+          <Button
+            variant="contained"
+            startIcon={<FaFileExcel style={{ color: "white" }} />}
+            onClick={() => setModalExcelOpen(true)}
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": { backgroundColor: "#1565c0" },
+              color: "#fff",
+            }}
+          >
+            Generar Excel
+          </Button>
+
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() =>
+              idEmpleado
+                ? navigate(`/pedido-venta/crear/${idEmpleado}`)
+                : navigate("/pedido-venta/crear")
+            }
+            sx={{
+              backgroundColor: "#4CAF50",
+              "&:hover": { backgroundColor: "#388E3C" },
+              color: "#ffffff",
+              px: 3,
+              py: 1.2,
+              borderRadius: "8px",
+            }}
+          >
+            Crear Pedido
+          </Button>
+        </Box> */}
       </Box>
 
       {loading ? (
@@ -539,7 +634,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
           </Typography>
           {pedidoVenta && (
             <Grid container spacing={2}>
-              <Grid item xs={12} sx={{ mb: 2 }}>
+              <Grid size={12} sx={{ mb: 2 }}>
                 <Autocomplete
                   fullWidth
                   id="estado-update"
@@ -582,8 +677,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                 />
               </Grid>
               <Grid
-                item
-                xs={12}
+                size={12}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
                 <Button

@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Modal as MuiModal,
   IconButton,
+  TextField,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ScheduleIcon from "@mui/icons-material/Schedule";
@@ -38,6 +39,7 @@ import { getPedidoVentaByIdSucursal } from "../../../Api/PedidoVentaApi";
 const SucursalDetails = () => {
   const [sucursal, setSucursal] = useState<SucursalEmpresa | null>(null);
   const [insumos, setInsumos] = useState<SucursalInsumo[] | null>([]);
+  const [articuloInsumosBefore, setArticuloInsumosBefore] = useState<SucursalInsumo[] | null>([])
   const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([]);
   const [loadingSucursal, setLoadingSucursal] = useState(false);
   const [loadingInsumos, setLoadingInsumos] = useState(false);
@@ -63,6 +65,7 @@ const SucursalDetails = () => {
         insumo.id === id ? { ...insumo, baja: new Date() } : insumo
       );
       setInsumos(newInsumos ?? []);
+      setArticuloInsumosBefore(newInsumos ?? [])
     } catch (error) {
       console.error("Error deleting articulo:", error);
     }
@@ -79,6 +82,7 @@ const SucursalDetails = () => {
         setLoadingPedidosVenta(true);
         const { data: insumos } = await getSucursalInsumosByIdSucursal(id);
         setInsumos(insumos);
+        setArticuloInsumosBefore(insumos)
         setLoadingInsumos(false);
         const { data: listPedidosVenta } = await getPedidoVentaByIdSucursal(id);
         setPedidosVenta(listPedidosVenta);
@@ -91,6 +95,19 @@ const SucursalDetails = () => {
       }
     }
   };
+
+    const handleSearch = (searchTerm: string) => {
+    if (searchTerm.trim() === "") {
+      setInsumos(articuloInsumosBefore);
+    } else {
+      const filtered = articuloInsumosBefore?.filter((sucInsumo) =>
+        sucInsumo.articuloInsumo?.denominacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sucInsumo.articuloInsumo?.categoriaArticulo?.some(categoria => categoria?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setInsumos(filtered || []);
+    }
+  }
+
   useEffect(() => {
     getsucursal();
   }, []);
@@ -248,6 +265,41 @@ const SucursalDetails = () => {
               </Typography>
             </Box>
               {insumos && insumos.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* <TextField
+                          label="Buscar por Denominación"
+                          variant="outlined"
+                          onChange={(e) => handleSearch(e.target.value)}
+                          sx={{
+                            flexGrow: 1,
+                            mr: { xs: 0, sm: 2 },
+                            minWidth: { xs: '100%', sm: 'auto' },
+                            backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                            borderRadius: '4px',
+                            '& .MuiInputBase-input': {
+                              color: '#e0e0e0',
+                            },
+                            '& .MuiInputLabel-root': {
+                              color: '#a0a0a0',
+                              '&.Mui-focused': {
+                                color: '#fff',
+                              },
+                              '&.MuiFormLabel-filled': {
+                                color: '#fff',
+                              },
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#757575',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#e0e0e0',
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                              borderColor: '#90CAF9',
+                              borderWidth: '2px',
+                            },
+                          }}
+                        /> */}
                 <Button
                   variant="contained"
                   color="primary"
@@ -268,6 +320,7 @@ const SucursalDetails = () => {
                 >
                   Agregar Insumo
                 </Button>
+                </Box>
               )}
           </Box>
 
@@ -676,7 +729,7 @@ const SucursalDetails = () => {
                           variant="body1"
                           sx={{ fontWeight: "medium" }}
                         >
-                          {`${pedido?.cliente?.nombre} ${pedido?.cliente?.apellido}`}
+                          {pedido?.cliente ?`${pedido?.cliente?.nombre} ${pedido?.cliente?.apellido}`: 'Sin cliente'}
                         </Typography>
                       </TableCell>
                       <TableCell

@@ -38,6 +38,7 @@ import ClienteTable from "../views/Cliente/components/ClienteTable"
 import ClienteForm from "../views/Cliente/components/ClienteForm"
 import ClienteDetails from "../views/Cliente/components/ClienteDetails"
 import ReporteView from "../views/Reporte/ReporteView"
+import PedidoVentaDetails from "../views/PedidoVenta/components/PedidoVentaDetails"
 
 const Router = () => {
   return (
@@ -71,6 +72,7 @@ const Router = () => {
 
         <Route path="/pedido-venta" element={<PedidoVentaView />}>
           <Route path="" element={<PedidoVentaTable idEmpleado={null} />} />
+          <Route path="ver/:id" element={<PedidoVentaDetails />} />
           <Route path="crear" element={<PedidoVentaForm />} />
           <Route path="crear/:idEmpleado" element={<PedidoVentaForm />} />
           <Route path="editar/:id" element={<PedidoVentaForm />} />
