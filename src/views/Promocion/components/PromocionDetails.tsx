@@ -28,6 +28,34 @@ const PromocionDetails = () => {
     }
   }
 
+  const getDiscountedPrice = () => {
+    if (!promocion) return 0;
+    const total = promocion.promocionDetalle?.reduce((sum, detalle) => {
+      const price = detalle.articuloManufacturado?.precioVenta || detalle.articuloInsumo?.precioVenta || 0 as number;
+      return sum + (price as number * (detalle.cantidad as number || 0));
+    }, 0) || 0;
+    const discount = promocion.descuento || 0;
+    return total - (total * (discount as number / 100));
+  }
+  
+  const getTotalPrice = () => {
+    if (!promocion) return 0;
+    return promocion.promocionDetalle?.reduce((sum, detalle) => {
+      const price = detalle.articuloManufacturado?.precioVenta || detalle.articuloInsumo?.precioVenta || 0 as number;
+      return sum + (price as number * (detalle.cantidad as number || 0));
+    }, 0) || 0;
+  }
+
+  const getProfitMargin = () => {
+    if (!promocion) return 0;
+    const totalCost = promocion.promocionDetalle?.reduce((sum, detalle) => {
+      const cost = detalle.articuloManufacturado?.precioCosto || detalle.articuloInsumo?.precioCompra || 0 as number;
+      return sum + (cost as number * (detalle.cantidad as number || 0));
+    }, 0) || 0;
+    const discountedPrice = getDiscountedPrice();
+    return discountedPrice - totalCost;
+  }
+
   useEffect(() => {
     getPromocion()
   }, [])
@@ -119,6 +147,20 @@ const PromocionDetails = () => {
               />
             )}
           </Box>
+          <Typography
+            variant='h5'
+            component='p'
+            align='center'
+            sx={{
+              mb: 4,
+              color: '#69F0AE',
+              fontWeight: 'bold',
+              fontSize: { xs: '1.5rem', sm: '1.75rem' },
+              textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+            }}
+          >
+            Precio total sin descuento: ${getTotalPrice().toFixed(2)}
+          </Typography>
 
           <Typography
             variant='h5'
@@ -133,6 +175,47 @@ const PromocionDetails = () => {
             }}
           >
             Descuento: {promocion.descuento.toFixed(2)} %
+          </Typography>
+          <Typography
+            variant='h5'
+            component='p'
+            align='center'
+            sx={{
+              mb: 4,
+              color: '#69F0AE',
+              fontWeight: 'bold',
+              fontSize: { xs: '1.5rem', sm: '1.75rem' },
+              textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+            }}
+          >
+            Precio total con descuento: ${getDiscountedPrice().toFixed(2)}
+          </Typography>
+
+          <Typography
+            variant='h5'
+            component='p'
+            align='center'
+            sx={{
+              mb: 4,
+              color: '#69F0AE',
+              fontWeight: 'bold',
+              fontSize: { xs: '1.5rem', sm: '1.75rem' },
+              textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+            }}
+          >
+            Margen de utilidad: ${getProfitMargin().toFixed(2)}
+          </Typography>
+          <Typography
+            variant='subtitle1'
+            component='p'
+            align='center'
+            sx={{
+              mb: 4,
+              color: '#ffffffff',
+              textShadow: '1px 1px 3px rgba(0,0,0,0.6)',
+            }}
+          >
+            * El margen de utilidad se calcula tomando el costo de los productos y restandolo al precio total con descuento.
           </Typography>
 
           {promocion.promocionDetalle && promocion.promocionDetalle.length > 0 && (
@@ -179,6 +262,28 @@ const PromocionDetails = () => {
                         }}
                       >
                         {detalle.articuloManufacturado?.denominacion || detalle.articuloInsumo?.denominacion || 'Artículo desconocido'}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 'medium',
+                          color: '#e0e0e0',
+                          mb: 1,
+                        }}
+                      >
+                       Valor: ${detalle.articuloManufacturado?.precioVenta?.toFixed(2) || detalle.articuloInsumo?.precioVenta?.toFixed(2) }
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          fontWeight: 'medium',
+                          color: '#e0e0e0',
+                          mb: 1,
+                        }}
+                      >
+                        Subtotal: ${detalle.articuloManufacturado ? 
+                        ((detalle.articuloManufacturado.precioVenta as number) * (detalle.cantidad as number)).toFixed(2) : 
+                        ((detalle.articuloInsumo?.precioVenta as number) * (detalle.cantidad as number)).toFixed(2)}
                       </Typography>
                       <Chip
                         label={`Cantidad: ${detalle.cantidad.toString()}`}
