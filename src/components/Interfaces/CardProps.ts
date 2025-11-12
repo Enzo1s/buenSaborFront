@@ -8,6 +8,7 @@ export interface CardProps {
         esParaElaborar: Boolean | null,
         unidadMedida: String | null,
         cantidad: Number | null,
-        esInsumo: Boolean 
+        esInsumo: Boolean,
+        categoriaArticulo?: { denominacion: string }[] | null,
     }
 }
