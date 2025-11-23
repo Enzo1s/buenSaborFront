@@ -9,11 +9,16 @@ import {
     Paper,
     TextField,
     Typography,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from '@mui/material';
 import { Formik } from 'formik'
 import { createUser, updateUser } from '../../../Api/UsuarioAPI'
 import { Usuario } from '../../../interfaces/Usuario'
 import { Rol } from '../../../enums/Rol'
+import { Cargo } from '../../../enums/Cargo'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const EmpleadoForm = () => {
@@ -77,7 +82,8 @@ const EmpleadoForm = () => {
                             password: "",
                             alta: null,
                             baja: null,
-                            modificacion: null
+                            modificacion: null,
+                            cargo: empleado?.cargo || null
                         }}
                         onSubmit={async (values, { setSubmitting }) => {
                             const nuevoEmpleado: Empleado = {
@@ -90,7 +96,8 @@ const EmpleadoForm = () => {
                                 perfil: values?.perfil?.toUpperCase() || 'EMPLEADO',
                                 alta: null,
                                 baja: null,
-                                modificacion: null
+                                modificacion: null,
+                                cargo: values.cargo
                             }
                             try {
                                 if (empleado) {
@@ -210,7 +217,33 @@ const EmpleadoForm = () => {
                                     />
                                 </Grid>
 
-                                <Grid size={12}>
+                                <Grid size={{xs:12, sm:6}}>
+                                    <FormControl fullWidth variant="outlined" sx={{ mt: 1 }}>
+                                        <InputLabel id="cargo-label" style={{ color: '#b0b0b0' }}>Cargo</InputLabel>
+                                        <Select
+                                            labelId="cargo-label"
+                                            id="cargo"
+                                            name="cargo"
+                                            value={values.cargo || ''}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            label="Cargo"
+                                            style={{ color: '#ffffff' }}
+                                            sx={{
+                                                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
+                                                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#777' },
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9' }
+                                            }}
+                                        >
+                                            <MenuItem value=""><em>Sin asignar</em></MenuItem>
+                                            <MenuItem value="CAJERO">Cajero</MenuItem>
+                                            <MenuItem value="COCINERO">Cocinero</MenuItem>
+                                            <MenuItem value="DELIVERY">Delivery</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+
+                                <Grid size={{xs:12, sm:6}}>
                                     <TextField
                                         fullWidth
                                         id="username"

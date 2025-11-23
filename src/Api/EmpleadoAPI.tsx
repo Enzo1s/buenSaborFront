@@ -21,3 +21,7 @@ export const createEmpleado = async (empleado: Empleado) => {
 export const deleteEmpleado = async (id: string) => {
     return axios.delete(`http://localhost:8080/api/empleado/${id}`)
 }
+
+export const getEmpleadosByCargo = async (cargo: string) => {
+    return axios.get(`http://localhost:8080/api/empleado/cargo?cargo=${cargo}`)
+}

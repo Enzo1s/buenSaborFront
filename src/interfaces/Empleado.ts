@@ -11,4 +11,5 @@ export interface Empleado {
     alta: Date | null,
 	baja: Date | null,
 	modificacion: Date | null,
+	cargo?: "CAJERO" | "COCINERO" | "DELIVERY" | null,
 }

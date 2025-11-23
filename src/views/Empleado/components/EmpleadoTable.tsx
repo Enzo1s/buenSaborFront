@@ -14,6 +14,10 @@ import {
   IconButton,
   Modal,
   TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -22,6 +26,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { deleteEmpleado, getEmpleados } from "../../../Api/EmpleadoAPI";
 import { Empleado } from "../../../interfaces/Empleado";
 import { useNavigate } from "react-router";
+import { Cargo } from "../../../enums/Cargo";
 
 type SortConfig = {
   key: string;
@@ -40,6 +45,7 @@ const EmpleadoTable = () => {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [filterNombre, setFilterNombre] = useState("");
   const [filterUsuario, setFilterUsuario] = useState("");
+  const [filterCargo, setFilterCargo] = useState<string>("");
 
   const listadoEmpleados = async () => {
     try {
@@ -71,10 +77,11 @@ const EmpleadoTable = () => {
     if (!empleados) return [];
     let filtered = empleados.filter(
       (emp) =>
-        emp.nombre.toLowerCase().includes(filterNombre.toLowerCase()) &&
+        emp.nombre?.toLowerCase().includes(filterNombre.toLowerCase()) &&
         (emp.usuario?.username || "")
           .toLowerCase()
-          .includes(filterUsuario.toLowerCase())
+          .includes(filterUsuario.toLowerCase()) &&
+        (filterCargo ? emp.cargo === filterCargo : true)
     );
 
     if (sortConfig !== null) {
@@ -84,12 +91,12 @@ const EmpleadoTable = () => {
 
         switch (sortConfig.key) {
           case "nombre":
-            aValue = a.nombre.toLowerCase();
-            bValue = b.nombre.toLowerCase();
+            aValue = a.nombre?.toLowerCase();
+            bValue = b.nombre?.toLowerCase();
             break;
           case "apellido":
-            aValue = a.apellido.toLowerCase();
-            bValue = b.apellido.toLowerCase();
+            aValue = a.apellido?.toLowerCase();
+            bValue = b.apellido?.toLowerCase();
             break;
           case "email":
             aValue = a.email?.toLowerCase() || "";
@@ -98,6 +105,10 @@ const EmpleadoTable = () => {
           case "usuario":
             aValue = a.usuario?.username?.toLowerCase() || "";
             bValue = b.usuario?.username?.toLowerCase() || "";
+            break;
+          case "cargo":
+            aValue = a.cargo?.toLowerCase() || "";
+            bValue = b.cargo?.toLowerCase() || "";
             break;
           default:
             return 0;
@@ -165,7 +176,7 @@ const EmpleadoTable = () => {
           size="small"
           value={filterNombre}
           onChange={(e) => setFilterNombre(e.target.value)}
-          sx={{ width: "25%" }}
+          sx={{ width: "20%" }}
         />
         <TextField
           label="Buscar por usuario"
@@ -173,8 +184,22 @@ const EmpleadoTable = () => {
           size="small"
           value={filterUsuario}
           onChange={(e) => setFilterUsuario(e.target.value)}
-          sx={{ width: "25%" }}
+          sx={{ width: "20%" }}
         />
+        <FormControl sx={{ width: "15%" }} size="small">
+          <InputLabel id="filter-cargo-label">Cargo</InputLabel>
+          <Select
+            labelId="filter-cargo-label"
+            value={filterCargo}
+            label="Cargo"
+            onChange={(e) => setFilterCargo(e.target.value)}
+          >
+            <MenuItem value="">Todos</MenuItem>
+            <MenuItem value="CAJERO">Cajero</MenuItem>
+            <MenuItem value="COCINERO">Cocinero</MenuItem>
+            <MenuItem value="DELIVERY">Delivery</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Loading */}
@@ -253,6 +278,17 @@ const EmpleadoTable = () => {
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => requestSort("cargo")}
+                >
+                  Cargo
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
                     width: "150px",
                     borderBottom: "1px solid #444",
                   }}
@@ -315,6 +351,18 @@ const EmpleadoTable = () => {
                         sx={{ fontStyle: "italic", color: "#999" }}
                       >
                         No disponible
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
+                    {empleado.cargo || (
+                      <Typography
+                        component="span"
+                        sx={{ fontStyle: "italic", color: "#999" }}
+                      >
+                        No asignado
                       </Typography>
                     )}
                   </TableCell>
