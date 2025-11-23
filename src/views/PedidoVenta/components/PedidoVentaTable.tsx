@@ -14,6 +14,12 @@ import {
   TextField,
   Autocomplete,
   Modal,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Chip,
+  OutlinedInput,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import AddIcon from "@mui/icons-material/Add";
@@ -32,6 +38,8 @@ import {
 } from "../../../Api/PedidoVentaApi";
 import { format } from "date-fns";
 import { Estado } from "../../../enums/Estado";
+import { Cargo } from "../../../enums/Cargo";
+import { useAuth } from "../../../Context/authContext";
 import axios from "axios";
 
 interface PedidoVentaTableProps {
@@ -40,6 +48,7 @@ interface PedidoVentaTableProps {
 
 const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   const { idEmpleado } = props;
+  const { empleado: authEmpleado } = useAuth();
 
   const [pedidosVenta, setPedidosVenta] = useState<PedidoVenta[] | null>([]);
   const [pedidosVentaBefore, setPedidosVentaBefore] = useState<PedidoVenta[] | null>([])
@@ -51,21 +60,46 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   const [fechaHasta, setFechaHasta] = useState(
     format(new Date(), "yyyy-MM-dd")
   );
+  const [filterEstado, setFilterEstado] = useState<string[]>([]);
+  const [filterEmpleadoCargo, setFilterEmpleadoCargo] = useState<string[]>([]);
 
   const navigate = useNavigate();
 
   const listadoPedidosVenta = async () => {
     setLoading(true);
-    if (idEmpleado) {
-      const { data } = await getPedidoVentaByEmpleadoId(idEmpleado);
+    try {
+      let data;
+
+      if (idEmpleado) {
+        // Si se especifica un idEmpleado (por ejemplo, desde la vista de empleado)
+        const response = await getPedidoVentaByEmpleadoId(idEmpleado);
+        data = response.data;
+      } else if (authEmpleado && authEmpleado.cargo) {
+        // Si hay un empleado autenticado, cargar todos los pedidos para aplicar filtros
+        const response = await gePedidoVenta();
+        data = response.data;
+      } else {
+        // Para ADMIN o usuarios sin cargo específico
+        const response = await gePedidoVenta();
+        data = response.data;
+      }
+
       setPedidosVenta(data);
-      setPedidosVentaBefore(data)
-    } else {
-      const { data } = await gePedidoVenta();
-      setPedidosVenta(data);
-      setPedidosVentaBefore(data)
+      setPedidosVentaBefore(data);
+
+      // Aplicar filtro automático por cargo del empleado autenticado si no es ADMIN
+      if (authEmpleado && authEmpleado.cargo) {
+        // Si es un empleado con cargo distinto de CAJERO, filtrar por su cargo
+        // El CAJERO puede ver todos los pedidos, pero se puede configurar diferente si se desea
+        if (authEmpleado.cargo !== "CAJERO") {
+          setFilterEmpleadoCargo([authEmpleado.cargo]);
+        }
+      }
+    } catch (error) {
+      console.error("Error al cargar los pedidos:", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getPdf = async (id: string) => {
@@ -148,11 +182,38 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   };
 
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const handleSearch = (searchTerm: string) => {
-    if (searchTerm.trim() === "") {
-      setPedidosVenta(pedidosVentaBefore);
-    } else {
-      const filtered = pedidosVentaBefore?.filter((pedido) =>
+    setSearchTerm(searchTerm);
+  };
+
+  // Función para aplicar todos los filtros
+  const applyFilters = () => {
+    if (!pedidosVentaBefore) {
+      setPedidosVenta([]);
+      return;
+    }
+
+    let filtered = [...pedidosVentaBefore];
+
+    // Filtrar por estado
+    if (filterEstado.length > 0) {
+      filtered = filtered.filter(pedido =>
+        filterEstado.includes(pedido.estado)
+      );
+    }
+
+    // Filtrar por cargo del empleado
+    if (filterEmpleadoCargo.length > 0) {
+      filtered = filtered.filter(pedido =>
+        pedido.empleado && filterEmpleadoCargo.includes(pedido.empleado.cargo || '')
+      );
+    }
+
+    // Aplicar también el filtro de búsqueda
+    if (searchTerm.trim() !== "") {
+      filtered = filtered.filter((pedido) =>
         pedido.cliente?.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         pedido.cliente?.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
         `${pedido.cliente?.nombre.toLowerCase()} ${pedido.cliente?.apellido.toLowerCase()}`.includes(searchTerm.toLowerCase()) ||
@@ -163,9 +224,15 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
            detalle?.articuloInsumo?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()) :
            detalle?.articuloManufacturado?.denominacion.toLowerCase().includes(searchTerm.toLowerCase()))
       );
-      setPedidosVenta(filtered || []);
     }
-  }
+
+    setPedidosVenta(filtered);
+  };
+
+  // Actualizar los filtros cuando cambian
+  useEffect(() => {
+    applyFilters();
+  }, [filterEstado, filterEmpleadoCargo, pedidosVentaBefore, searchTerm]);
 
   useEffect(() => {
     listadoPedidosVenta();
@@ -241,6 +308,83 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     },
                   }}
                 />
+
+                {/* Filtros por estado */}
+                <FormControl sx={{ minWidth: 150, mr: 1 }} size="small">
+                  <InputLabel id="estado-filter-label">Estado</InputLabel>
+                  <Select
+                    labelId="estado-filter-label"
+                    multiple
+                    value={filterEstado}
+                    onChange={(e) => setFilterEstado(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                    input={<OutlinedInput label="Estado" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} size="small" />
+                        ))}
+                      </Box>
+                    )}
+                    sx={{
+                      backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                      color: '#e0e0e0',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#757575',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#e0e0e0',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#90CAF9',
+                      },
+                    }}
+                  >
+                    {Object.values(Estado).map((estado) => (
+                      <MenuItem key={estado} value={estado}>
+                        {estado}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {/* Filtros por cargo del empleado */}
+                <FormControl sx={{ minWidth: 150, mr: 1 }} size="small">
+                  <InputLabel id="cargo-filter-label">Cargo Empleado</InputLabel>
+                  <Select
+                    labelId="cargo-filter-label"
+                    multiple
+                    value={filterEmpleadoCargo}
+                    onChange={(e) => setFilterEmpleadoCargo(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+                    input={<OutlinedInput label="Cargo Empleado" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} size="small" />
+                        ))}
+                      </Box>
+                    )}
+                    sx={{
+                      backgroundColor: 'rgba(70, 70, 70, 0.7)',
+                      color: '#e0e0e0',
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#757575',
+                      },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#e0e0e0',
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#90CAF9',
+                      },
+                    }}
+                  >
+                    {Object.values(Cargo).map((cargo) => (
+                      <MenuItem key={cargo} value={cargo}>
+                        {cargo}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
                 <Box display="flex" gap={2} alignItems="center">
           <Button
             variant="contained"
@@ -466,7 +610,11 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                       borderBottom: "1px solid #333",
                     }}
                   >
-                    {pedido.estado || "N/A"}
+                    {pedido.estado === "PREPARACION" ? "Preparación" :
+                     pedido.estado === "PENDIENTE" ? "Pendiente" :
+                     pedido.estado === "CANCELADO" ? "Cancelado" :
+                     pedido.estado === "RECHAZADO" ? "Rechazado" :
+                     pedido.estado === "ENTREGADO" ? "Entregado" : pedido.estado}
                   </TableCell>
                   <TableCell
                     sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
@@ -649,7 +797,13 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                       setPedidoVenta(newPedido);
                     }
                   }}
-                  getOptionLabel={(option: Estado) => option.toString()}
+                  getOptionLabel={(option: Estado) =>
+                    option === "PREPARACION" ? "Preparación" :
+                    option === "PENDIENTE" ? "Pendiente" :
+                    option === "CANCELADO" ? "Cancelado" :
+                    option === "RECHAZADO" ? "Rechazado" :
+                    option === "ENTREGADO" ? "Entregado" : option
+                  }
                   renderInput={(params) => (
                     <TextField
                       {...params}
