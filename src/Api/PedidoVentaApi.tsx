@@ -19,6 +19,10 @@ export const updateStatusPedidoVenta = async (id: string, status: string) => {
   return axios.put(`http://localhost:8080/api/pedido-venta?id=${id}&status=${status.toUpperCase()}`)
 }
 
+export const updatePedidoVenta = async (pedidoVenta: PedidoVenta) => {
+  return axios.put(`http://localhost:8080/api/pedido-venta/full-update`, pedidoVenta);
+}
+
 export const createPedidoVenta = async (pedidoVenta: PedidoVenta) => {
     return await axios.post("http://localhost:8080/api/pedido-venta/create-stock", pedidoVenta);
 }

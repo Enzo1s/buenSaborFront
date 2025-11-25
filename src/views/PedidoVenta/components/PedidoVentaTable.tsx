@@ -30,12 +30,15 @@ import { FaFilePdf } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
 import { PedidoVenta } from "../../../interfaces/PedidoVenta";
+import { Empleado } from "../../../interfaces/Empleado";
 import { useNavigate } from "react-router";
 import {
   gePedidoVenta,
   getPedidoVentaByEmpleadoId,
   updateStatusPedidoVenta,
+  updatePedidoVenta,
 } from "../../../Api/PedidoVentaApi";
+import { getEmpleados } from "../../../Api/EmpleadoAPI";
 import { format } from "date-fns";
 import { Estado } from "../../../enums/Estado";
 import { Cargo } from "../../../enums/Cargo";
@@ -55,6 +58,8 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   const [loading, setLoading] = useState(false);
   const [viewFormStatus, setViewFormStatus] = useState(false);
   const [pedidoVenta, setPedidoVenta] = useState<PedidoVenta | null>(null);
+  const [empleados, setEmpleados] = useState<Empleado[]>([]);
+  const [loadingEmpleados, setLoadingEmpleados] = useState(false);
   const [modalExcelOpen, setModalExcelOpen] = useState(false);
   const [fechaDesde, setFechaDesde] = useState("");
   const [fechaHasta, setFechaHasta] = useState(
@@ -84,8 +89,15 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
         data = response.data;
       }
 
-      setPedidosVenta(data);
-      setPedidosVentaBefore(data);
+      // Sort by date descending (most recent first)
+      const sortedData = [...data].sort((a, b) => {
+        const dateA = new Date(a.fechaPedido);
+        const dateB = new Date(b.fechaPedido);
+        return dateB.getTime() - dateA.getTime(); // Descending order
+      });
+
+      setPedidosVenta(sortedData);
+      setPedidosVentaBefore(sortedData);
 
       // Aplicar filtro automático por cargo del empleado autenticado si no es ADMIN
       if (authEmpleado && authEmpleado.cargo) {
@@ -99,6 +111,18 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
       console.error("Error al cargar los pedidos:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const listadoEmpleados = async () => {
+    setLoadingEmpleados(true);
+    try {
+      const response = await getEmpleados();
+      setEmpleados(response.data);
+    } catch (error) {
+      console.error("Error al cargar los empleados:", error);
+    } finally {
+      setLoadingEmpleados(false);
     }
   };
 
@@ -226,7 +250,14 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
       );
     }
 
-    setPedidosVenta(filtered);
+    // Sort by date descending (most recent first) after filtering
+    const sortedFiltered = [...filtered].sort((a, b) => {
+      const dateA = new Date(a.fechaPedido);
+      const dateB = new Date(b.fechaPedido);
+      return dateB.getTime() - dateA.getTime(); // Descending order
+    });
+
+    setPedidosVenta(sortedFiltered);
   };
 
   // Actualizar los filtros cuando cambian
@@ -238,6 +269,12 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
     listadoPedidosVenta();
   }, []);
 
+  useEffect(() => {
+    if (viewFormStatus) {
+      listadoEmpleados();
+    }
+  }, [viewFormStatus]);
+
   const getEstadoColor = (estado: Estado | null) => {
     switch (estado) {
       case Estado.PENDIENTE:
@@ -245,7 +282,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
       case Estado.PREPARACION:
         return "#FF9800";
       case Estado.RECHAZADO:
-        return "#4CAF50";
+        return "#EF5350";
       case Estado.ENTREGADO:
         return "#66BB6A";
       case Estado.CANCELADO:
@@ -830,6 +867,49 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                   }}
                 />
               </Grid>
+              <Grid size={12} sx={{ mb: 2 }}>
+                <Autocomplete
+                  fullWidth
+                  id="empleado-assignment"
+                  value={pedidoVenta?.empleado || null}
+                  options={empleados}
+                  getOptionLabel={(option) =>
+                    option ? `${option.nombre} ${option.apellido} (${option.cargo})` : ""
+                  }
+                  onChange={(_, newValue) => {
+                    const newPedido: PedidoVenta = {
+                      ...pedidoVenta,
+                      empleado: newValue,
+                    };
+                    setPedidoVenta(newPedido);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Asignar a Empleado"
+                      variant="outlined"
+                      InputLabelProps={{ style: { color: "#b0b0b0" } }}
+                      InputProps={{
+                        ...params.InputProps,
+                        style: { color: "#ffffff" },
+                        sx: {
+                          "& .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#555",
+                          },
+                          "&:hover .MuiOutlinedInput-notchedOutline": {
+                            borderColor: "#1976d2",
+                          },
+                        },
+                      }}
+                    />
+                  )}
+                  loading={loadingEmpleados}
+                  sx={{
+                    backgroundColor: "rgba(20, 20, 20, 0.8)",
+                    borderRadius: "6px",
+                  }}
+                />
+              </Grid>
               <Grid
                 size={12}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
@@ -838,10 +918,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                   variant="contained"
                   onClick={async () => {
                     if (pedidoVenta?.id) {
-                      await updateStatusPedidoVenta(
-                        pedidoVenta.id,
-                        pedidoVenta.estado as Estado
-                      );
+                      await updatePedidoVenta(pedidoVenta);
                       setViewFormStatus(false);
                       listadoPedidosVenta();
                     }
