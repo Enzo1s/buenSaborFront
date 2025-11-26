@@ -20,7 +20,6 @@ interface CartContextType {
     recalculatePromotion: (pedido: PedidoVenta) => { descuento: number; total: number; promocionAplicada: Promocion | null };
 }
 
-// This function checks if a promotion is currently valid (within date range)
 const isPromotionActive = (promocion: Promocion) => {
     const currentDate = new Date();
     const fechaDesde = new Date(promocion.fechaDesde);
@@ -28,19 +27,16 @@ const isPromotionActive = (promocion: Promocion) => {
     return currentDate >= fechaDesde && currentDate <= fechaHasta;
 }
 
-// This function finds which promotions apply to the current pedido
 const findApplicablePromotions = (promocion: Promocion | null, pedidoVenta: PedidoVenta | null) => {
     if (!promocion || !pedidoVenta) {
         return null;
     }
 
-    // Check if the promotion is active
     const isPromoActive = isPromotionActive(promocion);
     if (!isPromoActive) {
         return null;
     }
 
-    // Check if all items of the promotion are present in the required quantities
     if (!pedidoVenta.pedidoVentaDetalle) {
         return null;
     }
@@ -48,20 +44,17 @@ const findApplicablePromotions = (promocion: Promocion | null, pedidoVenta: Pedi
     return checkAllPromotionItemsPresent(promocion, pedidoVenta.pedidoVentaDetalle) ? promocion : null;
 }
 
-// Function to calculate how many complete sets of a promotion can be made from items in the cart
 const calculateAvailablePromotionSets = (promocion: Promocion, detalles: any[] | null) => {
     if (!detalles || !promocion.promocionDetalle) {
         return 0;
     }
 
-    // Check if the promotion is active
     if (!isPromotionActive(promocion)) {
         return 0;
     }
 
-    // For each required item in the promotion, calculate how many sets we can make
     const setsPerItem = promocion.promocionDetalle.map(detalle => {
-        const requiredQuantityPerSet = detalle.cantidad || 1; // Default to 1 if no cantidad specified
+        const requiredQuantityPerSet = detalle.cantidad || 1;
         const itemInCart = detalles.find(detallePedido => {
             if (detalle.articuloInsumo) {
                 return detallePedido.articuloInsumo?.id === detalle.articuloInsumo.id;
@@ -71,18 +64,13 @@ const calculateAvailablePromotionSets = (promocion: Promocion, detalles: any[] |
             return false;
         });
 
-        // If we don't have the required item at all, we can make 0 complete sets
         if (!itemInCart) {
             return 0;
         }
 
-        // Calculate how many sets we can make based on this item
-        // For example, if promotion requires 2 items of 'X' per set, and we have 5 in cart, we can make 5/2 = 2 complete sets from this item
         return Math.floor(itemInCart.cantidad / requiredQuantityPerSet);
     });
 
-    // The total number of complete sets is determined by the minimum of all items
-    // Because we need all items to make a complete set
     return setsPerItem.length > 0 ? Math.min(...setsPerItem) : 0;
 }
 
@@ -92,22 +80,18 @@ const checkAllPromotionItemsPresent = (promocion: Promocion, detalles: any[] | n
         return false;
     }
 
-    // Check if the promotion is active
     if (!isPromotionActive(promocion)) {
         return false;
     }
 
-    // Check if at least one complete set is available
     return calculateAvailablePromotionSets(promocion, detalles) > 0;
 }
 
-// Function to calculate the discount for a specific number of promotion sets
 const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], availableSets: number) => {
     if (availableSets <= 0) {
         return 0;
     }
 
-    // Calculate the value of items that are part of the complete sets
     let totalValueOfSets = 0;
     for (const detallePromo of promocion.promocionDetalle || []) {
         const detalleInCart = detalles.find(detalle => {
@@ -120,11 +104,9 @@ const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], avail
         });
 
         if (detalleInCart) {
-            // Only count the items that are part of complete sets
             const requiredQtyPerSet = detallePromo.cantidad || 1;
             const itemsUsedInSets = requiredQtyPerSet * availableSets;
 
-            // Make sure we don't count more items than we actually have
             const itemsToCount = Math.min(itemsUsedInSets, detalleInCart.cantidad);
 
             const unitPrice = detalleInCart.subTotal / detalleInCart.cantidad;
@@ -132,13 +114,11 @@ const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], avail
         }
     }
 
-    // Calculate the discount amount based on the value of items in complete sets
     const discountAmount = totalValueOfSets * (promocion.descuento as number) / 100;
 
     return discountAmount;
 };
 
-// Function to check all possible promotions from the system and apply the best one
 const applyBestPromotion = (pedidoVenta: PedidoVenta, promocionesCache?: Promocion[]) => {
     if (!pedidoVenta || !pedidoVenta.pedidoVentaDetalle) {
         return { descuento: 0, total: pedidoVenta?.total || 0, promocionAplicada: null };
@@ -146,16 +126,12 @@ const applyBestPromotion = (pedidoVenta: PedidoVenta, promocionesCache?: Promoci
 
     const detalles = pedidoVenta.pedidoVentaDetalle;
 
-    // Get all system promotions that could potentially apply
-    // Use the provided cache if available, otherwise use the context's active promotions
     const allPotentialPromociones: Promocion[] = promocionesCache || activePromociones || [];
 
-    // Add any promotions already attached to items in the cart
     const existingPromociones = detalles.flatMap(det => det.promocion || []).filter(Boolean) || [];
     const seenIds = new Set();
     const combinedPromociones: Promocion[] = [];
 
-    // Add unique existing promotions first
     existingPromociones.forEach(promo => {
         if (!seenIds.has(promo.id)) {
             seenIds.add(promo.id);
@@ -163,7 +139,6 @@ const applyBestPromotion = (pedidoVenta: PedidoVenta, promocionesCache?: Promoci
         }
     });
 
-    // Add active system promotions not already included
     allPotentialPromociones.forEach(promo => {
         if (!seenIds.has(promo.id)) {
             seenIds.add(promo.id);
@@ -174,12 +149,10 @@ const applyBestPromotion = (pedidoVenta: PedidoVenta, promocionesCache?: Promoci
     let maxDiscount = 0;
     let bestPromotion: Promocion | null = null;
 
-    // Check each potential promotion to see how many complete sets are available
     for (const promo of combinedPromociones) {
         const availableSets = calculateAvailablePromotionSets(promo, detalles);
 
         if (availableSets > 0) {
-            // Calculate the discount amount based on available complete sets
             const discountAmount = calculatePromotionDiscount(promo, detalles, availableSets);
 
             if (discountAmount > maxDiscount) {
@@ -385,7 +358,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 promocion: promocionValida ? [promocionValida] : null
             };
 
-            // Check if this item could be part of a promotion that's not yet in the cart
             if (!promocionValida) {
                 const applicablePromos = activePromociones.filter(promo =>
                     isPromotionActive(promo) &&
@@ -396,7 +368,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 );
 
                 if (applicablePromos.length > 0) {
-                    // Add the detected promotions to this item
                     newItemDetalle = {
                         ...newItemDetalle,
                         promocion: applicablePromos
@@ -408,9 +379,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 id: null,
                 horaEstimadaFinalizacion: new Date(),
                 subtotal: subTotal,
-                descuento: 0, // Initially no discount for single item
+                descuento: 0,
                 gastosEnvio: 0,
-                total: subTotal, // Initially no discount
+                total: subTotal,
                 totalCosto: itemCost,
                 estado: Estado.PENDIENTE.toUpperCase(),
                 tipoEnvio: TipoEnvio.DELIVERY.toUpperCase(),
@@ -620,20 +591,18 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                     return detalle.articuloInsumo?.id === itemId
             });
 
-            if (!item) return; // If no item found, do nothing
+            if (!item) return;
 
             const remainingDetails = pedidoVenta.pedidoVentaDetalle?.filter((detalle) =>
                 detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId
             ) || null;
 
             if (remainingDetails && remainingDetails.length === 0) {
-                // If no items left, reset the cart
                 setPedidoVenta(null);
                 localStorage.removeItem("pedidoVenta");
                 return;
             }
 
-            // Calculate values for the remaining items
             const subtotal = remainingDetails?.reduce((sum, detalle) => {
                 return sum + (detalle.subTotal as number);
             }, 0) || 0;
@@ -651,7 +620,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 ? addMinutes(pedidoVenta.horaEstimadaFinalizacion, -item.articuloManufacturado.tiempoEstimado as number)
                 : pedidoVenta.horaEstimadaFinalizacion;
 
-            // Create updated pedido to calculate promotions
             const updatedPedido = {
                 ...pedidoVenta,
                 subtotal: subtotal,
@@ -660,7 +628,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
                 pedidoVentaDetalle: remainingDetails
             };
 
-            // Apply best promotion to the updated pedido
             const { descuento: nuevoDescuento, total: nuevoTotal } = applyBestPromotion(updatedPedido, activePromociones);
 
             setPedidoVenta({

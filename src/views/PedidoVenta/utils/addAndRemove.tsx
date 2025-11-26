@@ -7,20 +7,17 @@ import { ArticuloManufacturado } from "../../../interfaces/ArticuloManufacturado
 import { PedidoVenta } from "../../../interfaces/PedidoVenta";
 import { Promocion } from "../../../interfaces/Promocion";
 
-// This function checks if all items of a specific promotion are present in the required quantities
 const checkIfAllPromotionItemsPresent = (promocion: Promocion, pedidoVenta: PedidoVenta | null) => {
     if (!pedidoVenta || !pedidoVenta.pedidoVentaDetalle) {
         return false;
     }
 
-    // Check if the promotion is active
     if (!isPromotionActive(promocion)) {
         return false;
     }
 
-    // Check if all items in the promotion are present in the required quantities
     return promocion.promocionDetalle?.every(detalle => {
-        const requiredQuantity = detalle.cantidad || 1; // Default to 1 if no cantidad specified
+        const requiredQuantity = detalle.cantidad || 1;
         const itemInCart = pedidoVenta.pedidoVentaDetalle?.find(detallePedido => {
             if (detalle.articuloInsumo) {
                 return detallePedido.articuloInsumo?.id === detalle.articuloInsumo.id;
@@ -30,12 +27,10 @@ const checkIfAllPromotionItemsPresent = (promocion: Promocion, pedidoVenta: Pedi
             return false;
         });
 
-        // Check if the item exists in the cart and has enough quantity
         return itemInCart && (itemInCart.cantidad >= requiredQuantity);
     }) || false;
 }
 
-// This function checks if a promotion is currently valid (within date range)
 const isPromotionActive = (promocion: Promocion) => {
     const currentDate = new Date();
     const fechaDesde = new Date(promocion.fechaDesde);
@@ -43,7 +38,6 @@ const isPromotionActive = (promocion: Promocion) => {
     return currentDate >= fechaDesde && currentDate <= fechaHasta;
 }
 
-// This function finds which promotions apply to the current pedido
 const findApplicablePromotions = (promocion: Promocion | null, pedidoVenta: PedidoVenta | null) => {
     if (!promocion || !pedidoVenta) {
         return null;
@@ -124,13 +118,11 @@ const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], avail
         }
     }
 
-    // Calculate the discount amount based on the value of items in complete sets
     const discountAmount = totalValueOfSets * (promocion.descuento as number) / 100;
 
     return discountAmount;
 };
 
-// Function to apply the best promotion based on current items in the cart
 const applyBestPromotion = (pedidoVenta: PedidoVenta) => {
     if (!pedidoVenta || !pedidoVenta.pedidoVentaDetalle) {
         return { descuento: 0, total: pedidoVenta?.total || 0, promocionAplicada: null };
@@ -138,10 +130,8 @@ const applyBestPromotion = (pedidoVenta: PedidoVenta) => {
 
     const detalles = pedidoVenta.pedidoVentaDetalle;
 
-    // Get all unique promotions that are linked to any items in the cart
     const allPromociones = detalles.flatMap(det => det.promocion || []).filter(Boolean) || [];
 
-    // Get unique promotions
     const uniquePromociones: Promocion[] = [];
     const seenIds = new Set();
     allPromociones.forEach(promo => {
@@ -154,12 +144,10 @@ const applyBestPromotion = (pedidoVenta: PedidoVenta) => {
     let maxDiscount = 0;
     let bestPromotion: Promocion | null = null;
 
-    // Check each unique promotion to see how many complete sets are available
     for (const promo of uniquePromociones) {
         const availableSets = calculateAvailablePromotionSets(promo, detalles);
 
         if (availableSets > 0) {
-            // Calculate the discount amount based on available complete sets
             const discountAmount = calculatePromotionDiscount(promo, detalles, availableSets);
 
             if (discountAmount > maxDiscount) {
