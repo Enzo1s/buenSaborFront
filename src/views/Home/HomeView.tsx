@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CardObject from "../../components/CardObject";
 import { Promocion } from "../../interfaces/Promocion";
-import { getPromociones } from "../../Api/PromocionAPI";
+import { getPromociones, getPromocionesActivas } from "../../Api/PromocionAPI";
 import PromocionCard from "../../components/PromocionCard";
 
 const HomeView = () => {
@@ -47,7 +47,7 @@ const HomeView = () => {
   // Fetch Promotions
   useEffect(() => {
     const fetchPromociones = async () => {
-      const { data } = await getPromociones();
+      const { data } = await getPromocionesActivas(); // Use only active promotions
       setPromociones(data);
       setPromocionesBeforeFilter(data);
     };

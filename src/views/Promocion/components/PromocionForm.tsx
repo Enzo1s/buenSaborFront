@@ -75,6 +75,12 @@ const PromocionForm = () => {
                         modificacion: null,
                     }}
                     onSubmit={async (values, { setSubmitting }) => {
+                        if (detalles.length < 2) {
+                            alert('Una promoción debe contener al menos 2 artículos');
+                            setSubmitting(false);
+                            return;
+                        }
+
                         const nuevaPromo: Promocion = {
                             id: values.id,
                             denominacion: values.denominacion,
@@ -246,7 +252,7 @@ const PromocionForm = () => {
                                         <Button
                                             variant="contained"
                                             type="submit"
-                                            disabled={isSubmitting}
+                                            disabled={isSubmitting || detalles.length < 2}
                                             sx={{
                                                 px: 4, py: 1.5,
                                                 borderRadius: '8px',

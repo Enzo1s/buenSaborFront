@@ -3,8 +3,8 @@ import { CategoriaArticulo } from "./CategoriaArticulo";
 export interface ArticuloInsumo {
     id:String | null,
 	denominacion: String,
-	precioCompra: Number,
-	precioVenta: Number,
+	precioCompra: Number | null,
+	precioVenta: Number | null,
 	esParaElaborar: Boolean,
 	unidadMedida: String,
 	categoriaArticulo: CategoriaArticulo[],

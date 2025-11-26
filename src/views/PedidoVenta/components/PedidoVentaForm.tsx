@@ -26,7 +26,7 @@ import { getByIdEmpleado } from "../../../Api/EmpleadoAPI";
 import CardArticulos from "./CardArticulos";
 import { ArticuloInsumo } from "../../../interfaces/ArticuloInsumo";
 import { ArticuloManufacturado } from "../../../interfaces/ArticuloManufacturado";
-import { addItemToCart, removeItemFromCart } from "../utils/addAndRemove";
+import { addItemToCart, removeItemFromCart, applyBestPromotion } from "../utils/addAndRemove";
 import { Estado } from "../../../enums/Estado";
 import { TipoEnvio } from "../../../enums/TipoEnvio";
 import { FormaPago } from "../../../enums/FormaPago";
@@ -40,7 +40,7 @@ import { SucursalEmpresa } from "../../../interfaces/SucursalEmpresa";
 import PagoModal from "./PagoModal";
 import { useAuth } from "../../../Context/authContext";
 import { Promocion } from "../../../interfaces/Promocion";
-import { getPromociones } from "../../../Api/PromocionAPI";
+import { getPromociones, getPromocionesActivas } from "../../../Api/PromocionAPI";
 import { PedidoVentaDetalle } from "../../../interfaces/PedidoVentaDetalle";
 
 interface CardArticulosProps {
@@ -139,14 +139,8 @@ const PedidoVentaForm = () => {
   };
 
   const listadoPromociones = async () => {
-    const { data } = await getPromociones();
-    const promocionesActivas = data.filter((promocion: Promocion) =>
-      isWithinInterval(new Date(), {
-        start: promocion.fechaDesde,
-        end: promocion.fechaHasta,
-      })
-    );
-    setPromociones(promocionesActivas);
+    const { data } = await getPromocionesActivas();
+    setPromociones(data);
   };
 
   const validacion = () => {
@@ -180,20 +174,33 @@ const PedidoVentaForm = () => {
       if (!validacion()) return;
 
       if (pedidoVenta) {
-        const pedidoFinal = {
+        // Make sure the pedidoVenta has all required fields before processing
+        const pedidoToSubmit = {
           ...pedidoVenta,
           formaPago: formaPago ?? pedidoVenta.formaPago,
+          // Ensure required fields are not null if they should have default values
+          tipoEnvio: pedidoVenta.tipoEnvio || TipoEnvio.DELIVERY,
+          cliente: pedidoVenta.cliente || null, // Client may need to be set based on logged in user
+          empleado: pedidoVenta.empleado || empleadoLogin || null,
         };
 
-        const { data } = await createPedidoVenta(pedidoFinal);
+        // Recalculate promotions to ensure discount is applied correctly
+        // Only apply this if there are items in the pedido
+        if (pedidoToSubmit.pedidoVentaDetalle && pedidoToSubmit.pedidoVentaDetalle.length > 0) {
+          const { descuento: recalculatedDescuento, total: recalculatedTotal } = applyBestPromotion(pedidoToSubmit);
+          pedidoToSubmit.descuento = recalculatedDescuento;
+          pedidoToSubmit.total = recalculatedTotal;
+        }
 
-        if (pedidoFinal.formaPago === FormaPago.EFECTIVO) {
+        const { data } = await createPedidoVenta(pedidoToSubmit);
+
+        if (pedidoToSubmit.formaPago === FormaPago.EFECTIVO) {
           await setViewFormBuy(true);
-        } else if (pedidoFinal.formaPago === FormaPago.MERCADOPAGO) {
+        } else if (pedidoToSubmit.formaPago === FormaPago.MERCADOPAGO) {
           const response = await createPreference(data.id);
           setIdPreference(response.data.idPreference);
           const preferenceUrl = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${response.data.idPreference}`;
-          
+
           ventanaPagoRef.current = window.open(
             preferenceUrl,
             "_blank",
@@ -224,10 +231,13 @@ const PedidoVentaForm = () => {
       }
     } catch (error) {
       console.error("Error en compra: ", error);
-      if((error as any)?.response)
-        alert((error as any)?.response?.data)
-      else 
+      if((error as any)?.response?.data?.message) {
+        alert((error as any).response.data.message);
+      } else if ((error as any)?.response?.data) {
+        alert((error as any).response.data);
+      } else {
         alert("Error al procesar el pago. Por favor, intentá nuevamente más tarde.");
+      }
     }
   };
 
@@ -235,17 +245,23 @@ const PedidoVentaForm = () => {
     insumo: ArticuloInsumo | null,
     manufacturado: ArticuloManufacturado | null
   ) => {
-    const tienePromo = promociones.find((promo) =>
+    // Buscar todas las promociones que contengan este artículo
+    const promocionesConEsteArticulo = promociones.filter((promo) =>
       promo.promocionDetalle?.some((detalle) => {
         if (detalle.articuloInsumo?.id && insumo?.id)
           return detalle.articuloInsumo?.id === insumo?.id;
         else return detalle.articuloManufacturado?.id === manufacturado?.id;
       })
     );
+
+    // Si hay promociones que contienen este artículo, usar la primera que encuentre
+    // En el proceso de addItemToCart, se verificará si todos los artículos de la promoción están presentes
+    const promoParaAplicar = promocionesConEsteArticulo.length > 0 ? promocionesConEsteArticulo[0] : null;
+
     const newPedido = addItemToCart(
       insumo,
       manufacturado,
-      tienePromo || null,
+      promoParaAplicar,
       1,
       pedidoVenta
     );

@@ -79,23 +79,30 @@ const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
                     >
                         {titulo}
                     </Typography>
-                    {promocion &&
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                color: '#ffffff', // Texto blanco para el descuento
-                                fontWeight: 'bold',
-                                backgroundColor: '#E53935', // Rojo brillante para el fondo del descuento
-                                display: 'inline-block', // Para que el fondo se ajuste al texto
-                                px: 1.5, // Padding horizontal
-                                py: 0.5, // Padding vertical
-                                borderRadius: '4px', // Bordes redondeados para el tag de descuento
-                                mb: 1, // Margen inferior para separar
-                            }}
-                        >
-                            {`${promocion.denominacion} - ${promocion.descuento}% OFF`} {/* Texto más descriptivo */}
-                        </Typography>
-                    }
+                    {promocion && (() => {
+                        const currentDate = new Date();
+                        const fechaDesde = new Date(promocion.fechaDesde);
+                        const fechaHasta = new Date(promocion.fechaHasta);
+                        const isPromotionActive = currentDate >= fechaDesde && currentDate <= fechaHasta;
+
+                        return isPromotionActive && (
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    color: '#ffffff', // Texto blanco para el descuento
+                                    fontWeight: 'bold',
+                                    backgroundColor: '#E53935', // Rojo brillante para el fondo del descuento
+                                    display: 'inline-block', // Para que el fondo se ajuste al texto
+                                    px: 1.5, // Padding horizontal
+                                    py: 0.5, // Padding vertical
+                                    borderRadius: '4px', // Bordes redondeados para el tag de descuento
+                                    mb: 1, // Margen inferior para separar
+                                }}
+                            >
+                                {`${promocion.denominacion} - ${promocion.descuento}% OFF`} {/* Texto más descriptivo */}
+                            </Typography>
+                        );
+                    })()}
                     <Typography variant="body2" sx={{ color: '#b0b0b0' }}> {/* Color más suave para la descripción */}
                         {descripcion}
                     </Typography>

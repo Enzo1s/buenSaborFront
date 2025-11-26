@@ -27,11 +27,12 @@ const Header = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
   const [idPreference] = useState<string | null>(null);
   const [viewForm, setViewForm] = useState(false);
 
   const { isAuthenticated, user, logout, cliente, empleado } = useAuth();
-  const { pedidoVenta, removeItemFromCart, clearCart } = useCartContext();
+  const { pedidoVenta, removeItemFromCart, clearCart, shouldOpenCart, setShouldOpenCart, recalculatePromotion } = useCartContext();
 
   const ventanaPagoRef = useRef<Window | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -63,6 +64,18 @@ const Header = () => {
     };
   }, []);
 
+  // Effect to handle opening the cart when shouldOpenCart is true
+  useEffect(() => {
+    if (shouldOpenCart && cartButtonRef.current) {
+      // Open the cart by setting the anchor element and open state
+      setAnchorEl(cartButtonRef.current);
+      setOpen(true);
+
+      // Reset the shouldOpenCart state after opening the cart
+      setShouldOpenCart(false);
+    }
+  }, [shouldOpenCart, setShouldOpenCart]);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setOpen(!open);
@@ -71,8 +84,13 @@ const Header = () => {
   const buy = async () => {
     try {
       if (pedidoVenta && user) {
+        // Make sure the latest discount is applied before sending to backend
+        const updatedPedido = recalculatePromotion(pedidoVenta);
+
         const { data } = await createPedidoVenta({
-          ...pedidoVenta,
+          ...pedidoVenta, // Use the original pedidoVenta with updated discount calculation
+          descuento: updatedPedido.descuento,
+          total: updatedPedido.total,
           sucursal: user.sucursalEmpresa,
           cliente: cliente,
           empleado: empleado,
@@ -112,7 +130,7 @@ const Header = () => {
       console.error(error);
       if((error as any)?.response)
         alert((error as any)?.response?.data)
-      else 
+      else
         alert("Error al procesar el pago. Por favor, intentá nuevamente más tarde.");
     }
   };
@@ -141,7 +159,7 @@ const Header = () => {
         justifyContent={"flex-end"}
         display={"flex"}
       >
-        <Button variant="text" onClick={handleClick}>
+        <Button ref={cartButtonRef} variant="text" onClick={handleClick}>
           <Typography variant="h6" color="white">
             <ShoppingCartIcon />
           </Typography>
@@ -300,14 +318,20 @@ const Header = () => {
           </Grid>
           <Grid
             container
-            sx={{ marginTop: "10px" }}
+            sx={{ marginTop: "10px", display: "flex", flexDirection: "column" }}
             size={12}
             justifyContent={"flex-start"}
             display={"flex"}
             alignItems={"start"}
           >
-            <Typography variant="body1">
-              Total:{pedidoVenta?.total?.toFixed(2)}
+            {/* Show discount information if a promotion is applied */}
+            {pedidoVenta?.descuento && pedidoVenta.descuento > 0 && (
+              <Typography variant="body1" color="success.main">
+                Descuento aplicado: -${pedidoVenta.descuento.toFixed(2)}
+              </Typography>
+            )}
+            <Typography variant="h6" sx={{ marginTop: "5px" }}>
+              Total: ${pedidoVenta?.total?.toFixed(2)}
             </Typography>
           </Grid>
 

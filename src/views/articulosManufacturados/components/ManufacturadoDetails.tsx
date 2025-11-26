@@ -20,7 +20,7 @@ import { useCartContext } from '../../../Context/cartContext';
 const ManufacturadoDetails = () => {
 
     const { id } = useParams()
-    const { addItemToCart } = useCartContext()
+    const { addItemToCart, setShouldOpenCart } = useCartContext()
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloManufacturado | null>(null)
     const [mainImage, setMainImage] = useState<string | null>(null)
@@ -240,7 +240,12 @@ const ManufacturadoDetails = () => {
                                             boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
                                         },
                                     }}
-                                    onClick={() => articulo && addItemToCart(null, articulo, null, 1)}
+                                    onClick={() => {
+                                        if (articulo) {
+                                            addItemToCart(null, articulo, null, 1);
+                                            setShouldOpenCart(true);
+                                        }
+                                    }}
                                 >
                                     Agregar al Carrito
                                 </Button>

@@ -5,6 +5,10 @@ export const getPromociones = async () => {
     return axios.get("http://localhost:8080/api/promocion")
 }
 
+export const getPromocionesActivas = async () => {
+    return axios.get("http://localhost:8080/api/promocion/activas")
+}
+
 export const getPromocionById = async (id: string) => {
     return axios.get(`http://localhost:8080/api/promocion/${id}`)
 }

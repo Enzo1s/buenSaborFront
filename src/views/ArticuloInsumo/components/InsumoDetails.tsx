@@ -16,7 +16,7 @@ import { useAuth } from '../../../Context/authContext';
 
 const InsumoDetails = () => {
     const { id } = useParams()
-    const { addItemToCart } = useCartContext()
+    const { addItemToCart, setShouldOpenCart } = useCartContext()
     const { user } = useAuth()
     const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
     const [articulo, setArticulo] = useState<ArticuloInsumo | null>(null)
@@ -27,6 +27,7 @@ const InsumoDetails = () => {
     const agregarACarrito = () => {
         if (articulo && stock > 0) {
             addItemToCart(articulo, null, null, 1);
+            setShouldOpenCart(true);
         } else if(stock === 0) {
             alert("No hay stock disponible para este artículo.");
         }

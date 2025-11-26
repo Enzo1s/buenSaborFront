@@ -5,8 +5,8 @@ export interface ArticuloManufacturado {
     id: string | null,
 	denominacion: string,
 	descripcion: string,
-	precioVenta: Number,
-	precioCosto: Number,
+	precioVenta: Number | null,
+	precioCosto: Number | null,
 	tiempoEstimado: Number,
 	categoriaArticuloManufacturado: CategoriaArticuloManufacturado | null,
 	pathImagen: string[]

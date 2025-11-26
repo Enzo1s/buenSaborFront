@@ -8,23 +8,36 @@ import {
   Box,
   Divider,
   Paper,
+  Button
 } from '@mui/material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { Promocion } from '../../../interfaces/Promocion'
 import { getPromocionById } from '../../../Api/PromocionAPI'
+import { useCartContext } from '../../../Context/cartContext'
+import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado';
+import { ArticuloInsumo } from '../../../interfaces/ArticuloInsumo';
 
 const PromocionDetails = () => {
 
   const { id } = useParams()
-
+  const { addItemToCart, addPromocionToCart, setShouldOpenCart } = useCartContext();
+  const navigate = useNavigate();
   const [promocion, setPromocion] = useState<Promocion | null>(null)
 
   const getPromocion = async () => {
     if (id) {
       const { data } = await getPromocionById(id)
       setPromocion(data)
+    }
+  }
+
+  const handleAddPromocionToCart = () => {
+    if (promocion) {
+      addPromocionToCart(promocion);
+      setShouldOpenCart(true);
+      navigate("/");
     }
   }
 
@@ -307,6 +320,29 @@ const PromocionDetails = () => {
               No hay artículos detallados para esta promoción.
             </Typography>
           )}
+
+          <Divider sx={{ mt: 3, mb: 3, bgcolor: 'rgba(255, 255, 255, 0.12)' }} />
+
+          <Grid container justifyContent="center" sx={{ mt: 3 }}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleAddPromocionToCart}
+              sx={{
+                backgroundColor: '#4CAF50',
+                color: '#ffffff',
+                fontWeight: 'bold',
+                px: 4,
+                py: 1.5,
+                borderRadius: '8px',
+                '&:hover': {
+                  backgroundColor: '#388E3C',
+                },
+              }}
+            >
+              Agregar Promoción al Carrito
+            </Button>
+          </Grid>
         </CardContent>
       </Card>
     </Box>
