@@ -33,6 +33,7 @@ const SucursalMain = () => {
     id: string | null;
   }>({ open: false, id: null });
   const [searchNombre, setSearchNombre] = useState("");
+  const [searchEstado, setSearchEstado] = useState("");
   const [orderBy, setOrderBy] = useState<keyof SucursalEmpresa>("nombre");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
@@ -62,7 +63,10 @@ const SucursalMain = () => {
   };
 
   const filteredSucursales = sucursales?.filter((s) =>
-    s.nombre.toLowerCase().includes(searchNombre.toLowerCase())
+    s.nombre.toLowerCase().includes(searchNombre.toLowerCase()) &&
+    (searchEstado === "" ||
+      (searchEstado === "activo" && !s.baja) ||
+      (searchEstado === "inactivo" && !!s.baja))
   );
 
   const sortedSucursales = filteredSucursales
@@ -124,17 +128,45 @@ const SucursalMain = () => {
         </Button>
       </Box>
 
-      {/* Buscador por Nombre */}
-      <Box mb={2} width="25%">
-        <TextField
-          label="Buscar por Nombre"
-          variant="outlined"
-          size="small"
-          value={searchNombre}
-          onChange={(e) => setSearchNombre(e.target.value)}
-          fullWidth
-        />
-      </Box>
+      {/* Buscadores */}
+      <Grid container spacing={2} mb={2}>
+        <Grid item xs={3}>
+          <TextField
+            label="Buscar por Nombre"
+            variant="outlined"
+            size="small"
+            value={searchNombre}
+            onChange={(e) => setSearchNombre(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            select
+            label="Estado"
+            variant="outlined"
+            size="small"
+            value={searchEstado}
+            onChange={(e) => setSearchEstado(e.target.value)}
+            fullWidth
+            SelectProps={{
+              style: { color: "#e0e0e0" },
+              MenuProps: {
+                PaperProps: {
+                  style: {
+                    backgroundColor: "#2c2c2c",
+                    color: "#e0e0e0",
+                  },
+                },
+              },
+            }}
+          >
+            <option value="">Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </TextField>
+        </Grid>
+      </Grid>
 
       {/* Loading State */}
       {loading ? (
@@ -217,6 +249,16 @@ const SucursalMain = () => {
                     color: "#90CAF9",
                     fontWeight: "bold",
                     fontSize: "1rem",
+                    borderBottom: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
+                  Estado
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#90CAF9",
+                    fontWeight: "bold",
+                    fontSize: "1rem",
                     width: "180px",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
                   }}
@@ -266,6 +308,15 @@ const SucursalMain = () => {
                     {`Desde: ${sucursal.horarioApertura || "N/A"} - Hasta: ${
                       sucursal.horarioCierre || "N/A"
                     }`}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: sucursal.baja ? "#ff6b6b" : "#66bb6a",
+                      fontWeight: "bold",
+                      borderBottom: "none"
+                    }}
+                  >
+                    {sucursal.baja ? "Inactivo" : "Activo"}
                   </TableCell>
                   <TableCell align="center" sx={{ borderBottom: "none" }}>
                     <Box display="flex" justifyContent="center" gap={1}>

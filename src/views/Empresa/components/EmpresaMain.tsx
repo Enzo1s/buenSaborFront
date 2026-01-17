@@ -36,6 +36,7 @@ const EmpresaMain = () => {
 
   const [searchNombre, setSearchNombre] = useState("");
   const [searchRazonSocial, setSearchRazonSocial] = useState("");
+  const [searchEstado, setSearchEstado] = useState("");
 
   const getCompanies = async () => {
     const { data } = await getEmpresas();
@@ -66,7 +67,15 @@ const EmpresaMain = () => {
     ?.filter((c) => c.nombre.toLowerCase().includes(searchNombre.toLowerCase()))
     .filter((c) =>
       c.razonSocial.toLowerCase().includes(searchRazonSocial.toLowerCase())
-    );
+    )
+    .filter((c) => {
+      if (searchEstado === "activo") {
+        return !c.baja;
+      } else if (searchEstado === "inactivo") {
+        return !!c.baja;
+      }
+      return true;
+    });
 
   const sortedCompanies = filteredCompanies
     ? [...filteredCompanies].sort((a, b) => {
@@ -120,6 +129,32 @@ const EmpresaMain = () => {
             fullWidth
           />
         </Grid>
+        <Grid item xs={3}>
+          <TextField
+            select
+            label="Estado"
+            variant="outlined"
+            size="small"
+            value={searchEstado}
+            onChange={(e) => setSearchEstado(e.target.value)}
+            fullWidth
+            SelectProps={{
+              style: { color: "#e0e0e0" },
+              MenuProps: {
+                PaperProps: {
+                  style: {
+                    backgroundColor: "#2c2c2c",
+                    color: "#e0e0e0",
+                  },
+                },
+              },
+            }}
+          >
+            <option value="">Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </TextField>
+        </Grid>
       </Grid>
 
       {/* Tabla */}
@@ -159,6 +194,15 @@ const EmpresaMain = () => {
                 <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
                   CUIT
                 </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    borderBottom: "2px solid #444",
+                  }}
+                >
+                  Estado
+                </TableCell>
                 <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
                   Acciones
                 </TableCell>
@@ -186,6 +230,14 @@ const EmpresaMain = () => {
                   </TableCell>
                   <TableCell sx={{ color: "#e0e0e0" }}>
                     {company.cuil.toString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: company.baja ? "#ff6b6b" : "#66bb6a",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {company.baja ? "Inactivo" : "Activo"}
                   </TableCell>
                   <TableCell>
                     <IconButton

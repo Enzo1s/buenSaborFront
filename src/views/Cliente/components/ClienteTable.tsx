@@ -2,19 +2,23 @@ import {
   Box,
   Button,
   CircularProgress,
+  FormControl,
   Grid,
   IconButton,
+  InputLabel,
+  MenuItem,
   Modal as MuiModal,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Typography,
   TableSortLabel,
+  TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -40,6 +44,7 @@ const ClienteTable = () => {
   const [orderBy, setOrderBy] = useState<keyof Cliente>("nombre");
   const [searchNombreApellido, setSearchNombreApellido] = useState("");
   const [searchCliente, setSearchCliente] = useState("");
+  const [searchEstado, setSearchEstado] = useState<string>("");
 
   const listadoClientes = async () => {
     setLoading(true);
@@ -68,15 +73,13 @@ const ClienteTable = () => {
     setOrderBy(property);
   };
 
-  const filteredClientes = clientes
-    ?.filter((c) =>
-      `${c.nombre} ${c.apellido}`
-        .toLowerCase()
-        .includes(searchNombreApellido.toLowerCase())
-    )
-    .filter((c) =>
-      c.usuario?.username.toLowerCase().includes(searchCliente.toLowerCase())
-    );
+  const filteredClientes = clientes?.filter((c) =>
+    `${c.nombre} ${c.apellido}`.toLowerCase().includes(searchNombreApellido.toLowerCase()) &&
+    (c.usuario?.username.toLowerCase() || "").includes(searchCliente.toLowerCase()) &&
+    (searchEstado === "" ||
+      (searchEstado === "activo" && !c.baja) ||
+      (searchEstado === "inactivo" && !!c.baja))
+  );
 
   const sortedClientes = filteredClientes
     ? [...filteredClientes].sort((a, b) => {
@@ -152,6 +155,33 @@ const ClienteTable = () => {
           onChange={(e) => setSearchCliente(e.target.value)}
           sx={{ flex: 1 }}
         />
+        <FormControl sx={{ flex: 1 }} size="small">
+          <InputLabel id="filter-estado-label">Estado</InputLabel>
+          <Select
+            labelId="filter-estado-label"
+            value={searchEstado}
+            label="Estado"
+            onChange={(e) => setSearchEstado(e.target.value)}
+            sx={{
+              backgroundColor: "rgba(70, 70, 70, 0.7)",
+              color: "#e0e0e0",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#757575",
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#e0e0e0",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9",
+                borderWidth: "2px",
+              },
+            }}
+          >
+            <MenuItem value="">Todos</MenuItem>
+            <MenuItem value="activo">Activo</MenuItem>
+            <MenuItem value="inactivo">Inactivo</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       {loading ? (
@@ -217,6 +247,15 @@ const ClienteTable = () => {
                   </TableSortLabel>
                 </TableCell>
                 <TableCell>Dirección</TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
+                  Estado
+                </TableCell>
                 <TableCell sx={{ width: "150px" }} align="center">
                   Acciones
                 </TableCell>
@@ -274,6 +313,15 @@ const ClienteTable = () => {
                         Sin dirección
                       </Typography>
                     )}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: cliente.baja ? "#ff6b6b" : "#66bb6a",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #333"
+                    }}
+                  >
+                    {cliente.baja ? "Inactivo" : "Activo"}
                   </TableCell>
                   <TableCell
                     align="center"
