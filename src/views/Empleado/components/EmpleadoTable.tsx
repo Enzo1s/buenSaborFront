@@ -46,6 +46,7 @@ const EmpleadoTable = () => {
   const [filterNombre, setFilterNombre] = useState("");
   const [filterUsuario, setFilterUsuario] = useState("");
   const [filterCargo, setFilterCargo] = useState<string>("");
+  const [filterEstado, setFilterEstado] = useState<string>("");
 
   const listadoEmpleados = async () => {
     try {
@@ -62,6 +63,7 @@ const EmpleadoTable = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteEmpleado(id);
+      listadoEmpleados();
       setOpenDelete({ open: false, id: null });
     } catch (error) {
       console.error("Error deleting empleado:", error);
@@ -72,7 +74,6 @@ const EmpleadoTable = () => {
     listadoEmpleados();
   }, []);
 
-  // Ordenamiento dinámico
   const sortedEmpleados = () => {
     if (!empleados) return [];
     let filtered = empleados.filter(
@@ -81,7 +82,10 @@ const EmpleadoTable = () => {
         (emp.usuario?.username || "")
           .toLowerCase()
           .includes(filterUsuario.toLowerCase()) &&
-        (filterCargo ? emp.cargo === filterCargo : true)
+        (filterCargo ? emp.cargo === filterCargo : true) &&
+        (filterEstado ?
+          (filterEstado === "activo" ? !emp.baja : !!emp.baja)
+          : true)
     );
 
     if (sortConfig !== null) {
@@ -200,6 +204,19 @@ const EmpleadoTable = () => {
             <MenuItem value="DELIVERY">Delivery</MenuItem>
           </Select>
         </FormControl>
+        <FormControl sx={{ width: "15%" }} size="small">
+          <InputLabel id="filter-estado-label">Estado</InputLabel>
+          <Select
+            labelId="filter-estado-label"
+            value={filterEstado}
+            label="Estado"
+            onChange={(e) => setFilterEstado(e.target.value)}
+          >
+            <MenuItem value="">Todos</MenuItem>
+            <MenuItem value="activo">Activo</MenuItem>
+            <MenuItem value="inactivo">Inactivo</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Loading */}
@@ -289,6 +306,15 @@ const EmpleadoTable = () => {
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
+                  Estado
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
                     width: "150px",
                     borderBottom: "1px solid #444",
                   }}
@@ -365,6 +391,15 @@ const EmpleadoTable = () => {
                         No asignado
                       </Typography>
                     )}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: empleado.baja ? "#ff6b6b" : "#66bb6a",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #333"
+                    }}
+                  >
+                    {empleado.baja ? "Inactivo" : "Activo"}
                   </TableCell>
                   <TableCell
                     align="center"

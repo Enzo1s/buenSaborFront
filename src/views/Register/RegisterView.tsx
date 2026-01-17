@@ -28,6 +28,7 @@ import { Empleado } from '../../interfaces/Empleado'
 import { createEmpleado } from '../../Api/EmpleadoAPI'
 import { Cliente } from '../../interfaces/Cliente'
 import { createCliente } from '../../Api/ClienteAPI'
+import { Cargo } from '../../enums/Cargo'
 
 const RegisterView = () => {
     const { register, isAuthenticated, setEmpleado, setCliente } = useAuth()
@@ -93,6 +94,7 @@ const RegisterView = () => {
                 apellido: "",
                 telefono: "",
                 email: "",
+                cargo: "", // Campo para el cargo del empleado
                 domicilio: {
                   id: null,
                   calle: "",
@@ -157,6 +159,7 @@ const RegisterView = () => {
                     email: values?.email,
                     usuario: usuarioCreado,
                     perfil: "EMPLEADO",
+                    cargo: values.cargo || null, // Asignar el cargo seleccionado
                     alta: null,
                     baja: null,
                     modificacion: null,
@@ -312,6 +315,33 @@ const RegisterView = () => {
                         )}
                       </FormControl>
                     </Grid>
+                    {values.rol === Rol.EMPLEADO && (
+                      <Grid size={12}>
+                        <FormControl fullWidth variant="outlined" sx={{ mt: 1 }}>
+                          <InputLabel id="cargo-label" style={{ color: '#b0b0b0' }}>Cargo</InputLabel>
+                          <Select
+                            labelId="cargo-label"
+                            id="cargo"
+                            name="cargo"
+                            value={values.cargo || ''}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            label="Cargo"
+                            style={{ color: '#ffffff' }}
+                            sx={{
+                              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#555' },
+                              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#777' },
+                              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#90CAF9' }
+                            }}
+                          >
+                            <MenuItem value=""><em>Sin asignar</em></MenuItem>
+                            <MenuItem value={Cargo.CAJERO}>Cajero</MenuItem>
+                            <MenuItem value={Cargo.COCINERO}>Cocinero</MenuItem>
+                            <MenuItem value={Cargo.DELIVERY}>Delivery</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    )}
                     <Grid size={12}>
                       <Autocomplete
                         fullWidth

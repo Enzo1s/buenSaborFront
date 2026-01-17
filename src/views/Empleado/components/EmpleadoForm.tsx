@@ -236,9 +236,9 @@ const EmpleadoForm = () => {
                                             }}
                                         >
                                             <MenuItem value=""><em>Sin asignar</em></MenuItem>
-                                            <MenuItem value="CAJERO">Cajero</MenuItem>
-                                            <MenuItem value="COCINERO">Cocinero</MenuItem>
-                                            <MenuItem value="DELIVERY">Delivery</MenuItem>
+                                            <MenuItem value={Cargo.CAJERO}>Cajero</MenuItem>
+                                            <MenuItem value={Cargo.COCINERO}>Cocinero</MenuItem>
+                                            <MenuItem value={Cargo.DELIVERY}>Delivery</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
