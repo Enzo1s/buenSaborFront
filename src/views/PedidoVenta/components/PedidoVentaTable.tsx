@@ -608,6 +608,11 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                   Fecha del Pedido
                 </TableCell>
                 <TableCell
+                  sx={{ color: "#f0f0f0", fontWeight: "bold", borderBottom: "1px solid #444" }}
+                >
+                  Asignado a
+                </TableCell>
+                <TableCell
                   sx={{ color: "#f0f0f0", fontWeight: "bold", width: "180px" }}
                   align="center"
                 >
@@ -689,6 +694,13 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     {pedido.fechaPedido
                       ? format(pedido.fechaPedido, "dd/MM/yyyy HH:mm")
                       : "N/A"}
+                  </TableCell>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
+                    {pedido.empleado
+                      ? `${pedido.empleado.nombre} ${pedido.empleado.apellido} (${pedido.empleado.cargo})`
+                      : "Sin asignar"}
                   </TableCell>
                   <TableCell
                     align="center"
