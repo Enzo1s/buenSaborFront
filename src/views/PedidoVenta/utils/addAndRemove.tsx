@@ -43,26 +43,22 @@ const findApplicablePromotions = (promocion: Promocion | null, pedidoVenta: Pedi
         return null;
     }
 
-    // Check if the promotion is active and all required items are present
     const isPromoActive = isPromotionActive(promocion);
     const allItemsPresent = checkIfAllPromotionItemsPresent(promocion, pedidoVenta);
     return isPromoActive && allItemsPresent ? promocion : null;
 }
 
-// Function to calculate how many complete sets of a promotion can be made from items in the cart
 const calculateAvailablePromotionSets = (promocion: Promocion, detalles: any[] | null) => {
     if (!detalles || !promocion.promocionDetalle) {
         return 0;
     }
 
-    // Check if the promotion is active
     if (!isPromotionActive(promocion)) {
         return 0;
     }
 
-    // For each required item in the promotion, calculate how many sets we can make
     const setsPerItem = promocion.promocionDetalle.map(detalle => {
-        const requiredQuantityPerSet = detalle.cantidad || 1; // Default to 1 if no cantidad specified
+        const requiredQuantityPerSet = detalle.cantidad || 1;
         const itemInCart = detalles.find(detallePedido => {
             if (detalle.articuloInsumo) {
                 return detallePedido.articuloInsumo?.id === detalle.articuloInsumo.id;
@@ -72,28 +68,21 @@ const calculateAvailablePromotionSets = (promocion: Promocion, detalles: any[] |
             return false;
         });
 
-        // If we don't have the required item at all, we can make 0 complete sets
         if (!itemInCart) {
             return 0;
         }
 
-        // Calculate how many sets we can make based on this item
-        // For example, if promotion requires 2 items of 'X' per set, and we have 5 in cart, we can make 5/2 = 2 complete sets from this item
         return Math.floor(itemInCart.cantidad / requiredQuantityPerSet);
     });
 
-    // The total number of complete sets is determined by the minimum of all items
-    // Because we need all items to make a complete set
     return setsPerItem.length > 0 ? Math.min(...setsPerItem) : 0;
 }
 
-// Function to calculate the discount for a specific number of promotion sets
 const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], availableSets: number) => {
     if (availableSets <= 0) {
         return 0;
     }
 
-    // Calculate the value of items that are part of the complete sets
     let totalValueOfSets = 0;
     for (const detallePromo of promocion.promocionDetalle || []) {
         const detalleInCart = detalles.find(detalle => {
@@ -106,11 +95,9 @@ const calculatePromotionDiscount = (promocion: Promocion, detalles: any[], avail
         });
 
         if (detalleInCart) {
-            // Only count the items that are part of complete sets
             const requiredQtyPerSet = detallePromo.cantidad || 1;
             const itemsUsedInSets = requiredQtyPerSet * availableSets;
 
-            // Make sure we don't count more items than we actually have
             const itemsToCount = Math.min(itemsUsedInSets, detalleInCart.cantidad);
 
             const unitPrice = detalleInCart.subTotal / detalleInCart.cantidad;
@@ -199,7 +186,6 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
         if (existingItem) {
             const newDetails = pedidoVenta?.pedidoVentaDetalle?.map((detalle) => {
                 if ((itemManufacturado && detalle.articuloManufacturado?.id === itemManufacturado?.id) || (itemInsumo && detalle.articuloInsumo?.id === itemInsumo?.id)) {
-                    // Update the item quantity
                     const updatedDetalle = {
                         ...detalle,
                         cantidad: detalle.cantidad + cantidad,
@@ -208,7 +194,6 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
                         ((detalle.articuloManufacturado?.precioVenta as number) || 0) * (detalle.cantidad + cantidad)
                     };
 
-                    // Update the pedido with the modified detail
                     const updatedPedidoVenta = {
                         ...pedidoVenta,
                         pedidoVentaDetalle: pedidoVenta.pedidoVentaDetalle?.map(d =>
@@ -216,7 +201,6 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
                         )
                     };
 
-                    // Check if any promotion applies to the updated pedido
                     const promoAplicada = promocion && findApplicablePromotions(promocion, updatedPedidoVenta);
 
                     return {
@@ -227,12 +211,10 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
                 return detalle;
             });
 
-                // Calculate subtotal
                 const subTotal = pedidoVenta.subtotal + (itemInsumo
                     ? ((itemInsumo?.precioVenta as number) || 0) * cantidad
                     : ((itemManufacturado?.precioVenta as number) || 0) * cantidad);
 
-                // Apply the best possible promotion
                 const updatedPedido = {
                     ...pedidoVenta,
                     pedidoVentaDetalle: newDetails || [],
@@ -281,12 +263,10 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
                 newDetalle
             ];
 
-            // Calculate subtotal
             const subTotal = pedidoVenta.subtotal + (itemInsumo
                 ? ((itemInsumo?.precioVenta as number) || 0) * cantidad
                 : ((itemManufacturado?.precioVenta as number) || 0) * cantidad);
 
-            // Apply the best possible promotion to the updated pedido
             const updatedPedido = {
                 ...pedidoVenta,
                 pedidoVentaDetalle: updatedPedidoVentaDetalle,
@@ -374,7 +354,6 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
 
 export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | null) => {
     if (pedidoVenta && pedidoVenta.pedidoVentaDetalle) {
-        // Find the index of the first item matching the ID to decrease its quantity by 1
         const itemIndex = pedidoVenta.pedidoVentaDetalle.findIndex((detalle) => {
             if (detalle.articuloManufacturado) {
                 return detalle.articuloManufacturado.id === itemId
@@ -384,19 +363,14 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
         });
 
         if (itemIndex === -1) {
-            // Item not found in the pedido
             return pedidoVenta;
         }
 
-        // Get the item to be modified
         const itemToRemove = pedidoVenta.pedidoVentaDetalle[itemIndex];
 
-        // Create a copy of the details array
         let updatedPedidoVentaDetalle = [...pedidoVenta.pedidoVentaDetalle];
 
-        // Decrease quantity by 1
         if (itemToRemove.cantidad > 1) {
-            // If quantity is greater than 1, just decrease the quantity
             const updatedItem = {
                 ...itemToRemove,
                 cantidad: itemToRemove.cantidad - 1,
@@ -407,11 +381,9 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
 
             updatedPedidoVentaDetalle[itemIndex] = updatedItem;
         } else {
-            // If quantity is 1, remove the entire item detail
             updatedPedidoVentaDetalle.splice(itemIndex, 1);
         }
 
-        // Calculate values for the remaining items
         const subtotal = updatedPedidoVentaDetalle.reduce((sum, detalle) => {
             return sum + (detalle.subTotal as number);
         }, 0);
@@ -425,7 +397,6 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
             return sum + itemCost;
         }, 0);
 
-        // Create updated pedido to check for applicable promotions
         const updatedPedido: PedidoVenta = {
             ...pedidoVenta,
             subtotal: subtotal,
@@ -433,17 +404,13 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
             pedidoVentaDetalle: updatedPedidoVentaDetalle
         };
 
-        // Apply the best possible promotion to the updated pedido
         const { descuento: nuevoDescuento, total: nuevoTotal } = applyBestPromotion(updatedPedido);
 
-        // Recalculate time estimation if needed - only if we removed an item and it was the last of its kind
         let horaEstimadaFinalizacion = pedidoVenta.horaEstimadaFinalizacion;
         if (itemToRemove.articuloManufacturado && itemToRemove.cantidad === 1) {
-            // Only adjust time if the item was completely removed (not just quantity reduced)
             horaEstimadaFinalizacion = addMinutes(pedidoVenta.horaEstimadaFinalizacion, -(itemToRemove.articuloManufacturado.tiempoEstimado as number));
         }
 
-        // Handle edge case where no items remain - still allow deletion of last item
         if (updatedPedidoVentaDetalle.length === 0) {
             return {
                 ...pedidoVenta,
@@ -468,5 +435,4 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
     return null
 };
 
-// Export the applyBestPromotion function for use in other components
 export { applyBestPromotion };

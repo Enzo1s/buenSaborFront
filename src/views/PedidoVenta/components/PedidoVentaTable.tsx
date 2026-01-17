@@ -76,33 +76,26 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
       let data;
 
       if (idEmpleado) {
-        // Si se especifica un idEmpleado (por ejemplo, desde la vista de empleado)
         const response = await getPedidoVentaByEmpleadoId(idEmpleado);
         data = response.data;
       } else if (authEmpleado && authEmpleado.cargo) {
-        // Si hay un empleado autenticado, cargar todos los pedidos para aplicar filtros
         const response = await gePedidoVenta();
         data = response.data;
       } else {
-        // Para ADMIN o usuarios sin cargo específico
         const response = await gePedidoVenta();
         data = response.data;
       }
 
-      // Sort by date descending (most recent first)
       const sortedData = [...data].sort((a, b) => {
         const dateA = new Date(a.fechaPedido);
         const dateB = new Date(b.fechaPedido);
-        return dateB.getTime() - dateA.getTime(); // Descending order
+        return dateB.getTime() - dateA.getTime();
       });
 
       setPedidosVenta(sortedData);
       setPedidosVentaBefore(sortedData);
 
-      // Aplicar filtro automático por cargo del empleado autenticado si no es ADMIN
       if (authEmpleado && authEmpleado.cargo) {
-        // Si es un empleado con cargo distinto de CAJERO, filtrar por su cargo
-        // El CAJERO puede ver todos los pedidos, pero se puede configurar diferente si se desea
         if (authEmpleado.cargo !== "CAJERO") {
           setFilterEmpleadoCargo([authEmpleado.cargo]);
         }
@@ -221,14 +214,12 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
 
     let filtered = [...pedidosVentaBefore];
 
-    // Filtrar por estado
     if (filterEstado.length > 0) {
       filtered = filtered.filter(pedido =>
         filterEstado.includes(pedido.estado)
       );
     }
 
-    // Filtrar por cargo del empleado
     if (filterEmpleadoCargo.length > 0) {
       filtered = filtered.filter(pedido =>
         pedido.empleado && filterEmpleadoCargo.includes(pedido.empleado.cargo || '')
@@ -250,11 +241,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
       );
     }
 
-    // Sort by date descending (most recent first) after filtering
     const sortedFiltered = [...filtered].sort((a, b) => {
       const dateA = new Date(a.fechaPedido);
       const dateB = new Date(b.fechaPedido);
-      return dateB.getTime() - dateA.getTime(); // Descending order
+      return dateB.getTime() - dateA.getTime();
     });
 
     setPedidosVenta(sortedFiltered);

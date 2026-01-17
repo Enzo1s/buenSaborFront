@@ -174,18 +174,14 @@ const PedidoVentaForm = () => {
       if (!validacion()) return;
 
       if (pedidoVenta) {
-        // Make sure the pedidoVenta has all required fields before processing
         const pedidoToSubmit = {
           ...pedidoVenta,
           formaPago: formaPago ?? pedidoVenta.formaPago,
-          // Ensure required fields are not null if they should have default values
           tipoEnvio: pedidoVenta.tipoEnvio || TipoEnvio.DELIVERY,
-          cliente: pedidoVenta.cliente || null, // Client may need to be set based on logged in user
+          cliente: pedidoVenta.cliente || null,
           empleado: pedidoVenta.empleado || empleadoLogin || null,
         };
 
-        // Recalculate promotions to ensure discount is applied correctly
-        // Only apply this if there are items in the pedido
         if (pedidoToSubmit.pedidoVentaDetalle && pedidoToSubmit.pedidoVentaDetalle.length > 0) {
           const { descuento: recalculatedDescuento, total: recalculatedTotal } = applyBestPromotion(pedidoToSubmit);
           pedidoToSubmit.descuento = recalculatedDescuento;
@@ -254,8 +250,6 @@ const PedidoVentaForm = () => {
       })
     );
 
-    // Si hay promociones que contienen este artículo, usar la primera que encuentre
-    // En el proceso de addItemToCart, se verificará si todos los artículos de la promoción están presentes
     const promoParaAplicar = promocionesConEsteArticulo.length > 0 ? promocionesConEsteArticulo[0] : null;
 
     const newPedido = addItemToCart(
