@@ -373,23 +373,42 @@ export const addItemToCart = (itemInsumo: ArticuloInsumo | null, itemManufactura
 };
 
 export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | null) => {
-    if (pedidoVenta) {
-        const item = pedidoVenta.pedidoVentaDetalle?.find((detalle) => {
+    if (pedidoVenta && pedidoVenta.pedidoVentaDetalle) {
+        // Find the index of the first item matching the ID to decrease its quantity by 1
+        const itemIndex = pedidoVenta.pedidoVentaDetalle.findIndex((detalle) => {
             if (detalle.articuloManufacturado) {
                 return detalle.articuloManufacturado.id === itemId
-            }
-            else
+            } else {
                 return detalle.articuloInsumo?.id === itemId
+            }
         });
 
-        // Remove the item from the pedido
-        const updatedPedidoVentaDetalle = pedidoVenta.pedidoVentaDetalle?.filter((detalle) =>
-            detalle.articuloManufacturado?.id !== itemId && detalle.articuloInsumo?.id !== itemId
-        ) || null;
+        if (itemIndex === -1) {
+            // Item not found in the pedido
+            return pedidoVenta;
+        }
 
-        if (!updatedPedidoVentaDetalle || updatedPedidoVentaDetalle.length === 0) {
-            // If no items left, return null to indicate empty cart
-            return null;
+        // Get the item to be modified
+        const itemToRemove = pedidoVenta.pedidoVentaDetalle[itemIndex];
+
+        // Create a copy of the details array
+        let updatedPedidoVentaDetalle = [...pedidoVenta.pedidoVentaDetalle];
+
+        // Decrease quantity by 1
+        if (itemToRemove.cantidad > 1) {
+            // If quantity is greater than 1, just decrease the quantity
+            const updatedItem = {
+                ...itemToRemove,
+                cantidad: itemToRemove.cantidad - 1,
+                subTotal: itemToRemove.articuloInsumo
+                    ? (itemToRemove.articuloInsumo.precioVenta as number) * (itemToRemove.cantidad - 1)
+                    : (itemToRemove.articuloManufacturado!.precioVenta as number) * (itemToRemove.cantidad - 1)
+            };
+
+            updatedPedidoVentaDetalle[itemIndex] = updatedItem;
+        } else {
+            // If quantity is 1, remove the entire item detail
+            updatedPedidoVentaDetalle.splice(itemIndex, 1);
         }
 
         // Calculate values for the remaining items
@@ -417,10 +436,24 @@ export const removeItemFromCart = (itemId: string, pedidoVenta: PedidoVenta | nu
         // Apply the best possible promotion to the updated pedido
         const { descuento: nuevoDescuento, total: nuevoTotal } = applyBestPromotion(updatedPedido);
 
-        // Recalculate time estimation if needed
-        const horaEstimadaFinalizacion = item?.articuloManufacturado
-            ? addMinutes(pedidoVenta.horaEstimadaFinalizacion, -(item.articuloManufacturado.tiempoEstimado as number))
-            : pedidoVenta.horaEstimadaFinalizacion;
+        // Recalculate time estimation if needed - only if we removed an item and it was the last of its kind
+        let horaEstimadaFinalizacion = pedidoVenta.horaEstimadaFinalizacion;
+        if (itemToRemove.articuloManufacturado && itemToRemove.cantidad === 1) {
+            // Only adjust time if the item was completely removed (not just quantity reduced)
+            horaEstimadaFinalizacion = addMinutes(pedidoVenta.horaEstimadaFinalizacion, -(itemToRemove.articuloManufacturado.tiempoEstimado as number));
+        }
+
+        // Handle edge case where no items remain - still allow deletion of last item
+        if (updatedPedidoVentaDetalle.length === 0) {
+            return {
+                ...pedidoVenta,
+                subtotal: 0,
+                descuento: 0,
+                total: 0,
+                totalCosto: 0,
+                pedidoVentaDetalle: []
+            };
+        }
 
         return {
             ...pedidoVenta,
