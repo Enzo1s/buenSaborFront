@@ -15,6 +15,7 @@ import {
   Grid,
   TableSortLabel,
   TextField,
+  MenuItem,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,6 +34,7 @@ const SucursalMain = () => {
     id: string | null;
   }>({ open: false, id: null });
   const [searchNombre, setSearchNombre] = useState("");
+  const [searchDireccion, setSearchDireccion] = useState("");
   const [searchEstado, setSearchEstado] = useState("");
   const [orderBy, setOrderBy] = useState<keyof SucursalEmpresa>("nombre");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
@@ -64,6 +66,10 @@ const SucursalMain = () => {
 
   const filteredSucursales = sucursales?.filter((s) =>
     s.nombre.toLowerCase().includes(searchNombre.toLowerCase()) &&
+    (s.domicilio?.calle?.toLowerCase().includes(searchDireccion.toLowerCase()) ||
+     s.domicilio?.numero?.toString().toLowerCase().includes(searchDireccion.toLowerCase()) ||
+     s.domicilio?.localidad?.nombre?.toLowerCase().includes(searchDireccion.toLowerCase()) ||
+     searchDireccion === "") &&
     (searchEstado === "" ||
       (searchEstado === "activo" && !s.baja) ||
       (searchEstado === "inactivo" && !!s.baja))
@@ -130,7 +136,7 @@ const SucursalMain = () => {
 
       {/* Buscadores */}
       <Grid container spacing={2} mb={2}>
-        <Grid item xs={3}>
+        <Grid item xs={5}>
           <TextField
             label="Buscar por Nombre"
             variant="outlined"
@@ -138,9 +144,73 @@ const SucursalMain = () => {
             value={searchNombre}
             onChange={(e) => setSearchNombre(e.target.value)}
             fullWidth
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2.5}>
+          <TextField
+            label="Buscar por Dirección"
+            variant="outlined"
+            size="small"
+            value={searchDireccion}
+            onChange={(e) => setSearchDireccion(e.target.value)}
+            fullWidth
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={2.5}>
           <TextField
             select
             label="Estado"
@@ -150,20 +220,90 @@ const SucursalMain = () => {
             onChange={(e) => setSearchEstado(e.target.value)}
             fullWidth
             SelectProps={{
-              style: { color: "#e0e0e0" },
+              style: { color: "#FFFFFF" }, // White text for better readability
               MenuProps: {
                 PaperProps: {
                   style: {
-                    backgroundColor: "#2c2c2c",
-                    color: "#e0e0e0",
+                    backgroundColor: "#2F3B52", // Consistent background
+                    color: "#FFFFFF", // White text
                   },
                 },
               },
             }}
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              width: "150px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text (same as other filters)
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           >
-            <option value="">Todos</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
+            <MenuItem value="" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Todos
+            </MenuItem>
+            <MenuItem value="activo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Activo
+            </MenuItem>
+            <MenuItem value="inactivo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Inactivo
+            </MenuItem>
           </TextField>
         </Grid>
       </Grid>
@@ -313,7 +453,7 @@ const SucursalMain = () => {
                     sx={{
                       color: sucursal.baja ? "#ff6b6b" : "#66bb6a",
                       fontWeight: "bold",
-                      borderBottom: "none"
+                      borderBottom: "none",
                     }}
                   >
                     {sucursal.baja ? "Inactivo" : "Activo"}

@@ -11,6 +11,7 @@ import {
   IconButton,
   Modal as MuiModal,
   Box,
+  Paper,
   TableSortLabel,
   MenuItem,
   Select,
@@ -218,52 +219,101 @@ const ManufacturadoTable = () => {
           onChange={(e) => handleSearch(e.target.value)}
           sx={{
             flex: "0 0 25%", // ocupa 1/4 del espacio
-            backgroundColor: "rgba(70, 70, 70, 0.7)",
-            borderRadius: "4px",
-            "& .MuiInputBase-input": { color: "#e0e0e0" },
-            "& .MuiInputLabel-root": {
-              color: "#a0a0a0",
-              "&.Mui-focused": { color: "#fff" },
-              "&.MuiFormLabel-filled": { color: "#fff" },
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiInputBase-input": {
+              color: "#FFFFFF" // White text for better readability
             },
-            "& .MuiOutlinedInput-notchedOutline": { borderColor: "#757575" },
+            "& .MuiInputLabel-root": {
+              color: "#A0B0C0", // Light blue-gray text
+              "&.Mui-focused": {
+                color: "#90CAF9" // Blue when focused
+              },
+              "&.MuiFormLabel-filled": {
+                color: "#90CAF9" // Blue when filled
+              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82" // Subtle border color
+            },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#e0e0e0",
+              borderColor: "#8FA4C2", // Lighter border on hover
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#90CAF9",
+              borderColor: "#90CAF9", // Blue focus border
               borderWidth: "2px",
             },
           }}
+          size="small" // Add size small to match other views
         />
 
         <FormControl
           variant="outlined"
+          size="small"
           sx={{
             minWidth: 200,
-            backgroundColor: "rgba(70, 70, 70, 0.7)",
-            borderRadius: "4px",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
           }}
         >
-          <InputLabel sx={{ color: "#a0a0a0" }}>Categoría</InputLabel>
+          <InputLabel sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9" // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9" // Blue when filled
+            },
+          }}>Categoría</InputLabel>
           <Select
             value={categoriaSeleccionada}
             onChange={(e) => handleCategoriaChange(e.target.value)}
             label="Categoría"
+            size="small"
             sx={{
-              color: "#e0e0e0",
-              ".MuiOutlinedInput-notchedOutline": { borderColor: "#757575" },
+              color: "#FFFFFF", // White text for better readability
+              ".MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82" // Subtle border color
+              },
               "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#e0e0e0",
+                borderColor: "#8FA4C2", // Lighter border on hover
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#90CAF9",
+                borderColor: "#90CAF9", // Blue focus border
               },
             }}
           >
             <MenuItem value="">Todas</MenuItem>
             {categorias.map((categoria) => (
-              <MenuItem key={categoria} value={categoria}>
+              <MenuItem
+                key={categoria}
+                value={categoria}
+                sx={{
+                  backgroundColor: "#2F3B52", // Consistent menu item background
+                  color: "#FFFFFF", // White text
+                  "&.Mui-selected": {
+                    backgroundColor: "#5D6D82", // Selected state
+                    "&:hover": {
+                      backgroundColor: "#4A5A70", // Hover when selected
+                    }
+                  },
+                  "&:hover": {
+                    backgroundColor: "#3C4A63", // Hover state
+                  }
+                }}
+              >
                 {categoria}
               </MenuItem>
             ))}
@@ -291,14 +341,16 @@ const ManufacturadoTable = () => {
           <Table
             sx={{
               minWidth: 1000,
-              backgroundColor: "rgba(50, 50, 50, 0.9)",
-              borderRadius: "8px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              borderRadius: "12px",
+              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               overflow: "hidden",
             }}
           >
             <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(70, 70, 70, 0.95)" }}>
+              <TableRow sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
                 {[
                   { id: "denominacion", label: "Denominación", sortable: true },
                   { id: "precioCosto", label: "Precio Costo", sortable: true },
@@ -323,7 +375,11 @@ const ManufacturadoTable = () => {
                 ].map((headCell) => (
                   <TableCell
                     key={headCell.id}
-                    sx={{ color: "#fff", fontWeight: "bold" }}
+                    sx={{
+                      color: "#f0f0f0",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #444",
+                    }}
                   >
                     {headCell.sortable ? (
                       <TableSortLabel
@@ -338,7 +394,13 @@ const ManufacturadoTable = () => {
                     )}
                   </TableCell>
                 ))}
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
                   Acciones
                 </TableCell>
               </TableRow>
@@ -349,23 +411,32 @@ const ManufacturadoTable = () => {
                   key={aManufacturado.id}
                   sx={{
                     "&:nth-of-type(odd)": {
-                      backgroundColor: "rgba(60, 60, 60, 0.8)",
+                      backgroundColor: "rgba(40, 40, 40, 0.8)",
                     },
                     "&:nth-of-type(even)": {
-                      backgroundColor: "rgba(55, 55, 55, 0.8)",
+                      backgroundColor: "rgba(35, 35, 35, 0.8)",
                     },
-                    "&:hover": { backgroundColor: "rgba(80, 80, 80, 0.9)" },
+                    "&:hover": {
+                      backgroundColor: "rgba(60, 60, 60, 0.9) !important",
+                    },
+                    transition: "background-color 0.3s ease",
                     opacity: aManufacturado.baja ? 0.6 : 1,
                     fontStyle: aManufacturado.baja ? "italic" : "normal",
                   }}
                 >
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {aManufacturado.denominacion}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {`$${aManufacturado.precioCosto.toFixed(2)}`}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {`$${aManufacturado.precioVenta.toFixed(2)}`}
                   </TableCell>
                   <TableCell sx={{ color: "#e0e0e0" }}>
@@ -374,6 +445,7 @@ const ManufacturadoTable = () => {
                   <TableCell
                     sx={{
                       color: "#e0e0e0",
+                      borderBottom: "1px solid #333",
                       maxWidth: "200px",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -385,6 +457,7 @@ const ManufacturadoTable = () => {
                   <TableCell
                     sx={{
                       color: "#e0e0e0",
+                      borderBottom: "1px solid #333",
                       maxWidth: "150px",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -395,16 +468,25 @@ const ManufacturadoTable = () => {
                       .map((detalle) => detalle.articuloInsumo?.denominacion)
                       .join(", ") || "N/A"}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {aManufacturado.categoriaArticuloManufacturado
                       ?.denominacion || "N/A"}
                   </TableCell>
                   <TableCell
-                    sx={{ color: aManufacturado.baja ? "#EF9A9A" : "#A5D6A7" }}
+                    sx={{
+                      color: aManufacturado.baja ? "#EF9A9A" : "#A5D6A7",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #333"
+                    }}
                   >
                     {aManufacturado.baja ? "Dada de Baja" : "Activo"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ borderBottom: "1px solid #333" }}
+                  >
                     <IconButton
                       color="primary"
                       onClick={() =>
@@ -412,7 +494,12 @@ const ManufacturadoTable = () => {
                           `/articulo-manufacturado/ver/${aManufacturado.id}`
                         )
                       }
-                      sx={{ "&:hover": { color: "#64B5F6" } }}
+                      sx={{
+                        color: "#90CAF9",
+                        "&:hover": {
+                          backgroundColor: "rgba(144, 202, 249, 0.1)",
+                        },
+                      }}
                     >
                       <VisibilityIcon />
                     </IconButton>
@@ -423,7 +510,12 @@ const ManufacturadoTable = () => {
                           `/articulo-manufacturado/editar/${aManufacturado.id}`
                         )
                       }
-                      sx={{ "&:hover": { color: "#BA68C8" } }}
+                      sx={{
+                        color: "#FFC107",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 193, 7, 0.1)",
+                        },
+                      }}
                     >
                       <EditIcon />
                     </IconButton>
@@ -432,7 +524,12 @@ const ManufacturadoTable = () => {
                       onClick={() =>
                         setOpenDelete({ open: true, id: aManufacturado?.id })
                       }
-                      sx={{ "&:hover": { color: "#EF5350" } }}
+                      sx={{
+                        color: "#EF5350",
+                        "&:hover": {
+                          backgroundColor: "rgba(239, 83, 80, 0.1)",
+                        },
+                      }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -443,10 +540,25 @@ const ManufacturadoTable = () => {
           </Table>
         </Grid>
       ) : (
-        <Grid size={12} sx={{ textAlign: "center", mt: 4 }}>
-          <Typography variant="h6" sx={{ color: "#a0a0a0" }}>
-            No hay artículos manufacturados para mostrar.
-          </Typography>
+        <Grid size={12}>
+          <Box
+            component="Paper"
+            elevation={6}
+            sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: "12px",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              color: "#e0e0e0",
+              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <Typography variant="h5">
+              No hay artículos manufacturados registrados. ¡Crea el primero!
+            </Typography>
+          </Box>
         </Grid>
       )}
 
@@ -456,18 +568,21 @@ const ManufacturadoTable = () => {
         onClose={() => setOpenDelete({ open: false, id: null })}
       >
         <Box
+          component="Paper"
+          elevation={10}
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: { xs: "90%", sm: 400 },
-            bgcolor: "background.paper",
-            boxShadow: 24,
             p: 4,
-            borderRadius: "8px",
-            backgroundColor: "#424242",
+            borderRadius: "12px",
+            backgroundColor: "rgba(40, 40, 40, 0.95)",
             color: "#e0e0e0",
+            boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.6)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
           }}
         >
           <Grid container spacing={2}>

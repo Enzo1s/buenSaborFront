@@ -145,7 +145,34 @@ const ClienteTable = () => {
           size="small"
           value={searchNombreApellido}
           onChange={(e) => setSearchNombreApellido(e.target.value)}
-          sx={{ flex: 1 }}
+          sx={{
+            flex: 1,
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiInputBase-input": {
+              color: "#FFFFFF", // White text for better readability
+            },
+            "& .MuiInputLabel-root": {
+              color: "#A0B0C0", // Light blue-gray text
+              "&.Mui-focused": {
+                color: "#90CAF9", // Blue when focused
+              },
+              "&.MuiFormLabel-filled": {
+                color: "#90CAF9", // Blue when filled
+              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
+          }}
         />
         <TextField
           label="Buscar por Cliente (usuario)"
@@ -153,33 +180,95 @@ const ClienteTable = () => {
           size="small"
           value={searchCliente}
           onChange={(e) => setSearchCliente(e.target.value)}
-          sx={{ flex: 1 }}
+          sx={{
+            flex: 1,
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiInputBase-input": {
+              color: "#FFFFFF", // White text for better readability
+            },
+            "& .MuiInputLabel-root": {
+              color: "#A0B0C0", // Light blue-gray text
+              "&.Mui-focused": {
+                color: "#90CAF9", // Blue when focused
+              },
+              "&.MuiFormLabel-filled": {
+                color: "#90CAF9", // Blue when filled
+              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
+          }}
         />
         <FormControl sx={{ flex: 1 }} size="small">
-          <InputLabel id="filter-estado-label">Estado</InputLabel>
+          <InputLabel id="filter-estado-label" sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9", // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9", // Blue when filled
+            },
+          }}>Estado</InputLabel>
           <Select
             labelId="filter-estado-label"
             value={searchEstado}
             label="Estado"
             onChange={(e) => setSearchEstado(e.target.value)}
+            size="small"
             sx={{
-              backgroundColor: "rgba(70, 70, 70, 0.7)",
-              color: "#e0e0e0",
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              color: "#FFFFFF", // White text for better readability
+              borderRadius: "8px",
+              height: "40px",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#757575",
+                borderColor: "#5D6D82", // Subtle border color
               },
               "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#e0e0e0",
+                borderColor: "#8FA4C2", // Lighter border on hover
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#90CAF9",
+                borderColor: "#90CAF9", // Blue focus border
                 borderWidth: "2px",
               },
             }}
           >
             <MenuItem value="">Todos</MenuItem>
-            <MenuItem value="activo">Activo</MenuItem>
-            <MenuItem value="inactivo">Inactivo</MenuItem>
+            <MenuItem value="activo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Activo</MenuItem>
+            <MenuItem value="inactivo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Inactivo</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -215,7 +304,7 @@ const ClienteTable = () => {
           <Table aria-label="tabla de clientes">
             <TableHead sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
               <TableRow>
-                <TableCell>
+                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>
                   <TableSortLabel
                     active={orderBy === "nombre"}
                     direction={orderBy === "nombre" ? order : "asc"}
@@ -225,7 +314,7 @@ const ClienteTable = () => {
                     Nombre y Apellido
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Teléfono</TableCell>
+                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>Teléfono</TableCell>
                 <TableCell>
                   <TableSortLabel
                     active={orderBy === "email"}
@@ -246,7 +335,7 @@ const ClienteTable = () => {
                     Usuario
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Dirección</TableCell>
+                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>Dirección</TableCell>
                 <TableCell
                   sx={{
                     color: "#f0f0f0",
@@ -256,7 +345,14 @@ const ClienteTable = () => {
                 >
                   Estado
                 </TableCell>
-                <TableCell sx={{ width: "150px" }} align="center">
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    width: "150px"
+                  }}
+                  align="center"
+                >
                   Acciones
                 </TableCell>
               </TableRow>

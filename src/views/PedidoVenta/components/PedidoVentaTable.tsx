@@ -284,13 +284,12 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
 
   return (
     <Box sx={{ p: 3, color: "#e0e0e0" }}>
+      {/* Header */}
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         mb={3}
-        flexWrap="wrap"
-        gap={2}
       >
         <Typography
           variant="h4"
@@ -299,120 +298,7 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
         >
           Listado de Pedidos de Venta
         </Typography>
-        {/* Sección de Búsqueda y Botón de Creación */}
-              <Grid size={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 2 }}>
-                <TextField
-                  label="Buscar "
-                  variant="outlined"
-                  onChange={(e) => handleSearch(e.target.value)}
-                  sx={{
-                    flexGrow: 1,
-                    mr: { xs: 0, sm: 2 },
-                    minWidth: { xs: '100%', sm: 'auto' },
-                    backgroundColor: 'rgba(70, 70, 70, 0.7)',
-                    borderRadius: '4px',
-                    '& .MuiInputBase-input': {
-                      color: '#e0e0e0',
-                    },
-                    '& .MuiInputLabel-root': {
-                      color: '#a0a0a0',
-                      '&.Mui-focused': {
-                        color: '#fff',
-                      },
-                      '&.MuiFormLabel-filled': {
-                        color: '#fff',
-                      },
-                    },
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#757575',
-                    },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#e0e0e0',
-                    },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#90CAF9',
-                      borderWidth: '2px',
-                    },
-                  }}
-                />
-
-                {/* Filtros por estado */}
-                <FormControl sx={{ minWidth: 150, mr: 1 }} size="small">
-                  <InputLabel id="estado-filter-label">Estado</InputLabel>
-                  <Select
-                    labelId="estado-filter-label"
-                    multiple
-                    value={filterEstado}
-                    onChange={(e) => setFilterEstado(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
-                    input={<OutlinedInput label="Estado" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} size="small" />
-                        ))}
-                      </Box>
-                    )}
-                    sx={{
-                      backgroundColor: 'rgba(70, 70, 70, 0.7)',
-                      color: '#e0e0e0',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#757575',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#e0e0e0',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#90CAF9',
-                      },
-                    }}
-                  >
-                    {Object.values(Estado).map((estado) => (
-                      <MenuItem key={estado} value={estado}>
-                        {estado}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {/* Filtros por cargo del empleado */}
-                <FormControl sx={{ minWidth: 150, mr: 1 }} size="small">
-                  <InputLabel id="cargo-filter-label">Cargo Empleado</InputLabel>
-                  <Select
-                    labelId="cargo-filter-label"
-                    multiple
-                    value={filterEmpleadoCargo}
-                    onChange={(e) => setFilterEmpleadoCargo(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
-                    input={<OutlinedInput label="Cargo Empleado" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} size="small" />
-                        ))}
-                      </Box>
-                    )}
-                    sx={{
-                      backgroundColor: 'rgba(70, 70, 70, 0.7)',
-                      color: '#e0e0e0',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#757575',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#e0e0e0',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#90CAF9',
-                      },
-                    }}
-                  >
-                    {Object.values(Cargo).map((cargo) => (
-                      <MenuItem key={cargo} value={cargo}>
-                        {cargo}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <Box display="flex" gap={2} alignItems="center">
+        <Box display="flex" gap={2} alignItems="center">
           <Button
             variant="contained"
             startIcon={<FaFileExcel style={{ color: "white" }} />}
@@ -447,42 +333,166 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
             Crear Pedido
           </Button>
         </Box>
-              </Grid>
-        {/* <Box display="flex" gap={2} alignItems="center">
-          <Button
-            variant="contained"
-            startIcon={<FaFileExcel style={{ color: "white" }} />}
-            onClick={() => setModalExcelOpen(true)}
-            sx={{
-              backgroundColor: "#1976d2",
-              "&:hover": { backgroundColor: "#1565c0" },
-              color: "#fff",
-            }}
-          >
-            Generar Excel
-          </Button>
+      </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() =>
-              idEmpleado
-                ? navigate(`/pedido-venta/crear/${idEmpleado}`)
-                : navigate("/pedido-venta/crear")
-            }
+      {/* Filtros */}
+      <Box display="flex" gap={2} mb={2} flexWrap="wrap">
+        <TextField
+          label="Buscar"
+          variant="outlined"
+          size="small"
+          onChange={(e) => handleSearch(e.target.value)}
+          sx={{
+            flexGrow: 1,
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            '& .MuiInputBase-input': {
+              color: '#FFFFFF', // White text for better readability
+            },
+            '& .MuiInputLabel-root': {
+              color: '#A0B0C0', // Light blue-gray text
+              '&.Mui-focused': {
+                color: '#90CAF9', // Blue when focused
+              },
+              '&.MuiFormLabel-filled': {
+                color: '#90CAF9', // Blue when filled
+              },
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#5D6D82', // Subtle border color
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#8FA4C2', // Lighter border on hover
+            },
+            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#90CAF9', // Blue focus border
+              borderWidth: '2px',
+            },
+          }}
+        />
+
+        {/* Filtros por estado */}
+        <FormControl sx={{ minWidth: 150 }} size="small">
+          <InputLabel id="estado-filter-label" sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9", // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9", // Blue when filled
+            },
+          }}>Estado</InputLabel>
+          <Select
+            labelId="estado-filter-label"
+            multiple
+            value={filterEstado}
+            onChange={(e) => setFilterEstado(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+            input={<OutlinedInput label="Estado" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} size="small" />
+                ))}
+              </Box>
+            )}
             sx={{
-              backgroundColor: "#4CAF50",
-              "&:hover": { backgroundColor: "#388E3C" },
-              color: "#ffffff",
-              px: 3,
-              py: 1.2,
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              color: "#FFFFFF", // White text for better readability
               borderRadius: "8px",
+              height: "40px",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
             }}
           >
-            Crear Pedido
-          </Button>
-        </Box> */}
+            {Object.values(Estado).map((estado) => (
+              <MenuItem key={estado} value={estado} sx={{
+                backgroundColor: "#2F3B52", // Consistent menu item background
+                color: "#FFFFFF", // White text
+                "&.Mui-selected": {
+                  backgroundColor: "#5D6D82", // Selected state
+                  "&:hover": {
+                    backgroundColor: "#4A5A70", // Hover when selected
+                  }
+                },
+                "&:hover": {
+                  backgroundColor: "#3C4A63", // Hover state
+                }
+              }}>
+                {estado}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Filtros por cargo del empleado */}
+        <FormControl sx={{ minWidth: 150 }} size="small">
+          <InputLabel id="cargo-filter-label" sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9", // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9", // Blue when filled
+            },
+          }}>Cargo Empleado</InputLabel>
+          <Select
+            labelId="cargo-filter-label"
+            multiple
+            value={filterEmpleadoCargo}
+            onChange={(e) => setFilterEmpleadoCargo(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+            input={<OutlinedInput label="Cargo Empleado" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} size="small" />
+                ))}
+              </Box>
+            )}
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              color: "#FFFFFF", // White text for better readability
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
+          >
+            {Object.values(Cargo).map((cargo) => (
+              <MenuItem key={cargo} value={cargo} sx={{
+                backgroundColor: "#2F3B52", // Consistent menu item background
+                color: "#FFFFFF", // White text
+                "&.Mui-selected": {
+                  backgroundColor: "#5D6D82", // Selected state
+                  "&:hover": {
+                    backgroundColor: "#4A5A70", // Hover when selected
+                  }
+                },
+                "&:hover": {
+                  backgroundColor: "#3C4A63", // Hover state
+                }
+              }}>
+                {cargo}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
       {loading ? (

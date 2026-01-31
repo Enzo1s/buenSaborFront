@@ -11,6 +11,7 @@ import {
   IconButton,
   Modal as MuiModal,
   Box,
+  Paper,
   TableSortLabel,
   Select,
   MenuItem,
@@ -196,47 +197,77 @@ const InsumosTable = () => {
           onChange={(e) => handleSearch(e.target.value)}
           sx={{
             flexBasis: "25%", // <-- 1/4 del ancho
-            backgroundColor: "rgba(70, 70, 70, 0.7)",
-            borderRadius: "4px",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
             "& .MuiInputBase-input": {
-              color: "#e0e0e0",
+              color: "#FFFFFF", // White text for better readability
             },
             "& .MuiInputLabel-root": {
-              color: "#a0a0a0",
+              color: "#A0B0C0", // Light blue-gray text
               "&.Mui-focused": {
-                color: "#fff",
+                color: "#90CAF9", // Blue when focused
               },
               "&.MuiFormLabel-filled": {
-                color: "#fff",
+                color: "#90CAF9", // Blue when filled
               },
             },
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#757575",
+              borderColor: "#5D6D82", // Subtle border color
             },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#e0e0e0",
+              borderColor: "#8FA4C2", // Lighter border on hover
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#90CAF9",
+              borderColor: "#90CAF9", // Blue focus border
               borderWidth: "2px",
             },
           }}
+          size="small" // Add size small to match other views
         />
 
         <Select
           value={categoriaFiltro}
           onChange={(e) => handleCategoriaFiltro(e.target.value)}
           displayEmpty
+          size="small"
           sx={{
             flexBasis: "20%",
-            backgroundColor: "rgba(70,70,70,0.7)",
-            color: "#e0e0e0",
-            borderRadius: "4px",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            color: "#FFFFFF", // White text for better readability
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
           }}
         >
           <MenuItem value="">Todas las Categorías</MenuItem>
           {categorias.map((cat) => (
-            <MenuItem key={cat} value={cat}>
+            <MenuItem
+              key={cat}
+              value={cat}
+              sx={{
+                backgroundColor: "#2F3B52", // Consistent menu item background
+                color: "#FFFFFF", // White text
+                "&.Mui-selected": {
+                  backgroundColor: "#5D6D82", // Selected state
+                  "&:hover": {
+                    backgroundColor: "#4A5A70", // Hover when selected
+                  }
+                },
+                "&:hover": {
+                  backgroundColor: "#3C4A63", // Hover state
+                }
+              }}
+            >
               {cat}
             </MenuItem>
           ))}
@@ -262,14 +293,16 @@ const InsumosTable = () => {
           <Table
             sx={{
               minWidth: 900,
-              backgroundColor: "rgba(50, 50, 50, 0.9)",
-              borderRadius: "8px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.4)",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              borderRadius: "12px",
+              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               overflow: "hidden",
             }}
           >
             <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(70, 70, 70, 0.95)" }}>
+              <TableRow sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
                 {[
                   { id: "denominacion", label: "Denominación", sortable: true },
                   {
@@ -293,7 +326,11 @@ const InsumosTable = () => {
                 ].map((headCell) => (
                   <TableCell
                     key={headCell.id}
-                    sx={{ color: "#fff", fontWeight: "bold" }}
+                    sx={{
+                      color: "#f0f0f0",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #444",
+                    }}
                   >
                     {headCell.sortable ? (
                       <TableSortLabel
@@ -310,7 +347,13 @@ const InsumosTable = () => {
                     )}
                   </TableCell>
                 ))}
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
                   Acciones
                 </TableCell>
               </TableRow>
@@ -322,34 +365,47 @@ const InsumosTable = () => {
                   key={articuloInsumo.id as Key}
                   sx={{
                     "&:nth-of-type(odd)": {
-                      backgroundColor: "rgba(60, 60, 60, 0.8)",
+                      backgroundColor: "rgba(40, 40, 40, 0.8)",
                     },
                     "&:nth-of-type(even)": {
-                      backgroundColor: "rgba(55, 55, 55, 0.8)",
+                      backgroundColor: "rgba(35, 35, 35, 0.8)",
                     },
                     "&:hover": {
-                      backgroundColor: "rgba(80, 80, 80, 0.9)",
+                      backgroundColor: "rgba(60, 60, 60, 0.9) !important",
                     },
+                    transition: "background-color 0.3s ease",
                     opacity: articuloInsumo.baja ? 0.6 : 1,
                     fontStyle: articuloInsumo.baja ? "italic" : "normal",
                   }}
                 >
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {articuloInsumo.denominacion}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {`$${articuloInsumo.precioCompra.toFixed(2)}`}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {`$${articuloInsumo.precioVenta.toFixed(2)}`}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {articuloInsumo.esParaElaborar ? "Sí" : "No"}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {articuloInsumo.unidadMedida}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {articuloInsumo.categoriaArticulo
                       ?.map((cat) => cat.denominacion)
                       .join(", ") || "N/A"}
@@ -357,17 +413,27 @@ const InsumosTable = () => {
                   <TableCell
                     sx={{
                       color: articuloInsumo.baja ? "#EF9A9A" : "#A5D6A7",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #333"
                     }}
                   >
                     {articuloInsumo.baja ? "Dada de Baja" : "Activo"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ borderBottom: "1px solid #333" }}
+                  >
                     <IconButton
                       color="primary"
                       onClick={() =>
                         navigate(`/articulo-insumo/ver/${articuloInsumo.id}`)
                       }
-                      sx={{ "&:hover": { color: "#64B5F6" } }}
+                      sx={{
+                        color: "#90CAF9",
+                        "&:hover": {
+                          backgroundColor: "rgba(144, 202, 249, 0.1)",
+                        },
+                      }}
                     >
                       <VisibilityIcon />
                     </IconButton>
@@ -376,7 +442,12 @@ const InsumosTable = () => {
                       onClick={() =>
                         navigate(`/articulo-insumo/editar/${articuloInsumo.id}`)
                       }
-                      sx={{ "&:hover": { color: "#BA68C8" } }}
+                      sx={{
+                        color: "#FFC107",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 193, 7, 0.1)",
+                        },
+                      }}
                     >
                       <EditIcon />
                     </IconButton>
@@ -385,7 +456,12 @@ const InsumosTable = () => {
                       onClick={() =>
                         setOpenDelete({ open: true, id: articuloInsumo?.id })
                       }
-                      sx={{ "&:hover": { color: "#EF5350" } }}
+                      sx={{
+                        color: "#EF5350",
+                        "&:hover": {
+                          backgroundColor: "rgba(239, 83, 80, 0.1)",
+                        },
+                      }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -396,19 +472,25 @@ const InsumosTable = () => {
           </Table>
         </Grid>
       ) : (
-        <Grid
-          size={12}
-          sx={{ textAlign: "center", mt: 4 }}
-          display={"flex"}
-          justifyContent={"center"}
-        >
-          <Typography
-            variant="h6"
-            className="textWhte"
-            sx={{ borderRadius: "10px", width: "400px" }}
+        <Grid size={12}>
+          <Box
+            component="Paper"
+            elevation={6}
+            sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: "12px",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              color: "#e0e0e0",
+              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
           >
-            No hay artículos insumo para mostrar.
-          </Typography>
+            <Typography variant="h5">
+              No hay artículos insumo registrados. ¡Crea el primero!
+            </Typography>
+          </Box>
         </Grid>
       )}
 
@@ -418,18 +500,21 @@ const InsumosTable = () => {
         onClose={() => setOpenDelete({ open: false, id: null })}
       >
         <Box
+          component="Paper"
+          elevation={10}
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: { xs: "90%", sm: 400 },
-            bgcolor: "background.paper",
-            boxShadow: 24,
             p: 4,
-            borderRadius: "8px",
-            backgroundColor: "#424242",
+            borderRadius: "12px",
+            backgroundColor: "rgba(40, 40, 40, 0.95)",
             color: "#e0e0e0",
+            boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.6)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
           }}
         >
           <Grid container spacing={2}>

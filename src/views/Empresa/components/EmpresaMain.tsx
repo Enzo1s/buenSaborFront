@@ -13,6 +13,7 @@ import {
   Paper,
   TableSortLabel,
   TextField,
+  MenuItem,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -36,6 +37,7 @@ const EmpresaMain = () => {
 
   const [searchNombre, setSearchNombre] = useState("");
   const [searchRazonSocial, setSearchRazonSocial] = useState("");
+  const [searchCUIT, setSearchCUIT] = useState("");
   const [searchEstado, setSearchEstado] = useState("");
 
   const getCompanies = async () => {
@@ -68,6 +70,13 @@ const EmpresaMain = () => {
     .filter((c) =>
       c.razonSocial.toLowerCase().includes(searchRazonSocial.toLowerCase())
     )
+    .filter((c) => {
+      // Check if CUIT starts with the search term (prefix matching)
+      if (searchCUIT) {
+        return c.cuil.toString().startsWith(searchCUIT);
+      }
+      return true; // If searchCUIT is empty, include all
+    })
     .filter((c) => {
       if (searchEstado === "activo") {
         return !c.baja;
@@ -117,6 +126,33 @@ const EmpresaMain = () => {
             value={searchNombre}
             onChange={(e) => setSearchNombre(e.target.value)}
             fullWidth
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           />
         </Grid>
         <Grid item xs={3}>
@@ -127,9 +163,73 @@ const EmpresaMain = () => {
             value={searchRazonSocial}
             onChange={(e) => setSearchRazonSocial(e.target.value)}
             fullWidth
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
+          <TextField
+            label="Buscar por CUIT"
+            variant="outlined"
+            size="small"
+            value={searchCUIT}
+            onChange={(e) => setSearchCUIT(e.target.value)}
+            fullWidth
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={5}>
           <TextField
             select
             label="Estado"
@@ -139,20 +239,90 @@ const EmpresaMain = () => {
             onChange={(e) => setSearchEstado(e.target.value)}
             fullWidth
             SelectProps={{
-              style: { color: "#e0e0e0" },
+              style: { color: "#FFFFFF" }, // White text for better readability
               MenuProps: {
                 PaperProps: {
                   style: {
-                    backgroundColor: "#2c2c2c",
-                    color: "#e0e0e0",
+                    backgroundColor: "#2F3B52", // Consistent background
+                    color: "#FFFFFF", // White text
                   },
                 },
               },
             }}
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              borderRadius: "8px",
+              height: "40px",
+              width: "150px",
+              "& .MuiInputBase-input": {
+                color: "#FFFFFF", // White text for better readability
+              },
+              "& .MuiInputLabel-root": {
+                color: "#A0B0C0", // Light blue-gray text (same as other filters)
+                "&.Mui-focused": {
+                  color: "#90CAF9", // Blue when focused
+                },
+                "&.MuiFormLabel-filled": {
+                  color: "#90CAF9", // Blue when filled
+                },
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           >
-            <option value="">Todos</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
+            <MenuItem value="" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Todos
+            </MenuItem>
+            <MenuItem value="activo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Activo
+            </MenuItem>
+            <MenuItem value="inactivo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>
+              Inactivo
+            </MenuItem>
           </TextField>
         </Grid>
       </Grid>
@@ -163,47 +333,75 @@ const EmpresaMain = () => {
           <Table
             sx={{
               minWidth: 650,
-              backgroundColor: "rgba(50,50,50,0.9)",
-              borderRadius: "8px",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.4)",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              borderRadius: "12px",
+              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(5px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
               overflow: "hidden",
             }}
           >
             <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(70,70,70,0.95)" }}>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+              <TableRow sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
+                <TableCell
+                  sx={{
+                    color: "#ffffff",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "nombre"}
                     direction={orderBy === "nombre" ? order : "asc"}
                     onClick={() => handleSort("nombre")}
-                    sx={{ color: "#fff" }}
+                    sx={{ color: "#ffffff" }}
                   >
                     Nombre
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "razonSocial"}
                     direction={orderBy === "razonSocial" ? order : "asc"}
                     onClick={() => handleSort("razonSocial")}
-                    sx={{ color: "#fff" }}
+                    sx={{ color: "#f0f0f0" }}
                   >
                     Razón Social
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                  }}
+                >
                   CUIT
                 </TableCell>
                 <TableCell
                   sx={{
-                    color: "#fff",
+                    color: "#f0f0f0",
                     fontWeight: "bold",
-                    borderBottom: "2px solid #444",
+                    borderBottom: "1px solid #444",
                   }}
                 >
                   Estado
                 </TableCell>
-                <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                    width: "150px",
+                  }}
+                  align="center"
+                >
                   Acciones
                 </TableCell>
               </TableRow>
@@ -214,43 +412,69 @@ const EmpresaMain = () => {
                   key={company.id as Key}
                   sx={{
                     "&:nth-of-type(odd)": {
-                      backgroundColor: "rgba(60,60,60,0.8)",
+                      backgroundColor: "rgba(40, 40, 40, 0.8)",
                     },
                     "&:nth-of-type(even)": {
-                      backgroundColor: "rgba(55,55,55,0.8)",
+                      backgroundColor: "rgba(35, 35, 35, 0.8)",
                     },
-                    "&:hover": { backgroundColor: "rgba(80,80,80,0.9)" },
+                    "&:hover": {
+                      backgroundColor: "rgba(60, 60, 60, 0.9) !important",
+                    },
+                    transition: "background-color 0.3s ease",
                   }}
                 >
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {company.nombre}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {company.razonSocial}
                   </TableCell>
-                  <TableCell sx={{ color: "#e0e0e0" }}>
+                  <TableCell
+                    sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
+                  >
                     {company.cuil.toString()}
                   </TableCell>
                   <TableCell
                     sx={{
                       color: company.baja ? "#ff6b6b" : "#66bb6a",
-                      fontWeight: "bold"
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #333",
                     }}
                   >
                     {company.baja ? "Inactivo" : "Activo"}
                   </TableCell>
-                  <TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      borderBottom: "1px solid #333",
+                      width: "150px",
+                    }}
+                  >
                     <IconButton
                       color="primary"
                       onClick={() => navigate(`/empresa/ver/${company.id}`)}
-                      sx={{ "&:hover": { color: "#64B5F6" } }}
+                      sx={{
+                        color: "#90CAF9",
+                        "&:hover": {
+                          backgroundColor: "rgba(144, 202, 249, 0.1)",
+                        },
+                      }}
                     >
                       <VisibilityIcon />
                     </IconButton>
                     <IconButton
                       color="secondary"
                       onClick={() => navigate(`/empresa/editar/${company.id}`)}
-                      sx={{ "&:hover": { color: "#BA68C8" } }}
+                      sx={{
+                        color: "#FFC107",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 193, 7, 0.1)",
+                        },
+                      }}
                     >
                       <EditIcon />
                     </IconButton>
@@ -259,7 +483,12 @@ const EmpresaMain = () => {
                       onClick={() =>
                         setOpenDelete({ open: true, id: company?.id })
                       }
-                      sx={{ "&:hover": { color: "#EF5350" } }}
+                      sx={{
+                        color: "#EF5350",
+                        "&:hover": {
+                          backgroundColor: "rgba(239, 83, 80, 0.1)",
+                        },
+                      }}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -270,10 +499,20 @@ const EmpresaMain = () => {
           </Table>
         </Grid>
       ) : (
-        <Grid size={12} sx={{ textAlign: "center", mt: 4 }}>
-          <Typography variant="h6" sx={{ color: "#a0a0a0" }}>
-            No hay empresas para mostrar.
-          </Typography>
+        <Grid size={12}>
+          <Paper
+            sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: "12px",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              color: "#e0e0e0",
+            }}
+          >
+            <Typography variant="h5">
+              No hay empresas registradas. ¡Crea la primera!
+            </Typography>
+          </Paper>
         </Grid>
       )}
 
@@ -283,17 +522,21 @@ const EmpresaMain = () => {
         onClose={() => setOpenDelete({ open: false, id: null })}
       >
         <Box
+          component="Paper"
+          elevation={10}
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: { xs: "90%", sm: 400 },
-            bgcolor: "#424242",
-            boxShadow: 24,
             p: 4,
-            borderRadius: "8px",
+            borderRadius: "12px",
+            backgroundColor: "rgba(40, 40, 40, 0.95)",
             color: "#e0e0e0",
+            boxShadow: "0px 12px 30px rgba(0, 0, 0, 0.6)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
           }}
         >
           <Grid container spacing={2}>

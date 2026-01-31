@@ -180,7 +180,34 @@ const EmpleadoTable = () => {
           size="small"
           value={filterNombre}
           onChange={(e) => setFilterNombre(e.target.value)}
-          sx={{ width: "20%" }}
+          sx={{
+            width: "20%",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiInputBase-input": {
+              color: "#FFFFFF", // White text for better readability
+            },
+            "& .MuiInputLabel-root": {
+              color: "#A0B0C0", // Light blue-gray text
+              "&.Mui-focused": {
+                color: "#90CAF9", // Blue when focused
+              },
+              "&.MuiFormLabel-filled": {
+                color: "#90CAF9", // Blue when filled
+              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
+          }}
         />
         <TextField
           label="Buscar por usuario"
@@ -188,33 +215,170 @@ const EmpleadoTable = () => {
           size="small"
           value={filterUsuario}
           onChange={(e) => setFilterUsuario(e.target.value)}
-          sx={{ width: "20%" }}
+          sx={{
+            width: "20%",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiInputBase-input": {
+              color: "#FFFFFF", // White text for better readability
+            },
+            "& .MuiInputLabel-root": {
+              color: "#A0B0C0", // Light blue-gray text
+              "&.Mui-focused": {
+                color: "#90CAF9", // Blue when focused
+              },
+              "&.MuiFormLabel-filled": {
+                color: "#90CAF9", // Blue when filled
+              },
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
+          }}
         />
         <FormControl sx={{ width: "15%" }} size="small">
-          <InputLabel id="filter-cargo-label">Cargo</InputLabel>
+          <InputLabel id="filter-cargo-label" sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9", // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9", // Blue when filled
+            },
+          }}>Cargo</InputLabel>
           <Select
             labelId="filter-cargo-label"
             value={filterCargo}
             label="Cargo"
             onChange={(e) => setFilterCargo(e.target.value)}
+            size="small"
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              color: "#FFFFFF", // White text for better readability
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           >
             <MenuItem value="">Todos</MenuItem>
-            <MenuItem value="CAJERO">Cajero</MenuItem>
-            <MenuItem value="COCINERO">Cocinero</MenuItem>
-            <MenuItem value="DELIVERY">Delivery</MenuItem>
+            <MenuItem value="CAJERO" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Cajero</MenuItem>
+            <MenuItem value="COCINERO" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Cocinero</MenuItem>
+            <MenuItem value="DELIVERY" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Delivery</MenuItem>
           </Select>
         </FormControl>
         <FormControl sx={{ width: "15%" }} size="small">
-          <InputLabel id="filter-estado-label">Estado</InputLabel>
+          <InputLabel id="filter-estado-label" sx={{
+            color: "#A0B0C0", // Light blue-gray text
+            "&.Mui-focused": {
+              color: "#90CAF9", // Blue when focused
+            },
+            "&.MuiFormLabel-filled": {
+              color: "#90CAF9", // Blue when filled
+            },
+          }}>Estado</InputLabel>
           <Select
             labelId="filter-estado-label"
             value={filterEstado}
             label="Estado"
             onChange={(e) => setFilterEstado(e.target.value)}
+            size="small"
+            sx={{
+              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              color: "#FFFFFF", // White text for better readability
+              borderRadius: "8px",
+              height: "40px",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5D6D82", // Subtle border color
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#8FA4C2", // Lighter border on hover
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#90CAF9", // Blue focus border
+                borderWidth: "2px",
+              },
+            }}
           >
             <MenuItem value="">Todos</MenuItem>
-            <MenuItem value="activo">Activo</MenuItem>
-            <MenuItem value="inactivo">Inactivo</MenuItem>
+            <MenuItem value="activo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Activo</MenuItem>
+            <MenuItem value="inactivo" sx={{
+              backgroundColor: "#2F3B52", // Consistent menu item background
+              color: "#FFFFFF", // White text
+              "&.Mui-selected": {
+                backgroundColor: "#5D6D82", // Selected state
+                "&:hover": {
+                  backgroundColor: "#4A5A70", // Hover when selected
+                }
+              },
+              "&:hover": {
+                backgroundColor: "#3C4A63", // Hover state
+              }
+            }}>Inactivo</MenuItem>
           </Select>
         </FormControl>
       </Box>

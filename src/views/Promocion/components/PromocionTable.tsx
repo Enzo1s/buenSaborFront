@@ -126,10 +126,8 @@ const PromocionTable = () => {
           elevation={6}
           sx={{
             borderRadius: "12px",
-            backgroundColor: "rgba(30, 30, 30, 0.9)",
+            backgroundColor: "rgba(50, 50, 50, 0.9)",
             boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
-            backdropFilter: "blur(5px)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
             overflow: "hidden",
           }}
         >

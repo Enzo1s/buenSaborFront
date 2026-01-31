@@ -191,16 +191,44 @@ const HomeView = () => {
           value={categoriaProductoFiltro}
           onChange={(e) => handleCategoriaProductoFiltro(e.target.value)}
           displayEmpty
+          size="small"
           sx={{
             minWidth: "200px", // Set a minimum width for better appearance
-            backgroundColor: "rgba(70,70,70,0.7)",
-            color: "#e0e0e0",
-            borderRadius: "4px",
+            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            color: "#FFFFFF", // White text for better readability
+            borderRadius: "8px",
+            height: "40px",
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#5D6D82", // Subtle border color
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2", // Lighter border on hover
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#90CAF9", // Blue focus border
+              borderWidth: "2px",
+            },
           }}
         >
           <MenuItem value="">Todas las Categorías</MenuItem>
           {categoriasProducto.map((cat) => (
-            <MenuItem key={cat} value={cat}>
+            <MenuItem
+              key={cat}
+              value={cat}
+              sx={{
+                backgroundColor: "#2F3B52", // Consistent menu item background
+                color: "#FFFFFF", // White text
+                "&.Mui-selected": {
+                  backgroundColor: "#5D6D82", // Selected state
+                  "&:hover": {
+                    backgroundColor: "#4A5A70", // Hover when selected
+                  }
+                },
+                "&:hover": {
+                  backgroundColor: "#3C4A63", // Hover state
+                }
+              }}
+            >
               {cat}
             </MenuItem>
           ))}
