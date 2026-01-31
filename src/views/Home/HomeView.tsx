@@ -126,6 +126,7 @@ const HomeView = () => {
       sx={{
         color: "#e0e0e0",
         padding: { xs: 2, md: 4 },
+        flexDirection: "column", // Ensures vertical stacking
       }}
     >
       {/* Sección de Promociones */}
@@ -140,6 +141,7 @@ const HomeView = () => {
       </Grid>
 
       <Grid
+        item
         container
         spacing={2}
         alignContent={"center"}
@@ -171,12 +173,11 @@ const HomeView = () => {
         xs={12}
         sx={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
           mb: 4,
           flexWrap: "wrap",
-          gap: 2,
-          mt: 5, // Keep the top margin for separation from promotions
+          gap: 3, // Increased gap for better spacing between text and selector
+          mt: 3, // Reduced margin to position it right after promotions
         }}
       >
         <Typography
@@ -191,7 +192,7 @@ const HomeView = () => {
           onChange={(e) => handleCategoriaProductoFiltro(e.target.value)}
           displayEmpty
           sx={{
-            flexBasis: "20%",
+            minWidth: "200px", // Set a minimum width for better appearance
             backgroundColor: "rgba(70,70,70,0.7)",
             color: "#e0e0e0",
             borderRadius: "4px",
@@ -207,6 +208,7 @@ const HomeView = () => {
       </Grid>
 
       <Grid
+        item
         container
         spacing={2}
         alignContent={"center"}
