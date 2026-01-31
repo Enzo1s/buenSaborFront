@@ -89,10 +89,6 @@ const PromocionDetails = () => {
         p: { xs: 2, md: 4 },
         maxWidth: 800,
         mx: 'auto',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         color: '#e0e0e0',
       }}
     >

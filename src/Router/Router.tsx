@@ -54,6 +54,32 @@ const Router = () => {
           <Route path="editar/:id" element={<EmpresaForm />} />
         </Route>
       </Route>
+
+      <Route path="/sucursal-insumo" element={<SucursalInsumoView />}>
+        <Route path="crear/:idSucursal" element={<SucursalInsumoForm />} />
+        <Route path="editar/:id" element={<SucursalInsumoForm />} />
+      </Route>
+
+      <Route path="/articulo-insumo" element={<ArticuloInsumoView />}>
+        <Route path="" element={<InsumosTable />} />
+        <Route
+          element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}
+        >
+          <Route path="crear" element={<InsumoForm />} />
+          <Route path="editar/:id" element={<InsumoForm />} />
+        </Route>
+        <Route path="ver/:id" element={<InsumoDetails />} />
+      </Route>
+
+      <Route path="/promocion" element={<PromocionView />}>
+        <Route path="" element={<PromocionTable />} />
+        <Route path="ver/:id" element={<PromocionDetails />} />
+        <Route element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}>
+          <Route path="crear" element={<PromocionForm />} />
+          <Route path="editar/:id" element={<PromocionForm />} />
+        </Route>
+      </Route>
+
       <Route element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}>
         <Route path="/sucursal" element={<SucursalView />}>
           <Route path="" element={<SucursalMain />} />
@@ -78,29 +104,6 @@ const Router = () => {
           <Route path="editar/:id" element={<PedidoVentaForm />} />
         </Route>
 
-        <Route path="/sucursal-insumo" element={<SucursalInsumoView />}>
-          <Route path="crear/:idSucursal" element={<SucursalInsumoForm />} />
-          <Route path="editar/:id" element={<SucursalInsumoForm />} />
-        </Route>
-
-        <Route path="/articulo-insumo" element={<ArticuloInsumoView />}>
-          <Route path="" element={<InsumosTable />} />
-          <Route
-            element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO"]} />}
-          >
-            <Route path="crear" element={<InsumoForm />} />
-            <Route path="editar/:id" element={<InsumoForm />} />
-          </Route>
-          <Route path="ver/:id" element={<InsumoDetails />} />
-        </Route>
-
-        <Route path="/promocion" element={<PromocionView />}>
-          <Route path="" element={<PromocionTable />} />
-          <Route path="crear" element={<PromocionForm />} />
-          <Route path="editar/:id" element={<PromocionForm />} />
-          <Route path="ver/:id" element={<PromocionDetails />} />
-        </Route>
-
         <Route path="/cliente" element={<ClienteView />}>
           <Route path="" element={<ClienteTable />} />
           <Route path="crear" element={<ClienteForm />} />
@@ -108,7 +111,6 @@ const Router = () => {
           <Route path="ver/:id" element={<ClienteDetails />} />
         </Route>
       </Route>
-
       <Route
         element={<ProtectedRoute allowedRoles={["ADMIN", "EMPLEADO", "CLIENTE" ]}/>}>
         <Route path="/articulo-manufacturado" element={<ArticuloManufacturadoView />}>
