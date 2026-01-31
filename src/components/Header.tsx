@@ -325,13 +325,13 @@ const Header = () => {
             alignItems={"start"}
           >
             {/* Show discount information if a promotion is applied */}
-            {pedidoVenta?.descuento && pedidoVenta.descuento > 0 && (
+            {pedidoVenta?.descuento != null && pedidoVenta.descuento > 0 && (
               <Typography variant="body1" color="success.main">
                 Descuento aplicado: -${pedidoVenta.descuento.toFixed(2)}
               </Typography>
             )}
             <Typography variant="h6" sx={{ marginTop: "5px" }}>
-              Total: ${pedidoVenta?.total?.toFixed(2)}
+              Total: ${pedidoVenta?.total != null ? pedidoVenta.total.toFixed(2) : '0.00'}
             </Typography>
           </Grid>
 
