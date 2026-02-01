@@ -13,6 +13,10 @@ export const getByIdSucursal = async ( id: string) => {
   return await axios.get(`http://localhost:8080/api/sucursal-empresa/${id}`)
 }
 
+export const updateSucursal = async (id: string, sucursal: SucursalEmpresa) => {
+  return await axios.put(`http://localhost:8080/api/sucursal-empresa/${id}`, sucursal)
+}
+
 export const deleteSucursal = async (id: string) => {
   return await axios.delete(`http://localhost:8080/api/sucursal-empresa/${id}`)
 }

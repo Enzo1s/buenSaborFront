@@ -9,6 +9,7 @@ import { Localidad } from "../../../interfaces/Localidad";
 import {
   crearSucursalEmpresa,
   getByIdSucursal,
+  updateSucursal,
 } from "../../../Api/SucursalAPI";
 import { useNavigate, useParams } from "react-router";
 
@@ -118,53 +119,47 @@ const SucursalForm = (props: SucursalFormProps) => {
               modificacion: null,
             }}
             onSubmit={async (values, { setSubmitting }) => {
-              const nuevaSucursal: SucursalEmpresa = {
-                id: null,
-                nombre: values.nombre,
-                horarioApertura: values.horarioApertura,
-                horarioCierre: values.horarioCierre,
+              const sucursalToSave: SucursalEmpresa = {
+                ...values,
                 domicilio: {
-                  id: null,
-                  calle: values.domicilio.calle,
-                  numero: values.domicilio.numero,
-                  cp: values.domicilio.cp,
+                  ...values.domicilio,
                   localidad: {
-                    id: null,
-                    nombre: values.domicilio.localidad.nombre,
+                    ...values.domicilio.localidad,
                     provincia: {
-                      id: null,
-                      nombre: values.domicilio.localidad.provincia.nombre,
+                      ...values.domicilio.localidad.provincia,
                       pais: {
-                        id: null,
-                        nombre:
-                          values.domicilio.localidad.provincia.pais.nombre,
-                        alta: null,
-                        baja: null,
-                        modificacion: null,
-                      } as Pais,
-                      alta: null,
-                      baja: null,
-                      modificacion: null,
-                    } as Provincia,
-                    alta: null,
-                    baja: null,
-                    modificacion: null,
-                  } as Localidad,
-                  alta: null,
-                  baja: null,
-                  modificacion: null,
-                } as Domicilio,
-                alta: null,
-                baja: null,
-                modificacion: null,
+                        ...values.domicilio.localidad.provincia.pais
+                      }
+                    }
+                  }
+                }
               };
-              const { data } = await crearSucursalEmpresa(nuevaSucursal);
+
+              let data;
+              if (sucursal?.id) {
+                // Updating existing branch
+                const response = await updateSucursal(sucursal.id as string, sucursalToSave);
+                data = response.data;
+              } else {
+                // Creating new branch
+                const response = await crearSucursalEmpresa(sucursalToSave);
+                data = response.data;
+              }
+
               if (isFromCompany && sucursales) {
-                setSucursales([...sucursales, data]);
+                if (sucursal?.id) {
+                  // If updating, replace the existing branch in the list
+                  const updatedSucursales = sucursales.map(s => s.id === data.id ? data : s);
+                  setSucursales(updatedSucursales);
+                } else {
+                  // If creating, add the new branch to the list
+                  setSucursales([...sucursales, data]);
+                }
                 setViewForm(false);
               } else {
                 setSubmitting(false);
-                navigate("/empresa");
+                // Redirect to the sucursal list page instead of empresa
+                navigate("/sucursal");
               }
             }}
           >
