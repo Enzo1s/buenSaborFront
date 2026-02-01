@@ -44,17 +44,17 @@ const PromocionForm = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-            <Grid container spacing={4} justifyContent="center" sx={{ p: 4, minHeight: '100vh', color: '#e0e0e0' }}>
+            <Grid container spacing={0} justifyContent="center" sx={{ pt: 2, pb: 2, color: '#e0e0e0' }} alignItems="flex-start">
                 <Grid size={12}>
-                    <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: "center", color: '#f0f0f0', textShadow: '1px 1px 3px rgba(0,0,0,0.6)', mb: 3 }}>
+                    <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: "center", color: '#f0f0f0', textShadow: '1px 1px 3px rgba(0,0,0,0.6)', mb: 1 }}>
                         {id ? 'Editar Promoción' : 'Crear Nueva Promoción'}
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 10, md: 8, lg: 6 }} >
+                <Grid size={{ xs: 12, sm: 10, md: 8, lg: 6 }} sx={{ mt: 2 }} >
                     <Paper
                         elevation={6}
                         sx={{
-                            p: 4,
+                            p: 2,
                             borderRadius: '12px',
                             backgroundColor: 'rgba(30, 30, 30, 0.9)',
                             boxShadow: '0px 8px 25px rgba(0, 0, 0, 0.4)',
