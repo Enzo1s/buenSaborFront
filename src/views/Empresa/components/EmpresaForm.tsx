@@ -33,7 +33,9 @@ const EmpresaForm = () => {
       const { data } = await getByIdEmpresa(id)
       setEmpresa(data)
       // Set the associated branches when editing an existing company
-      setSucursales(data.sucursalEmpresa || [])
+      // Only include active branches, but preserve inactive ones that are already associated
+      const activeAssociatedBranches = data.sucursalEmpresa?.filter((sucursal: SucursalEmpresa) => sucursal.baja === null) || [];
+      setSucursales(activeAssociatedBranches)
     }
   }
 
@@ -43,7 +45,9 @@ const EmpresaForm = () => {
     const fetchAllSucursales = async () => {
       try {
         const response = await getSucursales();
-        setAllSucursales(response.data);
+        // Filter to only include active branches (where baja is null)
+        const activeSucursales = response.data.filter((sucursal: SucursalEmpresa) => sucursal.baja === null);
+        setAllSucursales(activeSucursales);
       } catch (error) {
         console.error("Error fetching branches:", error);
       }
