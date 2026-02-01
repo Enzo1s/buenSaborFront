@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { Empresa } from '../../../interfaces/Empresa'
 import { SucursalEmpresa } from '../../../interfaces/SucursalEmpresa'
 import { crearEmpresa, getByIdEmpresa } from '../../../Api/EmpresaAPI'
+import { getSucursales } from '../../../Api/SucursalAPI'
 import { useNavigate, useParams } from 'react-router'
 import Modal from '../../../components/Modal'
 import SucursalForm from '../../Sucursal/components/SucursalForm'
@@ -22,6 +23,7 @@ const EmpresaForm = () => {
 
   const [viewForm, setViewForm] = useState(false)
   const [sucursales, setSucursales] = useState<SucursalEmpresa[]>([])
+  const [allSucursales, setAllSucursales] = useState<SucursalEmpresa[]>([])
   const [empresa, setEmpresa] = useState<Empresa | null>(null)
 
   const { id } = useParams()
@@ -30,11 +32,24 @@ const EmpresaForm = () => {
     if (id) {
       const { data } = await getByIdEmpresa(id)
       setEmpresa(data)
+      // Set the associated branches when editing an existing company
+      setSucursales(data.sucursalEmpresa || [])
     }
   }
 
   useEffect(() => {
     getCompany()
+    // Fetch all available branches
+    const fetchAllSucursales = async () => {
+      try {
+        const response = await getSucursales();
+        setAllSucursales(response.data);
+      } catch (error) {
+        console.error("Error fetching branches:", error);
+      }
+    };
+
+    fetchAllSucursales();
   }, [])
 
 
@@ -183,9 +198,9 @@ const EmpresaForm = () => {
                                                 id="sucursalEmpresa"
                                                 multiple
                                                 value={sucursales} // Usa el estado local de sucursales
-                                                options={sucursales} // Las opciones son las sucursales ya añadidas
+                                                options={allSucursales} // Mostrar todas las sucursales disponibles
                                                 onChange={(_, newValue) => {
-                                                    setSucursales(newValue); // Actualiza el estado local
+                                                    setSucursales(newValue); // Actualiza el estado local con la nueva selección
                                                 }}
                                                 getOptionLabel={(option: SucursalEmpresa) => option.nombre as string || 'Nueva Sucursal'}
                                                 renderInput={(params) => (
@@ -211,7 +226,7 @@ const EmpresaForm = () => {
                                                         }}
                                                     />
                                                 )}
-                                                readOnly // Si quieres que solo se puedan añadir/quitar desde el modal
+                                                isOptionEqualToValue={(option, value) => option.id === value.id}
                                             />
                                         </Grid>
                                         <Grid size={2}> {/* Botón '+' ocupa 2 de 12 columnas */}
