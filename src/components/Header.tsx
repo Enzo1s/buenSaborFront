@@ -33,6 +33,7 @@ const Header = () => {
 
   const { isAuthenticated, user, logout, cliente, empleado } = useAuth();
   const { pedidoVenta, removeItemFromCart, clearCart, shouldOpenCart, setShouldOpenCart, recalculatePromotion } = useCartContext();
+  const cartContentRef = useRef<HTMLDivElement | null>(null);
 
   const ventanaPagoRef = useRef<Window | null>(null);
   const timerRef = useRef<number | null>(null);
@@ -75,6 +76,13 @@ const Header = () => {
       setShouldOpenCart(false);
     }
   }, [shouldOpenCart, setShouldOpenCart]);
+
+  // Effect to scroll to the bottom when cart content changes
+  useEffect(() => {
+    if (open && cartContentRef.current) {
+      cartContentRef.current.scrollTop = cartContentRef.current.scrollHeight;
+    }
+  }, [open, pedidoVenta?.pedidoVentaDetalle?.length]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -258,6 +266,7 @@ const Header = () => {
       >
         <Grid
           container
+          ref={cartContentRef}
           sx={{
             textAlign: "center",
             borderRadius: "12px",
@@ -268,7 +277,9 @@ const Header = () => {
             border: "1px solid rgba(255, 255, 255, 0.1)",
             padding: "10px",
             width: "400px",
-            height: "300px",
+            maxHeight: "400px",
+            overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           <Grid size={12}>
