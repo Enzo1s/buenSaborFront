@@ -289,7 +289,16 @@ const InsumosTable = () => {
 
       {/* Tabla */}
       {articuloInsumos && articuloInsumos.length > 0 ? (
-        <Grid size={12}>
+        <Grid size={12} sx={{
+          maxHeight: "600px",
+          overflowY: "auto",
+          overflowX: "hidden",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+          msOverflowStyle: "none",
+          scrollbarWidth: "none",
+        }}>
           <Table
             sx={{
               minWidth: 900,
