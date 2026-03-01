@@ -290,6 +290,7 @@ const InsumosTable = () => {
       {/* Tabla */}
       {articuloInsumos && articuloInsumos.length > 0 ? (
         <Grid size={12} sx={{
+          height: "calc(100vh - 250px)",
           maxHeight: "600px",
           overflowY: "auto",
           overflowX: "hidden",
