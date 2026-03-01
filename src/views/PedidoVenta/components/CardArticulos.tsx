@@ -12,7 +12,10 @@ interface CardArticulosProps {
     promocion: Promocion | null
 }
 
-const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+const baseURL = "http://localhost:8080/api/imagenes/"
+
+// Helper function to extract filename from full path
+const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
  const CardArticulos = (props: CardArticulosProps) => {
     const { imagen, titulo, descripcion, promocion } = props;
@@ -49,7 +52,7 @@ const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
                     }}>
                         {imagen ? (
                             <img
-                                src={`${baseURL}${imagen}`}
+                                src={`${baseURL}${getFilename(imagen)}`}
                                 alt={titulo || 'Imagen de promoción'}
                                 style={{
                                     width: '100%',

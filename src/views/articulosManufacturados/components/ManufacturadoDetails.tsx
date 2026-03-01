@@ -21,7 +21,11 @@ const ManufacturadoDetails = () => {
 
     const { id } = useParams()
     const { addItemToCart, setShouldOpenCart } = useCartContext()
-    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+    const baseURL = "http://localhost:8080/api/imagenes/"
+    
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
+    
     const [articulo, setArticulo] = useState<ArticuloManufacturado | null>(null)
     const [mainImage, setMainImage] = useState<string | null>(null)
     const [galleryImages, setGalleryImages] = useState<string[]>([])
@@ -32,9 +36,9 @@ const ManufacturadoDetails = () => {
                 if (id !== undefined) {
                     const { data } = await getArticuloManufacturadoById(id);
                     setArticulo(data);
-                    const image = data.pathImagen && data.pathImagen.length > 0 ? `${baseURL}${data.pathImagen[0]}` : null;
+                    const image = data.pathImagen && data.pathImagen.length > 0 ? `${baseURL}${getFilename(data.pathImagen[0])}` : null;
                     setMainImage(image)
-                    const images = data.pathImagen ? data.pathImagen.slice(1) : [];
+                    const images = data.pathImagen ? data.pathImagen.slice(1).map(getFilename) : [];
                     setGalleryImages(images);
                 }
             } catch (error) {

@@ -8,17 +8,20 @@ interface PromocionCardProps {
 
 const PromocionCard = ({ promocion }: PromocionCardProps) => {
     const navigate = useNavigate();
-    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path=";
+    const baseURL = "http://localhost:8080/api/imagenes/";
+    
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
     // Function to get the first available image from either ArticuloManufacturado or ArticuloInsumo
     const getImageUrl = () => {
         if (promocion.promocionDetalle && promocion.promocionDetalle.length > 0) {
             for (const detalle of promocion.promocionDetalle) {
                 if (detalle.articuloManufacturado && detalle.articuloManufacturado.imagen) {
-                    return `${baseURL}${detalle.articuloManufacturado.imagen}`;
+                    return `${baseURL}${getFilename(detalle.articuloManufacturado.imagen)}`;
                 }
                 if (detalle.articuloInsumo && detalle.articuloInsumo.imagen) {
-                    return `${baseURL}${detalle.articuloInsumo.imagen}`;
+                    return `${baseURL}${getFilename(detalle.articuloInsumo.imagen)}`;
                 }
             }
         }

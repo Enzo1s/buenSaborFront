@@ -40,7 +40,10 @@ const ManufacturadoForm = () => {
     const [viewForm, setViewForm] = useState(false)
     const [viewFormInsumo, setViewFormInsumo] = useState(false)
     const [detalles, setDetalles] = useState<ArticuloManufacturadoDetalle[]>([])
-    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+    const baseURL = "http://localhost:8080/api/imagenes/"
+    
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
     const newCategoria = (categoria: CategoriaArticuloManufacturado) => {
         if (categoria !== null)
@@ -86,7 +89,7 @@ const ManufacturadoForm = () => {
                 const { data } = await getArticuloManufacturadoById(id)
                 setArticulo(data);
                 setDetalles(data.articuloManufacturadoDetalle || []);
-                setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${img}`) || []);
+                setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${getFilename(img as string)}`) || []);
             }
         } catch (error) {
             console.log(error)

@@ -34,7 +34,10 @@ const InsumoForm = () => {
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const navigate = useNavigate()
 
-    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+    const baseURL = "http://localhost:8080/api/imagenes/"
+    
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
     const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -76,7 +79,7 @@ const InsumoForm = () => {
                 if (id !== undefined) {
                     const { data } = await getByIdArticuloInsumo(id)
                     setArticulo(data);
-                    setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${img}`) || []);
+                    setPreviewUrls(data.pathImagen?.map((img: String) => `${baseURL}${getFilename(img as string)}`) || []);
                 }
             } catch (error) {
                 console.log(error)

@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router';
 
 const CardObject = (CardProps: CardProps) => {
     const { itemCard } = CardProps;
-    const baseURL = "http://localhost:8080/api/articulo-manufacturado/imagen?path="
+    const baseURL = "http://localhost:8080/api/imagenes/"
     
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
+
     const navigate = useNavigate();
     return (
         <Card
@@ -42,7 +45,7 @@ const CardObject = (CardProps: CardProps) => {
                         }}>
                             {itemCard.imagen ? (
                                 <img
-                                    src={`${baseURL}${itemCard.imagen}`}
+                                    src={`${baseURL}${getFilename(itemCard.imagen as string)}`}
                                     alt={itemCard.titulo || 'Imagen de producto'}
                                     style={{
                                         width: '100%',
