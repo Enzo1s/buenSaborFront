@@ -62,8 +62,7 @@ const InsumoDetails = () => {
         <Box
             sx={{
                 padding: { xs: 2, md: 4 },
-                color: '#e0e0e0', // Texto claro por defecto para toda la sección
-                minHeight: '80vh', // Asegura un mínimo de altura
+                color: '#e0e0e0',
             }}
         >
             <Paper
