@@ -188,10 +188,12 @@ const ManufacturadoTable = () => {
       sx={{
         color: "#e0e0e0",
         padding: { xs: 2, md: 4 },
+        minHeight: "calc(100vh - 64px)",
+        flexDirection: "column",
       }}
     >
       {/* Título */}
-      <Grid size={12} sx={{ mb: 3 }}>
+      <Grid size={12} sx={{ mb: 3, flexShrink: 0 }}>
         <Typography
           variant="h4"
           component="h1"
@@ -211,6 +213,7 @@ const ManufacturadoTable = () => {
           mb: 4,
           flexWrap: "wrap",
           gap: 2,
+          flexShrink: 0,
         }}
       >
         <TextField
@@ -338,8 +341,8 @@ const ManufacturadoTable = () => {
       {/* Tabla */}
       {aManufacturados && aManufacturados.length > 0 ? (
         <Grid size={12} sx={{
-          height: "calc(100vh - 250px)",
-          maxHeight: "600px",
+          flex: 1,
+          minHeight: 0,
           overflowY: "auto",
           overflowX: "hidden",
           "&::-webkit-scrollbar": {
