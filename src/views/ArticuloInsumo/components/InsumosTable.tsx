@@ -15,6 +15,7 @@ import {
   TableSortLabel,
   Select,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -419,9 +420,17 @@ const InsumosTable = () => {
                   <TableCell
                     sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
                   >
-                    {articuloInsumo.categoriaArticulo
-                      ?.map((cat) => cat.denominacion)
-                      .join(", ") || "N/A"}
+                    <Tooltip 
+                      title={articuloInsumo.categoriaArticulo
+                        ?.map((cat) => cat.denominacion)
+                        .join(", ") || "N/A"} 
+                      placement="top" 
+                      arrow
+                    >
+                      <span>{articuloInsumo.categoriaArticulo
+                        ?.map((cat) => cat.denominacion)
+                        .join(", ") || "N/A"}</span>
+                    </Tooltip>
                   </TableCell>
                   <TableCell
                     sx={{

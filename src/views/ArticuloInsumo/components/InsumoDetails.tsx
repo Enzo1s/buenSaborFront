@@ -8,7 +8,8 @@ import {
     Divider, // Para separar secciones
 } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import { useParams } from 'react-router'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate, useParams } from 'react-router'
 import { ArticuloInsumo } from '../../../interfaces/ArticuloInsumo'
 import { getByIdArticuloInsumo, getByIdArticuloInsumoAndIdSucursal } from '../../../Api/ArticuloInsumo'
 import { useCartContext } from '../../../Context/cartContext';
@@ -16,6 +17,7 @@ import { useAuth } from '../../../Context/authContext';
 
 const InsumoDetails = () => {
     const { id } = useParams()
+    const navigate = useNavigate()
     const { addItemToCart, setShouldOpenCart } = useCartContext()
     const { user } = useAuth()
     const baseURL = "http://localhost:8080/api/imagenes/"
@@ -66,16 +68,18 @@ const InsumoDetails = () => {
             }}
         >
             <Paper
-                elevation={8} // Mayor elevación para que la tarjeta de detalle resalte
+                elevation={8}
                 sx={{
-                    p: { xs: 3, md: 5 }, // Más padding para un look espacioso
-                    borderRadius: '16px', // Bordes más redondeados
-                    backgroundColor: 'rgba(35, 35, 35, 0.98)', // Fondo oscuro para la tarjeta
-                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)', // Sombra más pronunciada
-                    border: '1px solid rgba(70, 70, 70, 0.6)', // Borde sutil
+                    p: { xs: 3, md: 5 },
+                    borderRadius: '16px',
+                    backgroundColor: 'rgba(35, 35, 35, 0.98)',
+                    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)',
+                    border: '1px solid rgba(70, 70, 70, 0.6)',
+                    maxWidth: '1200px',
+                    margin: 'auto',
                 }}
             >
-                <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start"> {/* Espaciado general aumentado */}
+                <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
                     {/* Título Principal del Artículo */}
                     <Grid size={12}>
                         <Typography
@@ -83,9 +87,9 @@ const InsumoDetails = () => {
                             component='h1'
                             gutterBottom
                             sx={{
-                                color: '#90CAF9', // Color primario
+                                color: '#90CAF9',
                                 fontWeight: 'bold',
-                                textAlign: { xs: 'center', md: 'left' }, // Centrado en móvil, izquierda en desktop
+                                textAlign: { xs: 'center', md: 'left' },
                                 mb: { xs: 3, md: 4 }
                             }}
                         >
@@ -95,19 +99,18 @@ const InsumoDetails = () => {
                     </Grid>
 
                     {/* Sección de Imagen Principal */}
-                    <Grid size={{xs:12, md:6}}> {/* Ocupa la mitad del ancho en desktop, completo en móvil */}
+                    <Grid size={{xs:12, md:6}}>
                         {mainImage ? (
                             <Paper
                                 elevation={6}
                                 sx={{
                                     borderRadius: '12px',
-                                    overflow: 'hidden',
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     backgroundColor: 'rgba(60, 60, 60, 0.9)',
-                                    minHeight: { xs: 250, sm: 350, md: 450 }, // Altura responsiva
-                                    maxHeight: 500,
+                                    minHeight: { xs: 250, sm: 350, md: 450 },
+                                    maxHeight: { xs: '300px', sm: '400px', md: '500px' },
                                     boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
                                 }}
                             >
@@ -117,8 +120,8 @@ const InsumoDetails = () => {
                                     style={{
                                         maxWidth: '100%',
                                         maxHeight: '100%',
-                                        objectFit: 'contain', // Contiene la imagen dentro del Paper
-                                        display: 'block', // Elimina espacio extra bajo la imagen
+                                        objectFit: 'contain',
+                                        display: 'block',
                                     }}
                                 />
                             </Paper>
@@ -131,6 +134,7 @@ const InsumoDetails = () => {
                                     backgroundColor: 'rgba(60, 60, 60, 0.8)',
                                     textAlign: 'center',
                                     minHeight: { xs: 250, sm: 350, md: 450 },
+                                    maxHeight: { xs: '300px', sm: '400px', md: '500px' },
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -160,7 +164,7 @@ const InsumoDetails = () => {
                                             alignItems: 'center',
                                             cursor: 'pointer',
                                             '&:hover': {
-                                                boxShadow: '0 0 0 2px #90CAF9', // Resaltar al hover
+                                                boxShadow: '0 0 0 2px #90CAF9',
                                             },
                                         }}
                                     >
@@ -183,7 +187,7 @@ const InsumoDetails = () => {
                             </Typography>
                             <Divider sx={{ borderColor: 'rgba(100, 100, 100, 0.3)', mb: 3 }} />
 
-                            <Grid container spacing={2}> {/* Grid para las propiedades */}
+                            <Grid container spacing={2}>
                                 <Grid size={12}>
                                     <Typography variant='h6' sx={{ color: '#a0a0a0' }}>
                                         <Typography component="span" sx={{ fontWeight: 'bold', color: '#e0e0e0' }}>Precio de Venta:</Typography> ${articulo?.precioVenta.toFixed(2)}
@@ -213,7 +217,7 @@ const InsumoDetails = () => {
                                 {articulo?.categoriaArticulo && articulo?.categoriaArticulo.length > 0 && (
                                     <Grid size={12}>
                                         <Typography variant='h6' sx={{ mt: 2, mb: 1, color: '#fff', fontWeight: 'bold' }}>Categorías:</Typography>
-                                        <Box sx={{ pl: 2 }}> {/* Indentación para las categorías */}
+                                        <Box sx={{ pl: 2 }}>
                                             {articulo?.categoriaArticulo.map((categoria, index) => (
                                                 <Box key={index} sx={{ mb: 1 }}>
                                                     <Typography variant='body1' sx={{ color: '#b0b0b0' }}>
@@ -231,25 +235,45 @@ const InsumoDetails = () => {
                                 )}
                             </Grid>
 
-                            {/* Botón de Agregar al Carrito */}
-                            <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                            {/* Botón de Agregar al Carrito y Volver */}
+                            <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<ArrowBackIcon />}
+                                    sx={{
+                                        width: { xs: '100%', sm: 'auto' },
+                                        px: 6,
+                                        py: 1.8,
+                                        fontSize: '1.1rem',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
+                                        '&:hover': {
+                                            backgroundColor: '#64B5F6',
+                                            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
+                                        },
+                                    }}
+                                    onClick={() => navigate('/articulo-insumo')}
+                                >
+                                    Volver
+                                </Button>
                                 <Button
                                     variant="contained"
                                     color="primary"
                                     startIcon={<AddShoppingCartIcon />}
                                     sx={{
-                                        width: { xs: '100%', sm: 'auto' }, // Ancho completo en móvil, auto en desktop
-                                        px: 6, // Mayor padding horizontal
-                                        py: 1.8, // Mayor padding vertical
-                                        fontSize: '1.1rem', // Fuente un poco más grande
+                                        width: { xs: '100%', sm: 'auto' },
+                                        px: 6,
+                                        py: 1.8,
+                                        fontSize: '1.1rem',
                                         fontWeight: 'bold',
-                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)', // Sombra para el botón
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
                                         '&:hover': {
-                                            backgroundColor: '#64B5F6', // Tono más claro al hover
+                                            backgroundColor: '#64B5F6',
                                             boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
                                         },
                                     }}
-                                    disabled={stock <= 0} // Deshabilitar si no hay stock
+                                    disabled={stock <= 0}
                                     onClick={() => agregarACarrito()}
                                 >
                                     Agregar al Carrito

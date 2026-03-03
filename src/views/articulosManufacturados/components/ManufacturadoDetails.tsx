@@ -11,7 +11,8 @@ import {
     ListItemText,
 } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import { useParams } from 'react-router'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate, useParams } from 'react-router'
 import { getArticuloManufacturadoById } from '../../../Api/ArticuloManufacturadoAPI'
 import { ArticuloManufacturado } from '../../../interfaces/ArticuloManufacturado'
 import { useCartContext } from '../../../Context/cartContext';
@@ -20,6 +21,7 @@ import { useCartContext } from '../../../Context/cartContext';
 const ManufacturadoDetails = () => {
 
     const { id } = useParams()
+    const navigate = useNavigate()
     const { addItemToCart, setShouldOpenCart } = useCartContext()
     const baseURL = "http://localhost:8080/api/imagenes/"
     
@@ -63,6 +65,8 @@ const ManufacturadoDetails = () => {
                     backgroundColor: 'rgba(35, 35, 35, 0.98)',
                     boxShadow: '0 12px 24px rgba(0, 0, 0, 0.6)',
                     border: '1px solid rgba(70, 70, 70, 0.6)',
+                    maxWidth: '1200px',
+                    margin: 'auto',
                 }}
             >
                 <Grid container spacing={{ xs: 4, md: 6 }} alignItems="flex-start">
@@ -91,13 +95,12 @@ const ManufacturadoDetails = () => {
                                 elevation={6}
                                 sx={{
                                     borderRadius: '12px',
-                                    overflow: 'hidden',
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     backgroundColor: 'rgba(60, 60, 60, 0.9)',
                                     minHeight: { xs: 250, sm: 350, md: 450 },
-                                    maxHeight: 500,
+                                    maxHeight: { xs: '300px', sm: '400px', md: '500px' },
                                     boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
                                 }}
                             >
@@ -121,6 +124,7 @@ const ManufacturadoDetails = () => {
                                     backgroundColor: 'rgba(60, 60, 60, 0.8)',
                                     textAlign: 'center',
                                     minHeight: { xs: 250, sm: 350, md: 450 },
+                                    maxHeight: { xs: '300px', sm: '400px', md: '500px' },
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -203,7 +207,7 @@ const ManufacturadoDetails = () => {
                                 {articulo?.articuloManufacturadoDetalle && articulo?.articuloManufacturadoDetalle.length > 0 && (
                                     <Grid size={12}>
                                         <Typography variant='h6' sx={{ mt: 3, mb: 1, color: '#fff', fontWeight: 'bold' }}>Insumos Necesarios:</Typography>
-                                        <List sx={{ bgcolor: 'rgba(50, 50, 50, 0.8)', borderRadius: '8px', border: '1px solid rgba(80, 80, 80, 0.7)' }}>
+                                        <List sx={{ bgcolor: 'rgba(50, 50, 50, 0.8)', borderRadius: '8px', border: '1px solid rgba(80, 80, 80, 0.7)', maxHeight: '200px', overflow: 'auto' }}>
                                             {articulo?.articuloManufacturadoDetalle.map((detalle, index) => (
                                                 <ListItem key={detalle.id as Key || index} sx={{ borderBottom: index < articulo?.articuloManufacturadoDetalle.length - 1 ? '1px dashed rgba(100, 100, 100, 0.4)' : 'none' }}>
                                                     <ListItemText
@@ -225,8 +229,28 @@ const ManufacturadoDetails = () => {
                                 )}
                             </Grid>
 
-                            {/* Botón de Agregar al Carrito */}
-                            <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                            {/* Botón de Agregar al Carrito y Volver */}
+                            <Grid size={12} sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    startIcon={<ArrowBackIcon />}
+                                    sx={{
+                                        width: { xs: '100%', sm: 'auto' },
+                                        px: 6,
+                                        py: 1.8,
+                                        fontSize: '1.1rem',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
+                                        '&:hover': {
+                                            backgroundColor: '#64B5F6',
+                                            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.6)',
+                                        },
+                                    }}
+                                    onClick={() => navigate('/')}
+                                >
+                                    Volver
+                                </Button>
                                 <Button
                                     variant="contained"
                                     color="primary"

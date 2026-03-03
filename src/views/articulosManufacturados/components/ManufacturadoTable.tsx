@@ -17,6 +17,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Tooltip,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -465,7 +466,9 @@ const ManufacturadoTable = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {aManufacturado.descripcion}
+                    <Tooltip title={aManufacturado.descripcion || ""} placement="top" arrow>
+                      <span>{aManufacturado.descripcion}</span>
+                    </Tooltip>
                   </TableCell>
                   <TableCell
                     sx={{
@@ -477,9 +480,17 @@ const ManufacturadoTable = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {aManufacturado.articuloManufacturadoDetalle
-                      .map((detalle) => detalle.articuloInsumo?.denominacion)
-                      .join(", ") || "N/A"}
+                    <Tooltip 
+                      title={aManufacturado.articuloManufacturadoDetalle
+                        .map((detalle) => detalle.articuloInsumo?.denominacion)
+                        .join(", ") || "N/A"} 
+                      placement="top" 
+                      arrow
+                    >
+                      <span>{aManufacturado.articuloManufacturadoDetalle
+                        .map((detalle) => detalle.articuloInsumo?.denominacion)
+                        .join(", ") || "N/A"}</span>
+                    </Tooltip>
                   </TableCell>
                   <TableCell
                     sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
