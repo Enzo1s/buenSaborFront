@@ -139,7 +139,17 @@ const EmpleadoTable = () => {
   };
 
   return (
-    <Box sx={{ p: 3, color: "#e0e0e0" }}>
+    <Box
+      sx={{
+        p: 3,
+        color: "#e0e0e0",
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       {/* Header */}
       <Box
         display="flex"
@@ -407,18 +417,37 @@ const EmpleadoTable = () => {
             borderRadius: "12px",
             backgroundColor: "rgba(30, 30, 30, 0.9)",
             boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
-            overflow: "hidden",
+            maxHeight: "calc(100vh - 320px)",
+            overflow: "auto",
           }}
         >
           <Table aria-label="tabla de empleados">
-            <TableHead sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
-              <TableRow>
+            <TableHead
+              sx={{
+                backgroundColor: "rgba(50, 50, 50, 0.95)",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow
+                sx={{
+                  backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
                 <TableCell
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
                     cursor: "pointer",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   onClick={() => requestSort("nombre")}
                 >
@@ -429,6 +458,10 @@ const EmpleadoTable = () => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Teléfono
@@ -439,6 +472,10 @@ const EmpleadoTable = () => {
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
                     cursor: "pointer",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   onClick={() => requestSort("email")}
                 >
@@ -450,6 +487,10 @@ const EmpleadoTable = () => {
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
                     cursor: "pointer",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   onClick={() => requestSort("usuario")}
                 >
@@ -461,6 +502,10 @@ const EmpleadoTable = () => {
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
                     cursor: "pointer",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   onClick={() => requestSort("cargo")}
                 >
@@ -471,6 +516,10 @@ const EmpleadoTable = () => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Estado
@@ -481,6 +530,10 @@ const EmpleadoTable = () => {
                     fontWeight: "bold",
                     width: "150px",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   align="center"
                 >

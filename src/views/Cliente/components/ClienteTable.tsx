@@ -105,7 +105,17 @@ const ClienteTable = () => {
     : [];
 
   return (
-    <Box sx={{ p: 3, color: "#e0e0e0" }}>
+    <Box
+      sx={{
+        p: 3,
+        color: "#e0e0e0",
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       <Box
         display="flex"
         justifyContent="space-between"
@@ -298,13 +308,37 @@ const ClienteTable = () => {
             boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
             backdropFilter: "blur(5px)",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            overflow: "hidden",
+            maxHeight: "calc(100vh - 280px)",
+            overflow: "auto",
           }}
         >
           <Table aria-label="tabla de clientes">
-            <TableHead sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
-              <TableRow>
-                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>
+            <TableHead
+              sx={{
+                backgroundColor: "rgba(50, 50, 50, 0.95)",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow
+                sx={{
+                  backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "nombre"}
                     direction={orderBy === "nombre" ? order : "asc"}
@@ -314,8 +348,28 @@ const ClienteTable = () => {
                     Nombre y Apellido
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>Teléfono</TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
+                >
+                  Teléfono
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "email"}
                     direction={orderBy === "email" ? order : "asc"}
@@ -325,7 +379,16 @@ const ClienteTable = () => {
                     Email
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
+                >
                   <TableSortLabel
                     active={orderBy === "usuario"}
                     direction={orderBy === "usuario" ? order : "asc"}
@@ -335,12 +398,27 @@ const ClienteTable = () => {
                     Usuario
                   </TableSortLabel>
                 </TableCell>
-                <TableCell sx={{ color: "#f0f0f0", fontWeight: "bold" }}>Dirección</TableCell>
+                <TableCell
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
+                >
+                  Dirección
+                </TableCell>
                 <TableCell
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Estado
@@ -349,7 +427,11 @@ const ClienteTable = () => {
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
-                    width: "150px"
+                    width: "150px",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   align="center"
                 >

@@ -104,9 +104,19 @@ const EmpresaMain = () => {
     : [];
 
   return (
-    <Grid container sx={{ color: "#e0e0e0", padding: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{
+        color: "#e0e0e0",
+        padding: { xs: 2, md: 4 },
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       {/* Botón crear empresa */}
-      <Grid size={12} sx={{ mb: 3 }}>
+      <Grid container size={12} sx={{ mb: 3 }}>
         <Button
           variant="contained"
           color="primary"
@@ -127,7 +137,7 @@ const EmpresaMain = () => {
             onChange={(e) => setSearchNombre(e.target.value)}
             fullWidth
             sx={{
-              backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+              backgroundColor: "#2F3B52",
               borderRadius: "8px",
               height: "40px",
               "& .MuiInputBase-input": {
@@ -329,57 +339,89 @@ const EmpresaMain = () => {
 
       {/* Tabla */}
       {sortedCompanies && sortedCompanies.length > 0 ? (
-        <Grid size={12}>
-          <Table
+        <Grid item size={12}>
+          <Paper
+            elevation={6}
             sx={{
-              minWidth: 650,
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
               borderRadius: "12px",
+              backgroundColor: "rgba(30, 30, 30, 0.9)",
               boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
               backdropFilter: "blur(5px)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
-              overflow: "hidden",
+              maxHeight: "calc(100vh - 320px)",
+              overflow: "auto",
             }}
           >
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
-                <TableCell
+            <Table
+              sx={{
+                minWidth: 650,
+              }}
+            >
+              <TableHead
+                sx={{
+                  backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
+                <TableRow
                   sx={{
-                    color: "#ffffff",
-                    fontWeight: "bold",
-                    borderBottom: "1px solid #444",
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
                   }}
                 >
-                  <TableSortLabel
-                    active={orderBy === "nombre"}
-                    direction={orderBy === "nombre" ? order : "asc"}
-                    onClick={() => handleSort("nombre")}
-                    sx={{ color: "#ffffff" }}
+                  <TableCell
+                    sx={{
+                      color: "#ffffff",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #444",
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 2,
+                      backgroundColor: "rgba(50, 50, 50, 0.95)",
+                    }}
                   >
-                    Nombre
-                  </TableSortLabel>
-                </TableCell>
+                    <TableSortLabel
+                      active={orderBy === "nombre"}
+                      direction={orderBy === "nombre" ? order : "asc"}
+                      onClick={() => handleSort("nombre")}
+                      sx={{ color: "#ffffff" }}
+                    >
+                      Nombre
+                    </TableSortLabel>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#f0f0f0",
+                      fontWeight: "bold",
+                      borderBottom: "1px solid #444",
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 2,
+                      backgroundColor: "rgba(50, 50, 50, 0.95)",
+                    }}
+                  >
+                    <TableSortLabel
+                      active={orderBy === "razonSocial"}
+                      direction={orderBy === "razonSocial" ? order : "asc"}
+                      onClick={() => handleSort("razonSocial")}
+                      sx={{ color: "#f0f0f0" }}
+                    >
+                      Razón Social
+                    </TableSortLabel>
+                  </TableCell>
                 <TableCell
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
-                  }}
-                >
-                  <TableSortLabel
-                    active={orderBy === "razonSocial"}
-                    direction={orderBy === "razonSocial" ? order : "asc"}
-                    onClick={() => handleSort("razonSocial")}
-                    sx={{ color: "#f0f0f0" }}
-                  >
-                    Razón Social
-                  </TableSortLabel>
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#f0f0f0",
-                    fontWeight: "bold",
-                    borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   CUIT
@@ -389,6 +431,10 @@ const EmpresaMain = () => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Estado
@@ -399,6 +445,10 @@ const EmpresaMain = () => {
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
                     width: "150px",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                   align="center"
                 >
@@ -497,9 +547,10 @@ const EmpresaMain = () => {
               ))}
             </TableBody>
           </Table>
+          </Paper>
         </Grid>
       ) : (
-        <Grid size={12}>
+        <Grid item size={12}>
           <Paper
             sx={{
               p: 4,
@@ -576,7 +627,7 @@ const EmpresaMain = () => {
           </Grid>
         </Box>
       </MuiModal>
-    </Grid>
+    </Box>
   );
 };
 

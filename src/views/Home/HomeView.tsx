@@ -11,6 +11,8 @@ import {
   Button,
   Select,
   MenuItem,
+  Box,
+  Paper,
 } from "@mui/material";
 import CardObject from "../../components/CardObject";
 import { Promocion } from "../../interfaces/Promocion";
@@ -121,16 +123,19 @@ const HomeView = () => {
   };
 
   return (
-    <Grid
-      container
+    <Box
       sx={{
         color: "#e0e0e0",
         padding: { xs: 2, md: 4 },
-        flexDirection: "column", // Ensures vertical stacking
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
       }}
     >
       {/* Sección de Promociones */}
-      <Grid item xs={12} sx={{ mb: 3 }}>
+      <Box sx={{ mb: 2, flexShrink: 0 }}>
         <Typography
           variant="h4"
           component="h1"
@@ -138,46 +143,46 @@ const HomeView = () => {
         >
           Promociones
         </Typography>
-      </Grid>
+      </Box>
 
-      <Grid
-        item
-        container
-        spacing={2}
-        alignContent={"center"}
-        justifyContent="center"
-        sx={{ padding: 2, borderRadius: 2, flexWrap: "wrap" }}
+      <Box
+        sx={{ padding: 2, borderRadius: 2, flexShrink: 0 }}
       >
         {promociones && promociones.length > 0 ? (
-          promociones.map((promocion: Promocion) => (
-            <Grid item key={promocion.id} sx={{ margin: 2 }}>
-              <PromocionCard promocion={promocion} />
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12} sx={{ textAlign: "center", mt: 4 }}>
-            <Typography
-              variant="h6"
-              className="textWhte"
-              sx={{ borderRadius: "10px", width: "400px" }}
-            >
-              No hay promociones para mostrar.
-            </Typography>
+          <Grid
+            container
+            spacing={2}
+            alignContent={"center"}
+            justifyContent="center"
+            sx={{ flexWrap: "wrap" }}
+          >
+            {promociones.map((promocion: Promocion) => (
+              <Grid item key={promocion.id} sx={{ margin: 2 }}>
+                <PromocionCard promocion={promocion} />
+              </Grid>
+            ))}
           </Grid>
+        ) : (
+          <Typography
+            variant="h6"
+            className="textWhte"
+            sx={{ borderRadius: "10px", width: "400px" }}
+          >
+            No hay promociones para mostrar.
+          </Typography>
         )}
-      </Grid>
+      </Box>
 
       {/* Sección de Productos */}
-      <Grid
-        item
-        xs={12}
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          mb: 4,
+          mb: 1,
           flexWrap: "wrap",
-          gap: 3, // Increased gap for better spacing between text and selector
-          mt: 3, // Reduced margin to position it right after promotions
+          gap: 3,
+          mt: 2,
+          flexShrink: 0,
         }}
       >
         <Typography
@@ -193,19 +198,19 @@ const HomeView = () => {
           displayEmpty
           size="small"
           sx={{
-            minWidth: "200px", // Set a minimum width for better appearance
-            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
-            color: "#FFFFFF", // White text for better readability
+            minWidth: "200px",
+            backgroundColor: "#2F3B52",
+            color: "#FFFFFF",
             borderRadius: "8px",
             height: "40px",
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#5D6D82", // Subtle border color
+              borderColor: "#5D6D82",
             },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#8FA4C2", // Lighter border on hover
+              borderColor: "#8FA4C2",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#90CAF9", // Blue focus border
+              borderColor: "#90CAF9",
               borderWidth: "2px",
             },
           }}
@@ -216,16 +221,16 @@ const HomeView = () => {
               key={cat}
               value={cat}
               sx={{
-                backgroundColor: "#2F3B52", // Consistent menu item background
-                color: "#FFFFFF", // White text
+                backgroundColor: "#2F3B52",
+                color: "#FFFFFF",
                 "&.Mui-selected": {
-                  backgroundColor: "#5D6D82", // Selected state
+                  backgroundColor: "#5D6D82",
                   "&:hover": {
-                    backgroundColor: "#4A5A70", // Hover when selected
+                    backgroundColor: "#4A5A70",
                   }
                 },
                 "&:hover": {
-                  backgroundColor: "#3C4A63", // Hover state
+                  backgroundColor: "#3C4A63",
                 }
               }}
             >
@@ -233,35 +238,42 @@ const HomeView = () => {
             </MenuItem>
           ))}
         </Select>
-      </Grid>
+      </Box>
 
-      <Grid
-        item
-        container
-        spacing={2}
-        alignContent={"center"}
-        justifyContent="center"
-        sx={{ padding: 2, borderRadius: 2, flexWrap: "wrap" }}
+      {/* Grid de Productos con scroll */}
+      <Paper
+        elevation={0}
+        sx={{
+          borderRadius: "0",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          flex: 1,
+          minHeight: 0,
+          overflow: "auto",
+          p: 2,
+        }}
       >
         {productos && productos.length > 0 ? (
-          productos.map((itemCard: CardProps) => (
-            <Grid item key={itemCard.itemCard.id} sx={{ margin: 2 }}>
-              <CardObject itemCard={itemCard.itemCard} />
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12} sx={{ textAlign: "center", mt: 4 }}>
-            <Typography
-              variant="h6"
-              className="textWhte"
-              sx={{ borderRadius: "10px", width: "400px" }}
-            >
-              No hay productos para mostrar.
-            </Typography>
+          <Grid
+            container
+            spacing={2}
+            alignContent={"center"}
+            justifyContent="center"
+            sx={{ flexWrap: "wrap" }}
+          >
+            {productos.map((itemCard: CardProps) => (
+              <Grid item key={itemCard.itemCard.id} sx={{ margin: 2 }}>
+                <CardObject itemCard={itemCard.itemCard} />
+              </Grid>
+            ))}
           </Grid>
+        ) : (
+          <Typography variant="h6" sx={{ textAlign: "center", mt: 4, color: "#e0e0e0" }}>
+            No hay productos para mostrar.
+          </Typography>
         )}
-      </Grid>
-    </Grid>
+      </Paper>
+    </Box>
   );
 };
 

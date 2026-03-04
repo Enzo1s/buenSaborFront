@@ -16,6 +16,7 @@ import {
   Select,
   MenuItem,
   Tooltip,
+  TableContainer,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -163,16 +164,18 @@ const InsumosTable = () => {
   }, []);
 
   return (
-    <Grid
-      container
+    <Box
       sx={{
         color: "#e0e0e0",
         padding: { xs: 2, md: 4 },
-        minHeight: "calc(100vh - 64px)",
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
       }}
     >
-      <Grid size={12} sx={{ mb: 3, flexShrink: 0 }}>
+      <Box sx={{ mb: 2, flexShrink: 0 }}>
         <Typography
           variant="h4"
           component="h1"
@@ -180,16 +183,15 @@ const InsumosTable = () => {
         >
           Listado de Artículos Insumo
         </Typography>
-      </Grid>
+      </Box>
 
       {/* Barra de búsqueda y filtro */}
-      <Grid
-        size={12}
+      <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 4,
+          mb: 2,
           flexWrap: "wrap",
           gap: 2,
           flexShrink: 0,
@@ -289,34 +291,44 @@ const InsumosTable = () => {
         >
           Crear Artículo Insumo
         </Button>
-      </Grid>
+      </Box>
 
       {/* Tabla */}
       {articuloInsumos && articuloInsumos.length > 0 ? (
-        <Grid size={12} sx={{
-          flex: 1,
-          minHeight: 0,
-          overflowY: "auto",
-          overflowX: "hidden",
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
-          msOverflowStyle: "none",
-          scrollbarWidth: "none",
-        }}>
+        <TableContainer
+          component={Paper}
+          elevation={6}
+          sx={{
+            borderRadius: "12px",
+            backgroundColor: "rgba(30, 30, 30, 0.9)",
+            boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(5px)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            maxHeight: "calc(100vh - 280px)",
+            overflow: "auto",
+          }}
+        >
           <Table
             sx={{
               minWidth: 900,
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
-              borderRadius: "12px",
-              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
-              backdropFilter: "blur(5px)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              overflow: "hidden",
             }}
           >
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
+            <TableHead
+              sx={{
+                backgroundColor: "rgba(50, 50, 50, 0.95)",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow
+                sx={{
+                  backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
                 {[
                   { id: "denominacion", label: "Denominación", sortable: true },
                   {
@@ -344,6 +356,10 @@ const InsumosTable = () => {
                       color: "#f0f0f0",
                       fontWeight: "bold",
                       borderBottom: "1px solid #444",
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 2,
+                      backgroundColor: "rgba(50, 50, 50, 0.95)",
                     }}
                   >
                     {headCell.sortable ? (
@@ -366,6 +382,10 @@ const InsumosTable = () => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Acciones
@@ -492,28 +512,25 @@ const InsumosTable = () => {
               ))}
             </TableBody>
           </Table>
-        </Grid>
+        </TableContainer>
       ) : (
-        <Grid size={12}>
-          <Box
-            component="Paper"
-            elevation={6}
-            sx={{
-              p: 4,
-              textAlign: "center",
-              borderRadius: "12px",
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
-              color: "#e0e0e0",
-              boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
-              backdropFilter: "blur(5px)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            <Typography variant="h5">
-              No hay artículos insumo registrados. ¡Crea el primero!
-            </Typography>
-          </Box>
-        </Grid>
+        <Paper
+          elevation={6}
+          sx={{
+            p: 4,
+            textAlign: "center",
+            borderRadius: "12px",
+            backgroundColor: "rgba(30, 30, 30, 0.9)",
+            color: "#e0e0e0",
+            boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(5px)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+          }}
+        >
+          <Typography variant="h5">
+            No hay artículos insumo registrados. ¡Crea el primero!
+          </Typography>
+        </Paper>
       )}
 
       {/* Modal de eliminación */}
@@ -577,7 +594,7 @@ const InsumosTable = () => {
           </Grid>
         </Box>
       </MuiModal>
-    </Grid>
+    </Box>
   );
 };
 

@@ -97,7 +97,17 @@ const SucursalMain = () => {
   }, []);
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, minHeight: "100vh", color: "#e0e0e0" }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        color: "#e0e0e0",
+      }}
+    >
       {/* Header Section */}
       <Box
         display="flex"
@@ -341,18 +351,37 @@ const SucursalMain = () => {
             backgroundColor: "rgba(30,30,30,0.9)",
             boxShadow: "0px 10px 30px rgba(0,0,0,0.5)",
             border: "1px solid rgba(255,255,255,0.1)",
-            overflow: "hidden",
+            maxHeight: "calc(100vh - 280px)",
+            overflow: "auto",
           }}
         >
           <Table aria-label="tabla de sucursales">
-            <TableHead sx={{ bgcolor: "rgba(40,40,40,0.95)" }}>
-              <TableRow>
+            <TableHead
+              sx={{
+                bgcolor: "rgba(40,40,40,0.95)",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow
+                sx={{
+                  bgcolor: "rgba(40,40,40,0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
                 <TableCell
                   sx={{
                     color: "#90CAF9",
                     fontWeight: "bold",
                     fontSize: "1rem",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(40,40,40,0.95)",
                   }}
                 >
                   <TableSortLabel
@@ -370,6 +399,10 @@ const SucursalMain = () => {
                     fontWeight: "bold",
                     fontSize: "1rem",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(40,40,40,0.95)",
                   }}
                 >
                   Dirección
@@ -380,6 +413,10 @@ const SucursalMain = () => {
                     fontWeight: "bold",
                     fontSize: "1rem",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(40,40,40,0.95)",
                   }}
                 >
                   Horarios
@@ -390,6 +427,10 @@ const SucursalMain = () => {
                     fontWeight: "bold",
                     fontSize: "1rem",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(40,40,40,0.95)",
                   }}
                 >
                   Estado
@@ -401,6 +442,10 @@ const SucursalMain = () => {
                     fontSize: "1rem",
                     width: "180px",
                     borderBottom: "1px solid rgba(255,255,255,0.2)",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(40,40,40,0.95)",
                   }}
                   align="center"
                 >

@@ -154,7 +154,13 @@ const Header = () => {
   return (
     <Grid
       container
-      sx={{ bgcolor: "rgba(50, 50, 50, 0.9)", margin: 0, padding: 0 }}
+      sx={{
+        bgcolor: "rgba(50, 50, 50, 0.9)",
+        margin: 0,
+        padding: 0,
+        minHeight: 64,
+        flexShrink: 0,
+      }}
     >
       <Grid size={9} sx={{ padding: "5px" }}>
         <Typography variant="h2" color="white">

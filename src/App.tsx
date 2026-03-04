@@ -1,5 +1,6 @@
 import './App.css'
 import { BrowserRouter } from 'react-router'
+import { Grid } from '@mui/material'
 import Router from './Router/Router'
 import Header from './components/Header'
 import { AuthProvider } from './Context/authContext'
@@ -24,8 +25,12 @@ function App() {
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       <AuthProvider>
         <CartProvider>
-        <Header />
-        <Router />
+        <Grid container sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+          <Header />
+          <Grid component="main" sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+            <Router />
+          </Grid>
+        </Grid>
         </CartProvider>
       </AuthProvider>
       </LocalizationProvider>

@@ -283,7 +283,17 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
   };
 
   return (
-    <Box sx={{ p: 3, color: "#e0e0e0" }}>
+    <Box
+      sx={{
+        p: 3,
+        color: "#e0e0e0",
+        height: "100%",
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       {/* Header */}
       <Box
         display="flex"
@@ -520,17 +530,36 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
             boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
             backdropFilter: "blur(5px)",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            overflow: "hidden",
+            maxHeight: "calc(100vh - 320px)",
+            overflow: "auto",
           }}
         >
           <Table aria-label="tabla de pedidos venta">
-            <TableHead sx={{ backgroundColor: "rgba(50, 50, 50, 0.9)" }}>
-              <TableRow>
+            <TableHead
+              sx={{
+                backgroundColor: "rgba(50, 50, 50, 0.95)",
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              <TableRow
+                sx={{
+                  backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1,
+                }}
+              >
                 <TableCell
                   sx={{
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Cliente
@@ -540,6 +569,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Estado
@@ -549,6 +582,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Tipo de Envío
@@ -558,6 +595,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Subtotal
@@ -567,6 +608,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Descuento
@@ -576,6 +621,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Total
@@ -585,6 +634,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "white",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Costo Total
@@ -594,6 +647,10 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Forma de Pago
@@ -603,17 +660,37 @@ const PedidoVentaTable = (props: PedidoVentaTableProps) => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
                   }}
                 >
                   Fecha del Pedido
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#f0f0f0", fontWeight: "bold", borderBottom: "1px solid #444" }}
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    borderBottom: "1px solid #444",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
                 >
                   Asignado a
                 </TableCell>
                 <TableCell
-                  sx={{ color: "#f0f0f0", fontWeight: "bold", width: "180px" }}
+                  sx={{
+                    color: "#f0f0f0",
+                    fontWeight: "bold",
+                    width: "180px",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                  }}
                   align="center"
                 >
                   Acciones
