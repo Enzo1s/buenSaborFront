@@ -25,6 +25,10 @@ const PromocionDetails = () => {
   const { addItemToCart, addPromocionToCart, setShouldOpenCart } = useCartContext();
   const navigate = useNavigate();
   const [promocion, setPromocion] = useState<Promocion | null>(null)
+  const baseURL = "http://localhost:8080/api/imagenes/";
+
+  // Helper function to extract filename from full path
+  const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
   const getPromocion = async () => {
     if (id) {
@@ -119,6 +123,36 @@ const PromocionDetails = () => {
           >
             Detalles de Promoción: {promocion.denominacion}
           </Typography>
+
+          {/* Promotion Image */}
+          {promocion.pathImagen && promocion.pathImagen.length > 0 && (
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: '500px',
+                height: '300px',
+                mx: 'auto',
+                mb: 3,
+                borderRadius: '12px',
+                overflow: 'hidden',
+                backgroundColor: '#444',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <img
+                src={`${baseURL}${getFilename(promocion.pathImagen[0])}`}
+                alt={promocion.denominacion?.toString() || 'Imagen de promoción'}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                }}
+              />
+            </Box>
+          )}
 
           <Divider sx={{ mb: 3, bgcolor: 'rgba(255, 255, 255, 0.12)' }} />
 

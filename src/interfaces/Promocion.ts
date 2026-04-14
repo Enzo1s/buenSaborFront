@@ -6,6 +6,7 @@ export interface Promocion {
 	fechaDesde: Date,
 	fechaHasta: Date,
 	descuento: Number,
+	pathImagen: string[],
 	promocionDetalle: PromocionDetalle[],
 	alta: Date | null,
 	baja: Date | null,

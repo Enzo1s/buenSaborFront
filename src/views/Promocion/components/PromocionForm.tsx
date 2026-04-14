@@ -5,10 +5,18 @@ import {
     TextField,
     Button,
     Paper,
-    Modal as MuiModal
+    Modal as MuiModal,
+    Input,
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
 } from '@mui/material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Formik } from 'formik'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -29,17 +37,51 @@ const PromocionForm = () => {
     const [promocion, setPromocion] = useState<Promocion | null>(null)
     const [viewForm, setViewForm] = useState(false)
     const [detalles, setDetalles] = useState<PromocionDetalle[]>([])
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    const baseURL = "http://localhost:8080/api/imagenes/";
+
+    // Helper function to extract filename from full path
+    const getFilename = (path: string) => path.split(/[\\/]/).pop() || path;
 
     const getPromocion = async () => {
         if (id) {
             const { data } = await getPromocionById(id)
             setPromocion(data)
+            setPreviewUrls(data.pathImagen?.map((img: string) => `${baseURL}${getFilename(img)}`) || []);
         }
     }
 
     useEffect(() => {
         getPromocion()
     }, [])
+
+    const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const newPreviewUrls: string[] = [];
+            const readers: FileReader[] = [];
+            const base64Results: (string | null)[] = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                readers.push(reader);
+                reader.onloadend = () => {
+                    newPreviewUrls.push(reader.result as string);
+                    base64Results.push(reader.result as string);
+                    if (base64Results.length === files.length) {
+                        setPreviewUrls([...previewUrls, ...newPreviewUrls]);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    }, [previewUrls]);
+
+    const handleRemoveImage = useCallback((indexToRemove: number) => {
+        const newPreviewUrls = previewUrls.filter((_, index) => index !== indexToRemove);
+        setPreviewUrls(newPreviewUrls);
+    }, [previewUrls]);
 
 
     return (
@@ -69,6 +111,7 @@ const PromocionForm = () => {
                         fechaDesde: new Date(),
                         fechaHasta: new Date(),
                         descuento: 0,
+                        pathImagen: promocion?.pathImagen || [],
                         promocionDetalle: promocion?.promocionDetalle || [],
                         alta: null,
                         baja: null,
@@ -87,6 +130,7 @@ const PromocionForm = () => {
                             fechaDesde: values.fechaDesde,
                             fechaHasta: values.fechaHasta,
                             descuento: values.descuento,
+                            pathImagen: previewUrls,
                             promocionDetalle: detalles,
                             alta: null,
                             baja: null,
@@ -200,6 +244,66 @@ const PromocionForm = () => {
                                                 sx={{ '& .MuiFormHelperText-root': { color: '#ffb0b0' } }}
                                             />
                                         </Grid>
+                                        
+                                        {/* Sección de Carga y Previsualización de Imágenes */}
+                                        <Grid size={12}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                p: 2,
+                                                border: '1px dashed #555',
+                                                borderRadius: '8px',
+                                                backgroundColor: 'rgba(50, 50, 50, 0.5)',
+                                            }}>
+                                                <label htmlFor="upload-image">
+                                                    <Input inputProps={{ accept: "image/*", multiple: true }} id="upload-image" type="file" onChange={handleImageChange} sx={{ display: 'none' }} />
+                                                    <IconButton color="primary" aria-label="upload picture" component="span" sx={{ fontSize: 40 }}>
+                                                        <PhotoCamera sx={{ fontSize: 'inherit', color: '#90CAF9' }} />
+                                                    </IconButton>
+                                                    <Typography variant="body2" sx={{ color: '#a0a0a0', mt: 1 }}>
+                                                        Click para subir imágenes
+                                                    </Typography>
+                                                </label>
+                                                {previewUrls.length > 0 && (
+                                                    <Box mt={2} sx={{ width: "100%" }}>
+                                                        <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Imágenes Cargadas:</Typography>
+                                                        <Grid container spacing={2} justifyContent="center">
+                                                            {previewUrls.map((url, index) => (
+                                                                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+                                                                    <Paper
+                                                                        elevation={3}
+                                                                        sx={{
+                                                                            backgroundColor: 'rgba(40, 40, 40, 0.8)',
+                                                                            borderRadius: '8px',
+                                                                            p: 1,
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            alignItems: 'center',
+                                                                        }}
+                                                                    >
+                                                                        <img
+                                                                            src={url}
+                                                                            alt={`Vista previa ${index + 1}`}
+                                                                            style={{ maxWidth: '100%', maxHeight: '150px', objectFit: 'contain', borderRadius: '4px' }}
+                                                                        />
+                                                                        <IconButton
+                                                                            aria-label={`remove image ${index + 1}`}
+                                                                            onClick={() => handleRemoveImage(index)}
+                                                                            color="error"
+                                                                            sx={{ mt: 1 }}
+                                                                        >
+                                                                            <DeleteIcon />
+                                                                        </IconButton>
+                                                                    </Paper>
+                                                                </Grid>
+                                                            ))}
+                                                        </Grid>
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        </Grid>
+
                                         <Grid size={12} container alignItems="center" spacing={1}>
                                             <Grid >
                                                 <Typography variant="h6" sx={{ color: '#f0f0f0' }}>Artículos de la Promoción:</Typography>
