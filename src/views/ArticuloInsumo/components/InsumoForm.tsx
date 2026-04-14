@@ -103,7 +103,7 @@ const InsumoForm = () => {
 
 
    return (
-        <Box sx={{ height: '100%', pb: 4, display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ pb: 4, display: 'flex', justifyContent: 'center' }}>
             <Grid
                 container
                 spacing={2}
@@ -116,8 +116,6 @@ const InsumoForm = () => {
                     color: '#e0e0e0',
                     maxWidth: '900px',
                     width: '100%',
-                    maxHeight: '100%',
-                    overflowY: 'auto',
                     border: '1px solid rgba(70, 70, 70, 0.5)'
                 }}
             >
