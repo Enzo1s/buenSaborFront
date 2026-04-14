@@ -64,7 +64,7 @@ const HomeView = () => {
         (articulo: ArticuloManufacturado) => ({
           itemCard: {
             id: articulo.id,
-            imagen: articulo.pathImagen[0],
+            imagen: articulo.pathImagen && articulo.pathImagen.length > 0 ? articulo.pathImagen[0] : null,
             titulo: articulo.denominacion,
             precioVenta: articulo.precioVenta,
             esInsumo: false,
@@ -81,7 +81,7 @@ const HomeView = () => {
         (articulo: ArticuloInsumo) => ({
           itemCard: {
             id: articulo.id,
-            imagen: articulo.pathImagen[0],
+            imagen: articulo.pathImagen && articulo.pathImagen.length > 0 ? articulo.pathImagen[0] : null,
             titulo: articulo.denominacion,
             precioVenta: articulo.precioVenta,
             esInsumo: true,
