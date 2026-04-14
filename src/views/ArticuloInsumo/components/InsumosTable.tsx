@@ -44,7 +44,6 @@ const InsumosTable = () => {
     open: boolean;
     id: String | null;
   }>({ open: false, id: null });
-
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<string>("");
 
@@ -53,7 +52,7 @@ const InsumosTable = () => {
       await deleteArticuloInsumo(id);
       setOpenDelete({ open: false, id: null });
     } catch (error) {
-      console.error("Error deleting articulo insumo:", error);
+      console.error(error);
     }
   };
 
@@ -69,8 +68,8 @@ const InsumosTable = () => {
           articuloInsumo.categoriaArticulo?.some((categoria) =>
             categoria?.denominacion
               .toLowerCase()
-              .includes(searchTerm.toLowerCase())
-          )
+              .includes(searchTerm.toLowerCase()),
+          ),
       );
     }
 
@@ -78,8 +77,8 @@ const InsumosTable = () => {
       filtered = filtered.filter((insumo) =>
         insumo.categoriaArticulo?.some(
           (cat) =>
-            cat?.denominacion.toLowerCase() === categoriaFiltro.toLowerCase()
-        )
+            cat?.denominacion.toLowerCase() === categoriaFiltro.toLowerCase(),
+        ),
       );
     }
 
@@ -93,15 +92,14 @@ const InsumosTable = () => {
     if (categoria) {
       filtered = filtered.filter((insumo) =>
         insumo.categoriaArticulo?.some(
-          (cat) => cat?.denominacion.toLowerCase() === categoria.toLowerCase()
-        )
+          (cat) => cat?.denominacion.toLowerCase() === categoria.toLowerCase(),
+        ),
       );
     }
 
     setArticuloInsumos(filtered);
   };
 
-  // ---- ORDENAMIENTO ----
   const handleRequestSort = (property: string) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -111,28 +109,23 @@ const InsumosTable = () => {
   function descendingComparator(
     a: ArticuloInsumo,
     b: ArticuloInsumo,
-    orderBy: string
+    orderBy: string,
   ) {
     const aValue = a[orderBy as keyof ArticuloInsumo];
     const bValue = b[orderBy as keyof ArticuloInsumo];
 
     if (aValue == null) return 1;
     if (bValue == null) return -1;
-
-    if (typeof aValue === "number" && typeof bValue === "number") {
+    if (typeof aValue === "number" && typeof bValue === "number")
       return bValue - aValue;
-    }
-
-    if (typeof aValue === "boolean" && typeof bValue === "boolean") {
+    if (typeof aValue === "boolean" && typeof bValue === "boolean")
       return Number(bValue) - Number(aValue);
-    }
-
     return String(bValue).localeCompare(String(aValue));
   }
 
   function getComparator(
     order: Order,
-    orderBy: string
+    orderBy: string,
   ): (a: ArticuloInsumo, b: ArticuloInsumo) => number {
     return order === "desc"
       ? (a, b) => descendingComparator(a, b, orderBy)
@@ -143,20 +136,18 @@ const InsumosTable = () => {
     ? [...articuloInsumos].sort(getComparator(order, orderBy))
     : articuloInsumos;
 
-  // ---- FETCH ----
   useEffect(() => {
     const getInsumos = async () => {
       const { data } = await getListArticuloInsumo();
       setArticuloInsumos(data);
       setArticuloInsumosBefore(data);
 
-      // Extraer categorías únicas
       const categoriasUnicas = Array.from(
         new Set(
           data.flatMap(
-            (i) => i.categoriaArticulo?.map((c) => c.denominacion) || []
-          )
-        )
+            (i) => i.categoriaArticulo?.map((c) => c.denominacion) || [],
+          ),
+        ),
       );
       setCategorias(categoriasUnicas);
     };
@@ -185,7 +176,6 @@ const InsumosTable = () => {
         </Typography>
       </Box>
 
-      {/* Barra de búsqueda y filtro */}
       <Box
         sx={{
           display: "flex",
@@ -202,34 +192,26 @@ const InsumosTable = () => {
           variant="outlined"
           onChange={(e) => handleSearch(e.target.value)}
           sx={{
-            flexBasis: "25%", // <-- 1/4 del ancho
-            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
+            flexBasis: "25%",
+            backgroundColor: "#2F3B52",
             borderRadius: "8px",
             height: "40px",
-            "& .MuiInputBase-input": {
-              color: "#FFFFFF", // White text for better readability
-            },
+            "& .MuiInputBase-input": { color: "#FFFFFF" },
             "& .MuiInputLabel-root": {
-              color: "#A0B0C0", // Light blue-gray text
-              "&.Mui-focused": {
-                color: "#90CAF9", // Blue when focused
-              },
-              "&.MuiFormLabel-filled": {
-                color: "#90CAF9", // Blue when filled
-              },
+              color: "#A0B0C0",
+              "&.Mui-focused": { color: "#90CAF9" },
+              "&.MuiFormLabel-filled": { color: "#90CAF9" },
             },
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#5D6D82", // Subtle border color
-            },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#8FA4C2", // Lighter border on hover
+            "& .MuiOutlinedInput-notchedOutline": { borderColor: "#5D6D82" },
+            "& :hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "#8FA4C2",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#90CAF9", // Blue focus border
+              borderColor: "#90CAF9",
               borderWidth: "2px",
             },
           }}
-          size="small" // Add size small to match other views
+          size="small"
         />
 
         <Select
@@ -239,18 +221,16 @@ const InsumosTable = () => {
           size="small"
           sx={{
             flexBasis: "20%",
-            backgroundColor: "#2F3B52", // Dark blue-gray background for better contrast
-            color: "#FFFFFF", // White text for better readability
+            backgroundColor: "#2F3B52",
+            color: "#FFFFFF",
             borderRadius: "8px",
             height: "40px",
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#5D6D82", // Subtle border color
-            },
+            "& .MuiOutlinedInput-notchedOutline": { borderColor: "#5D6D82" },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#8FA4C2", // Lighter border on hover
+              borderColor: "#8FA4C2",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#90CAF9", // Blue focus border
+              borderColor: "#90CAF9",
               borderWidth: "2px",
             },
           }}
@@ -261,17 +241,13 @@ const InsumosTable = () => {
               key={cat}
               value={cat}
               sx={{
-                backgroundColor: "#2F3B52", // Consistent menu item background
-                color: "#FFFFFF", // White text
+                backgroundColor: "#2F3B52",
+                color: "#FFFFFF",
                 "&.Mui-selected": {
-                  backgroundColor: "#5D6D82", // Selected state
-                  "&:hover": {
-                    backgroundColor: "#4A5A70", // Hover when selected
-                  }
+                  backgroundColor: "#5D6D82",
+                  "&:hover": { backgroundColor: "#4A5A70" },
                 },
-                "&:hover": {
-                  backgroundColor: "#3C4A63", // Hover state
-                }
+                "&:hover": { backgroundColor: "#3C4A63" },
               }}
             >
               {cat}
@@ -283,52 +259,29 @@ const InsumosTable = () => {
           variant="contained"
           color="primary"
           onClick={() => navigate("/articulo-insumo/crear")}
-          sx={{
-            px: 4,
-            py: 1.5,
-            fontWeight: "bold",
-          }}
+          sx={{ px: 4, py: 1.5, fontWeight: "bold" }}
         >
           Crear Artículo Insumo
         </Button>
       </Box>
 
-      {/* Tabla */}
       {articuloInsumos && articuloInsumos.length > 0 ? (
         <TableContainer
           component={Paper}
           elevation={6}
           sx={{
+            flexGrow: 1,
+            overflow: "auto",
             borderRadius: "12px",
             backgroundColor: "rgba(30, 30, 30, 0.9)",
             boxShadow: "0px 8px 25px rgba(0, 0, 0, 0.4)",
             backdropFilter: "blur(5px)",
             border: "1px solid rgba(255, 255, 255, 0.1)",
-            maxHeight: "calc(100vh - 280px)",
-            overflow: "auto",
           }}
         >
-          <Table
-            sx={{
-              minWidth: 900,
-            }}
-          >
-            <TableHead
-              sx={{
-                backgroundColor: "rgba(50, 50, 50, 0.95)",
-                position: "sticky",
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              <TableRow
-                sx={{
-                  backgroundColor: "rgba(50, 50, 50, 0.95)",
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
+          <Table stickyHeader sx={{ minWidth: 900 }}>
+            <TableHead>
+              <TableRow>
                 {[
                   { id: "denominacion", label: "Denominación", sortable: true },
                   {
@@ -356,10 +309,7 @@ const InsumosTable = () => {
                       color: "#f0f0f0",
                       fontWeight: "bold",
                       borderBottom: "1px solid #444",
-                      position: "sticky",
-                      top: 0,
-                      zIndex: 2,
-                      backgroundColor: "rgba(50, 50, 50, 0.95)",
+                      backgroundColor: "rgba(50, 50, 50, 1)",
                     }}
                   >
                     {headCell.sortable ? (
@@ -382,10 +332,7 @@ const InsumosTable = () => {
                     color: "#f0f0f0",
                     fontWeight: "bold",
                     borderBottom: "1px solid #444",
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 2,
-                    backgroundColor: "rgba(50, 50, 50, 0.95)",
+                    backgroundColor: "rgba(50, 50, 50, 1)",
                   }}
                 >
                   Acciones
@@ -440,23 +387,27 @@ const InsumosTable = () => {
                   <TableCell
                     sx={{ color: "#e0e0e0", borderBottom: "1px solid #333" }}
                   >
-                    <Tooltip 
-                      title={articuloInsumo.categoriaArticulo
-                        ?.map((cat) => cat.denominacion)
-                        .join(", ") || "N/A"} 
-                      placement="top" 
+                    <Tooltip
+                      title={
+                        articuloInsumo.categoriaArticulo
+                          ?.map((cat) => cat.denominacion)
+                          .join(", ") || "N/A"
+                      }
+                      placement="top"
                       arrow
                     >
-                      <span>{articuloInsumo.categoriaArticulo
-                        ?.map((cat) => cat.denominacion)
-                        .join(", ") || "N/A"}</span>
+                      <span>
+                        {articuloInsumo.categoriaArticulo
+                          ?.map((cat) => cat.denominacion)
+                          .join(", ") || "N/A"}
+                      </span>
                     </Tooltip>
                   </TableCell>
                   <TableCell
                     sx={{
                       color: articuloInsumo.baja ? "#EF9A9A" : "#A5D6A7",
                       fontWeight: "bold",
-                      borderBottom: "1px solid #333"
+                      borderBottom: "1px solid #333",
                     }}
                   >
                     {articuloInsumo.baja ? "Dada de Baja" : "Activo"}
@@ -533,7 +484,6 @@ const InsumosTable = () => {
         </Paper>
       )}
 
-      {/* Modal de eliminación */}
       <MuiModal
         open={openDelete.open}
         onClose={() => setOpenDelete({ open: false, id: null })}
